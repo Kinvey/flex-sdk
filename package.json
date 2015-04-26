@@ -1,0 +1,20 @@
+{
+  "name": "kinvey-backend-sdk",
+  "version": "0.0.0",
+  "description": "Backend SDK",
+  "engines": {
+    "node": "= 0.10.x"
+  },
+  "dependencies": {
+    "coffee-script": "1.7.1"
+  },
+  "devDependencies": {
+    "mocha": "1.21.4",
+    "should": "3.3.2",
+    "coffeelint": "1.8.1"
+  },
+  "scripts": {
+    "pretest": "./node_modules/.bin/coffeelint --file ./coffeelint.json lib test",
+    "test": "mocha test/lib/*"
+  }
+}
