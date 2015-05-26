@@ -14,69 +14,69 @@
 module.exports = do ->
   registeredCollections = {}
   dataRegistrationOperators = [
-    'insert'
-    'deleteEntity'
-    'deleteAll'
-    'deleteWithQuery'
-    'update'
-    'getEntity'
-    'getAll'
-    'getWithQuery'
-    'getCount'
+    'onInsert'
+    'onDeleteById'
+    'onDeleteAll'
+    'onDeleteByQuery'
+    'onUpdate'
+    'onGetById'
+    'onGetAll'
+    'onGetByQuery'
+    'onGetCount'
   ]
 
-  register = (dataOp, collection, functionToExecute) ->
-    unless dataOp? and dataOp in dataRegistrationOperators
-      throw new Error 'Operation not permitted'
+  class Collection
+    constructor: (collectionName) ->
+      @eventMap = {}
 
-    unless registeredCollections[collection]?
-      registeredCollections[collection] = {}
+    register: (dataOp, functionToExecute) ->
+      unless dataOp? and dataOp in dataRegistrationOperators
+        throw new Error 'Operation not permitted'
 
-    registeredCollections[collection][dataOp] = functionToExecute
+      @eventMap[dataOp] = functionToExecute
 
-  insert = (collection, functionToExecute) ->
-    register 'insert', collection, functionToExecute
+    onInsert: (functionToExecute) ->
+      @register 'onInsert', functionToExecute
 
-  deleteEntity = (collection, functionToExecute) ->
-    register 'deleteEntity', collection, functionToExecute
+    onDeleteById: (functionToExecute) ->
+      @register 'onDeleteById', functionToExecute
 
-  deleteAll = (collection, functionToExecute) ->
-    register 'deleteAll', collection, functionToExecute
+    onDeleteAll: (functionToExecute) ->
+      @register 'onDeleteAll', functionToExecute
 
-  deleteWithQuery = (collection, functionToExecute) ->
-    register 'deleteWithQuery', collection, functionToExecute
+    onDeleteByQuery: (functionToExecute) ->
+      @register 'onDeleteByQuery', functionToExecute
 
-  update = (collection, functionToExecute) ->
-    register 'update', collection, functionToExecute
+    onUpdate: (functionToExecute) ->
+      @register 'onUpdate', functionToExecute
 
-  getEntity = (collection, functionToExecute) ->
-    register 'getEntity', collection, functionToExecute
+    onGetById: (functionToExecute) ->
+      @register 'onGetById', functionToExecute
 
-  getAll = (collection, functionToExecute) ->
-    register 'getAll', collection, functionToExecute
+    onGetAll: (functionToExecute) ->
+      @register 'onGetAll', functionToExecute
 
-  getWithQuery = (collection, functionToExecute) ->
-    register 'getWithQuery', collection, functionToExecute
+    onGetByQuery: (functionToExecute) ->
+      @register 'onGetByQuery', functionToExecute
 
-  getCount = (collection, functionToExecute) ->
-    register 'getCount', collection, functionToExecute
+    onGetCount: (functionToExecute) ->
+      @register 'onGetCount', functionToExecute
 
-  resolve = (collection, dataOp) ->
-    unless registeredCollections[collection]?[dataOp]?
-      throw new Error 'This collection is not registered'
+    resolve: (dataOp) ->
+      unless @eventMap[dataOp]?
+        throw new Error 'This data operation is not registered'
 
-    return registeredCollections[collection][dataOp]
+      return @eventMap[dataOp]
+
+  collection = (collectionName) ->
+
+    unless registeredCollections[collectionName]?
+      registeredCollections[collectionName] = new Collection(collectionName)
+
+    return registeredCollections[collectionName]
 
   obj =
-    insert: insert
-    deleteEntity: deleteEntity
-    deleteAll: deleteAll
-    deleteWithQuery: deleteWithQuery
-    update: update
-    getEntity: getEntity
-    getAll: getAll
-    getWithQuery: getWithQuery
-    getCount: getCount
-    resolve: resolve
+    collection: collection
+
 
   return obj

@@ -19,64 +19,64 @@ collectionName2 = 'myCollection2'
 
 describe 'data registration', () ->
   it 'can register an insert', (done) ->
-    data.insert collectionName, () ->
+    data.collection(collectionName).onInsert () ->
       done()
 
-    fn = data.resolve collectionName, 'insert'
+    fn = data.collection(collectionName).resolve 'onInsert'
     fn()
 
   it 'can register a deleteAll', (done) ->
-    data.deleteAll collectionName, () ->
+    data.collection(collectionName).onDeleteAll () ->
       done()
 
-    fn = data.resolve collectionName, 'deleteAll'
+    fn = data.collection(collectionName).resolve 'onDeleteAll'
     fn()
 
-  it 'can register a deleteEntity', (done) ->
-    data.deleteEntity collectionName, () ->
+  it 'can register a deleteById', (done) ->
+    data.collection(collectionName).onDeleteById () ->
       done()
 
-    fn = data.resolve collectionName, 'deleteEntity'
+    fn = data.collection(collectionName).resolve 'onDeleteById'
     fn()
 
-  it 'can register a deleteWithQuery', (done) ->
-    data.deleteWithQuery collectionName, () ->
+  it 'can register a deleteByQuery', (done) ->
+    data.collection(collectionName).onDeleteByQuery () ->
       done()
 
-    fn = data.resolve collectionName, 'deleteWithQuery'
+    fn = data.collection(collectionName).resolve 'onDeleteByQuery'
     fn()
 
   it 'can register an update', (done) ->
-    data.update collectionName, () ->
+    data.collection(collectionName).onUpdate () ->
       done()
 
-    fn = data.resolve collectionName, 'update'
+    fn = data.collection(collectionName).resolve 'onUpdate'
     fn()
 
   it 'can register a getAll', (done) ->
-    data.getAll collectionName, () ->
+    data.collection(collectionName).onGetAll () ->
       done()
 
-    fn = data.resolve collectionName, 'getAll'
+    fn = data.collection(collectionName).resolve 'onGetAll'
     fn()
 
-  it 'can register a getEntity', (done) ->
-    data.getEntity collectionName, () ->
+  it 'can register a getById', (done) ->
+    data.collection(collectionName).onGetById () ->
       done()
 
-    fn = data.resolve collectionName, 'getEntity'
+    fn = data.collection(collectionName).resolve 'onGetById'
     fn()
 
-  it 'can register a getWithQuery', (done) ->
-    data.getWithQuery collectionName, () ->
+  it 'can register a getByQuery', (done) ->
+    data.collection(collectionName).onGetByQuery () ->
       done()
 
-    fn = data.resolve collectionName, 'getWithQuery'
+    fn = data.collection(collectionName).resolve 'onGetByQuery'
     fn()
 
   it 'can register a getCount', (done) ->
-    data.getCount collectionName, () ->
+    data.collection(collectionName).onGetCount () ->
       done()
 
-    fn = data.resolve collectionName, 'getCount'
+    fn = data.collection(collectionName).resolve 'onGetCount'
     fn()

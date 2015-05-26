@@ -19,7 +19,7 @@ module.exports = do ->
     constructor: () ->
       @data = require './service/data'
       @logic = require './service/logic'
-      @modules = {}
+      @modules = require './service/modules'
 
   generateService = () ->
     return new Service()
