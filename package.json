@@ -6,7 +6,10 @@
     "node": "= 0.10.x"
   },
   "dependencies": {
-    "coffee-script": "1.7.1"
+    "coffee-script": "1.7.1",
+    "request": "2.55.0",
+    "moment": "*",
+    "bson":"*"
   },
   "devDependencies": {
     "mocha": "1.21.4",

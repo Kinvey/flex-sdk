@@ -1,4 +1,4 @@
-# Copyright (c) 2015, Kinvey, Inc. All rights reserved.
+# Copyright (c) 2014, Kinvey, Inc. All rights reserved.
 #
 # This software is licensed to you under the Kinvey terms of service located at
 # http://www.kinvey.com/terms-of-use. By downloading, accessing and/or using this
@@ -11,21 +11,15 @@
 # Unauthorized reproduction, transmission or distribution of this file and its
 # contents is a violation of applicable laws.
 
-util = require 'util'
-
 module.exports = do ->
 
-  class Service
-    constructor: (@task) ->
+  (metadata) ->
 
-      @data = require './service/data'
-      @logic = require './service/logic'
-      @modules = require('./service/modules')(@task)
+    functions =
+      getAppKey: -> metadata._id
+      getAppSecret: -> metadata.appsecret
+      getMasterSecret: -> metadata.mastersecret
+      getSecurityContext: -> metadata.securityContext
+      getAuthenticatedUsername: -> metadata.authenticatedUsername
 
-  generateService = (task) ->
-    return new Service(task)
-
-  obj =
-    service: generateService
-
-  return obj
+    return functions

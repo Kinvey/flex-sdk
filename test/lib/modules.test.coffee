@@ -11,7 +11,7 @@
 # Unauthorized reproduction, transmission or distribution of this file and its
 # contents is a violation of applicable laws.
 
-sdk = require '../../lib/sdk'
+modules = require '../../lib/service/modules'
 should = require 'should'
 
 sampleTaskInfo =
@@ -68,10 +68,16 @@ sampleTaskInfo =
     body: {}
   applicationId: 'a182cf15971444ec9981a60233b0e931'
 
-describe 'service creation', () ->
-  it 'can create a new service', (done) ->
-    service = sdk.service(sampleTaskInfo)
-    should.exist service.data
-    should.exist service.logic
-    should.exist service.modules
+describe 'modules creation', () ->
+  it 'can generate modules', (done) ->
+    modules = modules sampleTaskInfo
+    should.exist modules.backendContext
+    should.exist modules.email
+    should.exist modules.entity
+    should.exist modules.kinveyDate
+    should.exist modules.logger
+    should.exist modules.push
+    should.exist modules.requestContext
+    should.exist modules.tempObjectStore
+    should.exist modules.validation
     done()
