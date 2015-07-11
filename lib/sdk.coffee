@@ -12,18 +12,30 @@
 # contents is a violation of applicable laws.
 
 util = require 'util'
+receiver = require 'code-task-receiver'
 
 module.exports = do ->
 
   class Service
-    constructor: (@task) ->
+    constructor: (@task, callback) ->
 
       @data = require './service/data'
       @logic = require './service/logic'
       @modules = require('./service/modules')(@task)
 
-  generateService = (task) ->
-    return new Service(task)
+      taskReceivedCallback = (task, callback) ->
+        if task.taskType is 'data'
+          @data.process task, callback
+        else if task.taskType is 'logic'
+          @logic.process task, callback
+
+      receiver.start taskReceivedCallback, (err, result) ->
+        return callback new Err "Could not start task receiver: #{err}"
+        callback()
+
+
+  generateService = (task, callback) ->
+    return new Service(task, callback)
 
   obj =
     service: generateService

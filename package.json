@@ -9,7 +9,8 @@
     "coffee-script": "1.7.1",
     "request": "2.55.0",
     "moment": "*",
-    "bson":"*"
+    "bson":"*",
+    "code-task-receiver": "git+ssh://git@github.com:Kinvey/kinvey-task-receiver.git"
   },
   "devDependencies": {
     "mocha": "1.21.4",

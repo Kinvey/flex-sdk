@@ -19,12 +19,28 @@ module.exports = do ->
 
   resolve = (taskName) ->
     unless registeredFunctions[taskName]
-      throw new Error 'No such task registered'
+      return new Error 'No such task registered'
 
     return registeredFunctions[taskName]
+
+  process = (task, callback) ->
+    unless task.taskName?
+      return callback new Error "No taskname to execute"
+
+    logicHandler = resolve task.taskName
+
+    if logicHandler instanceof Error
+      return callback logicHandler
+
+    logicHandler task.request, task.response. (err, result) ->
+      if err?
+        return callback err
+
+      callback null, result
 
   obj =
     register: register
     resolve: resolve
+    process: process
 
   return obj

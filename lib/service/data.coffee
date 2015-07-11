@@ -23,7 +23,10 @@ module.exports = do ->
     'onGetAll'
     'onGetByQuery'
     'onGetCount'
+    'onGetCountWithQuery'
   ]
+
+  # TODO:  Need to add validation of funcitons?
 
   class Collection
     constructor: (collectionName) ->
@@ -62,9 +65,12 @@ module.exports = do ->
     onGetCount: (functionToExecute) ->
       @register 'onGetCount', functionToExecute
 
+    onGetCountWithQuery: (functionToExecute) ->
+      @register 'onGetCountWithQuery', functionToExecute
+
     resolve: (dataOp) ->
       unless @eventMap[dataOp]?
-        throw new Error 'This data operation is not registered'
+        return new Error 'This data operation is not registered'
 
       return @eventMap[dataOp]
 
@@ -75,8 +81,55 @@ module.exports = do ->
 
     return registeredCollections[collectionName]
 
+  process = (task, callback) ->
+    unless task.collectionName?
+      return callback new Error "CollectionName not found"
+
+      collectionToProcess = collection task.collectionName
+      dataOp = ''
+
+      if task.method is 'POST'
+        dataOp = 'onInsert'
+      else if task.method is 'PUT'
+        dataOp = 'onUpdate'
+      else if task.method is 'GET' and task.endpoint isnt '_count'
+        if task.entityId?
+          dataOp = 'onGetById'
+        else if task.query?
+          dataOp = 'onGetByQuery'
+        else
+          dataOp = 'onGetAll'
+      else if task.method is 'GET' and task.endpoint is '_count'
+        if task.query?
+          dataOp = 'onGetCountWithQuery'
+        else
+          dataOp = 'onGetCount'
+      else if task.method is 'DELETE'
+        if task.entityId?
+          dataOp = 'onDeleteById'
+        else if task.query?
+          dataOp = 'onDeleteByQuery'
+        else
+          dataOp = 'onDeleteAll'
+      else
+        return callback new Error "Cannot determine data operation"
+
+      operationHandler = collectionToProcess.resolve dataOp
+
+      if operationHandler instanceof Error
+        return callback operationHandler
+
+      # TODO Add error trapping/handling for this code
+
+      operationHandler task.request, task.response. (err, result) ->
+        if err?
+          return callback err
+
+        callback null, result
+
   obj =
-    collection: collection
+    forCollection: collection
+    process: process
 
 
   return obj
