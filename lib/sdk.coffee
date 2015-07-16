@@ -19,15 +19,15 @@ module.exports = do ->
   class Service
     constructor: (@task, callback) ->
 
-      @data = require './service/data'
-      @logic = require './service/logic'
+      @dataLink = require './service/datalink'
+      @businessLogic = require './service/businesslogic'
       @modules = require('./service/modules')(@task)
 
       taskReceivedCallback = (task, callback) ->
-        if task.taskType is 'data'
+        if task.taskType is 'dataLink'
           @data.process task, callback
-        else if task.taskType is 'logic'
-          @logic.process task, callback
+        else if task.taskType is 'businessLogic'
+          @businessLogic.process task, callback
 
       receiver.start taskReceivedCallback, (err, result) ->
         return callback new Err "Could not start task receiver: #{err}"

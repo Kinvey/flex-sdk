@@ -121,14 +121,14 @@ module.exports = do ->
 
       # TODO Add error trapping/handling for this code
 
-      operationHandler task.request, task.response. (err, result) ->
+      operationHandler task.request, task.response, (err, result) ->
         if err?
           return callback err
 
         callback null, result
 
   obj =
-    forCollection: collection
+    collection: collection
     process: process
 
 
