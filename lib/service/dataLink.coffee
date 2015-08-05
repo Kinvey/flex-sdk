@@ -81,6 +81,86 @@ module.exports = do ->
 
     return registeredCollections[collectionName]
 
+  initCompletionHandler = (task) ->
+    unless task.originalRequest?
+      task.originalRequest = task.request
+
+    return () ->
+
+    completionHandler = (entity, callback) ->
+      responseCallback = callback
+      result = task.request
+      result.body = entity
+      methods = {}
+
+      created = ->
+        result.statusCode = 201
+        return methods
+
+      accepted = ->
+        result.statusCode = 202
+        return methods
+
+      ok = ->
+        result.statusCode = 200
+        return methods
+
+      notFound = ->
+        result.statusCode = 404
+        return methods
+
+      badRequest = ->
+        result.statusCode = 400
+        return methods
+
+      unauthorized = ->
+        result.statusCode = 401
+        return methods
+
+      forbidden = ->
+        result.statusCode = 403
+        return methods
+
+      notAllowed = ->
+        result.statusCode = 405
+        return methods
+
+      notImplemented = ->
+        result.statusCode = 501
+        return methods
+
+      runtimeError = ->
+        result.statusCode = 550
+        return methods
+
+      done = ->
+        result.continue = false
+        task.request = result
+        responseCallback null, task
+
+      next = ->
+        result.continue = true
+        task.request = result
+        responseCallback null, task
+
+      methods =
+        created: created
+        accepted: accepted
+        ok: ok
+        done: done
+        next: next
+        notFound: notFound
+        badRequest: badRequest
+        unauthorized: unauthorized
+        forbidden: forbidden
+        notAllowed: notAllowed
+        notImplemented: notImplemented
+        runtimeError: runtimeError
+
+      return methods
+
+    return completionHandler
+
   process = (task, callback) ->
     unless task.collectionName?
       return callback new Error "CollectionName not found"
@@ -121,7 +201,7 @@ module.exports = do ->
 
       # TODO Add error trapping/handling for this code
 
-      operationHandler task.request, task.response, (err, result) ->
+      operationHandler task.request, completionHandler
         if err?
           return callback err
 
