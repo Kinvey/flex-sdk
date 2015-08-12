@@ -11,6 +11,8 @@
 # Unauthorized reproduction, transmission or distribution of this file and its
 # contents is a violation of applicable laws.
 
+entityHelper = require 'modules/entity'
+
 module.exports = do ->
   registeredCollections = {}
   dataRegistrationOperators = [
@@ -25,8 +27,6 @@ module.exports = do ->
     'onGetCount'
     'onGetCountWithQuery'
   ]
-
-  # TODO:  Need to add validation of funcitons?
 
   class Collection
     constructor: (collectionName) ->
@@ -85,9 +85,23 @@ module.exports = do ->
     unless task.originalRequest?
       task.originalRequest = task.request
 
+    environmentId = task.appMetadata._id
+
     return () ->
 
+    convertToError = (body) ->
+
+      errorResult = new Error (body?.message or body)
+      taskResult.debugMessage = exception.toString()
+      taskResult.metadata = metadata
+      if unhandledException is true
+        taskResult.metadata.unhandled = true
+
+    respond emitter, taskResult
+
     completionHandler = (entity, callback) ->
+      entityParser = entityHelper environmentId
+
       responseCallback = callback
       result = task.request
       result.body = entity
@@ -134,12 +148,28 @@ module.exports = do ->
         return methods
 
       done = ->
+        unless result.statusCode?
+          result.statusCode = 200
+
+        if result.statusCode < 400 and entityParser.isKinveyEntity(entity) is false
+          entity = entityParser.entity entity
+
         result.continue = false
         task.request = result
         responseCallback null, task
 
       next = ->
+        unless result.statusCode?
+          result.statusCode = 200
+
+        if result.statusCode < 400 and entityParser.isKinveyEntity(entity) is false
+          entity = entityParser.entity entity
+
         result.continue = true
+
+        if result.statusCode >= 400
+          convertToError result.body
+
         task.request = result
         responseCallback null, task
 
@@ -167,6 +197,8 @@ module.exports = do ->
 
       collectionToProcess = collection task.collectionName
       dataOp = ''
+
+      completionHandler = initCompletionHandler task
 
       if task.method is 'POST'
         dataOp = 'onInsert'
@@ -199,7 +231,7 @@ module.exports = do ->
       if operationHandler instanceof Error
         return callback operationHandler
 
-      # TODO Add error trapping/handling for this code
+      # TODO Need to handle runtime errors/unhandled exceptions - or do we?
 
       operationHandler task.request, completionHandler
         if err?

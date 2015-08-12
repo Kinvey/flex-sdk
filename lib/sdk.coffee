@@ -23,11 +23,11 @@ module.exports = do ->
       @businessLogic = require './service/businesslogic'
       @modules = require('./service/modules')(@task)
 
-      taskReceivedCallback = (task, callback) ->
+      taskReceivedCallback = (task, completionCallback) ->
         if task.taskType is 'dataLink'
-          @data.process task, callback
+          @data.process task, completionCallback
         else if task.taskType is 'businessLogic'
-          @businessLogic.process task, callback
+          @businessLogic.process task, completionCallback
 
       receiver.start taskReceivedCallback, (err, result) ->
         return callback new Err "Could not start task receiver: #{err}"
