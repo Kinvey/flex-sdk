@@ -191,7 +191,7 @@ module.exports = do ->
 
     return completionHandler
 
-  process = (task, callback) ->
+  process = (task, modules, callback) ->
     unless task.collectionName?
       return callback new Error "CollectionName not found"
 

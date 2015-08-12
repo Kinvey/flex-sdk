@@ -34,7 +34,7 @@ module.exports = do ->
   proxyTaskEmitter.on 'proxyTaskCompleted', () ->
     pendingProxyTasks -= 1
 
-  (task) ->
+  generateModules = (task) ->
 
     getSecurityContextString = (authorizationHeader, appMetadata) ->
       try
@@ -106,3 +106,7 @@ module.exports = do ->
 
     return api
 
+  methods =
+    generate: generateModules
+
+  return methods

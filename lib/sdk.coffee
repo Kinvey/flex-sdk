@@ -13,6 +13,7 @@
 
 util = require 'util'
 receiver = require 'code-task-receiver'
+moduleGenerator = require './service/modules'
 
 module.exports = do ->
 
@@ -21,21 +22,22 @@ module.exports = do ->
 
       @dataLink = require './service/datalink'
       @businessLogic = require './service/businesslogic'
-      @modules = require('./service/modules')(@task)
+      @moduleGenerator = require './service/modules'
 
       taskReceivedCallback = (task, completionCallback) ->
+
         if task.taskType is 'dataLink'
-          @data.process task, completionCallback
+          @data.process task, @moduleGenerator task, completionCallback
         else if task.taskType is 'businessLogic'
-          @businessLogic.process task, completionCallback
+          @businessLogic.process task, @moduleGenerator task, completionCallback
 
       receiver.start taskReceivedCallback, (err, result) ->
         return callback new Err "Could not start task receiver: #{err}"
         callback()
 
 
-  generateService = (task, callback) ->
-    return new Service(task, callback)
+  generateService = (callback) ->
+    return new Service(callback)
 
   obj =
     service: generateService
