@@ -33,11 +33,12 @@ module.exports = do ->
 
       receiver.start taskReceivedCallback, (err, result) ->
         return callback new Err "Could not start task receiver: #{err}"
-        callback()
+        callback null, this
 
 
   generateService = (callback) ->
-    return new Service(callback)
+    new Service (err, service) ->
+      callback err, service
 
   obj =
     service: generateService
