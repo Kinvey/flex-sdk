@@ -34,7 +34,7 @@ module.exports = do ->
     if logicHandler instanceof Error
       return callback logicHandler
 
-    logicHandler task.request, task.response. (err, result) ->
+    logicHandler task.request, task.response, (err, result) ->
       if err?
         return callback err
 

@@ -233,7 +233,7 @@ module.exports = do ->
 
       # TODO Need to handle runtime errors/unhandled exceptions - or do we?
 
-      operationHandler task.request, completionHandler
+      operationHandler task.request, completionHandler, (err, result) ->
         if err?
           return callback err
 
