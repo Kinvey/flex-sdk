@@ -245,7 +245,7 @@ module.exports = do ->
       domainBoundOperationHandler = taskDomain.bind operationHandler
 
 
-      domainBoundOperationHandler task.request, completionHandler
+      domainBoundOperationHandler task.request, completionHandler, (err, result) ->
         if err?
           return callback(convertToError err)
 
