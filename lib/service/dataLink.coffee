@@ -12,6 +12,7 @@
 # contents is a violation of applicable laws.
 
 entityHelper = require 'modules/entity'
+domain = require 'domain'
 
 module.exports = do ->
   registeredCollections = {}
@@ -91,13 +92,13 @@ module.exports = do ->
 
     convertToError = (body) ->
 
-      errorResult = new Error (body?.message or body)
-      taskResult.debugMessage = exception.toString()
-      taskResult.metadata = metadata
-      if unhandledException is true
-        taskResult.metadata.unhandled = true
+      errorResult = new Error (body?.message or body.toString())
+      errorResult.debugMessage = body.toString()
+      errorResult.metadata = metadata
+      if body?.unhandledException is true
+        errorResult.metadata.unhandled = true
 
-    respond emitter, taskResult
+      return errorResult
 
     completionHandler = (entity, callback) ->
       entityParser = entityHelper environmentId
@@ -229,13 +230,24 @@ module.exports = do ->
       operationHandler = collectionToProcess.resolve dataOp
 
       if operationHandler instanceof Error
-        return callback operationHandler
+        return callback(convertToError operationHandler)
 
       # TODO Need to handle runtime errors/unhandled exceptions - or do we?
+      taskDomain = domain.create()
 
-      operationHandler task.request, completionHandler
+      taskDomain.on 'error', (err) =>
+        err.metadata = {}
+        err.metadata.unhandled = true
+        err.taskId = task.taskId
+        err.requestId = task.requestId
+        return callback(confvertToError operationHandler)
+
+      domainBoundOperationHandler = taskDomain.bind operationHandler
+
+
+      domainBoundOperationHandler task.request, completionHandler
         if err?
-          return callback err
+          return callback(convertToError err)
 
         callback null, result
 
