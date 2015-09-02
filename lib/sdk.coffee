@@ -27,7 +27,7 @@ module.exports = do ->
       taskReceivedCallback = (task, completionCallback) ->
 
         if task.taskType is 'dataLink'
-          @data.process task, @moduleGenerator task, completionCallback
+          @dataLink.process task, @moduleGenerator task, completionCallback
         else if task.taskType is 'businessLogic'
           @businessLogic.process task, @moduleGenerator task, completionCallback
 
