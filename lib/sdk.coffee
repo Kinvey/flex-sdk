@@ -18,7 +18,7 @@ moduleGenerator = require './service/modules'
 module.exports = do ->
 
   class Service
-    constructor: (@task, callback) ->
+    constructor: (callback) ->
 
       @dataLink = require './service/datalink'
       @businessLogic = require './service/businesslogic'
