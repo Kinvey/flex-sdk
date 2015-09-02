@@ -31,7 +31,7 @@ module.exports = do ->
         else if task.taskType is 'businessLogic'
           @businessLogic.process task, @moduleGenerator task, completionCallback
 
-      receiver.start taskReceivedCallback, (err, result) ->
+      receiver.start taskReceivedCallback, (err, result) =>
         if err?
           return callback new Error "Could not start task receiver: #{err}"
         console.log "Started runner"
