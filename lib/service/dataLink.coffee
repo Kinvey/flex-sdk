@@ -151,7 +151,8 @@ module.exports = do ->
           result.statusCode = 200
 
         if result.statusCode < 400 and entityParser.isKinveyEntity(entity) is false
-          entity = entityParser.entity entity
+          if entity.constructor isnt Array
+            entity = entityParser.entity entity
 
         result.continue = false
         task.request = result
@@ -162,7 +163,8 @@ module.exports = do ->
           result.statusCode = 200
 
         if result.statusCode < 400 and entityParser.isKinveyEntity(entity) is false
-          entity = entityParser.entity entity
+          if entity.constructor isnt Array
+            entity = entityParser.entity entity
 
         result.continue = true
 
