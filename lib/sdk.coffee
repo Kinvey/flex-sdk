@@ -12,7 +12,7 @@
 # contents is a violation of applicable laws.
 
 util = require 'util'
-receiver = require 'code-task-receiver'
+receiver = require 'code-task-runner'
 moduleGenerator = require './service/modules'
 
 module.exports = do ->

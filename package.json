@@ -10,7 +10,7 @@
     "request": "2.55.0",
     "moment": "*",
     "bson":"*",
-    "code-task-receiver": "git+ssh://git@github.com:Kinvey/kinvey-task-receiver.git"
+    "code-task-runner": "git+ssh://git@github.com:Kinvey/kinvey-task-receiver.git"
   },
   "devDependencies": {
     "mocha": "1.21.4",
