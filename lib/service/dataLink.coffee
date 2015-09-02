@@ -82,13 +82,11 @@ module.exports = do ->
 
     return registeredCollections[collectionName]
 
-  initCompletionHandler = (task) ->
+  initCompletionHandler = (task, callback) ->
     unless task.originalRequest?
       task.originalRequest = task.request
 
     environmentId = task.appMetadata._id
-
-    return () ->
 
     convertToError = (body) ->
 
@@ -100,7 +98,7 @@ module.exports = do ->
 
       return errorResult
 
-    completionHandler = (entity, callback) ->
+    completionHandler = (entity) ->
       entityParser = entityHelper environmentId
 
       responseCallback = callback
@@ -199,7 +197,11 @@ module.exports = do ->
       collectionToProcess = collection task.collectionName
       dataOp = ''
 
-      completionHandler = initCompletionHandler task
+      completionHandler = initCompletionHandler task, (err, result) ->
+        if err?
+          return callback(convertToError err)
+
+        callback null, result
 
       if task.method is 'POST'
         dataOp = 'onInsert'
@@ -245,11 +247,7 @@ module.exports = do ->
       domainBoundOperationHandler = taskDomain.bind operationHandler
 
 
-      domainBoundOperationHandler task.request, completionHandler, (err, result) ->
-        if err?
-          return callback(convertToError err)
-
-        callback null, result
+      domainBoundOperationHandler task.request, completionHandler
 
   obj =
     collection: collection
