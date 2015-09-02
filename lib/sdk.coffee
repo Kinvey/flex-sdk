@@ -33,6 +33,7 @@ module.exports = do ->
 
       receiver.start taskReceivedCallback, (err, result) ->
         return callback new Err "Could not start task receiver: #{err}"
+        console.log "Started runner"
         callback null, this
 
 
