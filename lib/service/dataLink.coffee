@@ -11,7 +11,7 @@
 # Unauthorized reproduction, transmission or distribution of this file and its
 # contents is a violation of applicable laws.
 
-entityHelper = require 'modules/entity'
+entityHelper = require '../modules/entity'
 domain = require 'domain'
 
 module.exports = do ->
