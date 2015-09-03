@@ -1,6 +1,6 @@
 {
   "name": "kinvey-backend-sdk",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Backend SDK",
   "engines": {
     "node": "= 0.10.x"
@@ -10,7 +10,7 @@
     "request": "2.55.0",
     "moment": "*",
     "bson":"*",
-    "code-task-runner": "git+ssh://git@github.com:Kinvey/kinvey-task-receiver.git"
+    "kinvey-code-task-receiver": "0.0.0"
   },
   "devDependencies": {
     "mocha": "1.21.4",
