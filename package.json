@@ -10,7 +10,7 @@
     "request": "2.55.0",
     "moment": "*",
     "bson":"*",
-    "kinvey-code-task-receiver": "0.0.0"
+    "kinvey-code-task-runner": "0.0.0"
   },
   "devDependencies": {
     "mocha": "1.21.4",
