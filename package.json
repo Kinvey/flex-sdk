@@ -1,6 +1,6 @@
 {
   "name": "kinvey-backend-sdk",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Backend SDK",
   "engines": {
     "node": "= 0.10.x"
@@ -10,7 +10,7 @@
     "request": "2.55.0",
     "moment": "*",
     "bson":"*",
-    "kinvey-code-task-runner": "0.0.0"
+    "kinvey-code-task-runner": "0.0.1"
   },
   "devDependencies": {
     "mocha": "1.21.4",
