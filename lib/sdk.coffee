@@ -20,8 +20,8 @@ module.exports = do ->
   class Service
     constructor: (callback) ->
 
-      @dataLink = require './service/datalink'
-      @businessLogic = require './service/businesslogic'
+      @dataLink = require './service/dataLink'
+      @businessLogic = require './service/businessLogic'
       @moduleGenerator = require './service/modules'
 
       taskReceivedCallback = (task, completionCallback) ->
