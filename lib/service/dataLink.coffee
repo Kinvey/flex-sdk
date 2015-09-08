@@ -196,60 +196,56 @@ module.exports = do ->
     unless task.collectionName?
       return callback new Error "CollectionName not found"
 
-      collectionToProcess = collection task.collectionName
-      dataOp = ''
+    collectionToProcess = collection task.collectionName
+    dataOp = ''
 
-      completionHandler = initCompletionHandler task, (err, result) ->
-        if err?
-          return callback(convertToError err)
+    completionHandler = initCompletionHandler task
 
-        callback null, result
-
-      if task.method is 'POST'
-        dataOp = 'onInsert'
-      else if task.method is 'PUT'
-        dataOp = 'onUpdate'
-      else if task.method is 'GET' and task.endpoint isnt '_count'
-        if task.entityId?
-          dataOp = 'onGetById'
-        else if task.query?
-          dataOp = 'onGetByQuery'
-        else
-          dataOp = 'onGetAll'
-      else if task.method is 'GET' and task.endpoint is '_count'
-        if task.query?
-          dataOp = 'onGetCountWithQuery'
-        else
-          dataOp = 'onGetCount'
-      else if task.method is 'DELETE'
-        if task.entityId?
-          dataOp = 'onDeleteById'
-        else if task.query?
-          dataOp = 'onDeleteByQuery'
-        else
-          dataOp = 'onDeleteAll'
+    if task.method is 'POST'
+      dataOp = 'onInsert'
+    else if task.method is 'PUT'
+      dataOp = 'onUpdate'
+    else if task.method is 'GET' and task.endpoint isnt '_count'
+      if task.entityId?
+        dataOp = 'onGetById'
+      else if task.query?
+        dataOp = 'onGetByQuery'
       else
-        return callback new Error "Cannot determine data operation"
+        dataOp = 'onGetAll'
+    else if task.method is 'GET' and task.endpoint is '_count'
+      if task.query?
+        dataOp = 'onGetCountWithQuery'
+      else
+        dataOp = 'onGetCount'
+    else if task.method is 'DELETE'
+      if task.entityId?
+        dataOp = 'onDeleteById'
+      else if task.query?
+        dataOp = 'onDeleteByQuery'
+      else
+        dataOp = 'onDeleteAll'
+    else
+      return callback new Error "Cannot determine data operation"
 
-      operationHandler = collectionToProcess.resolve dataOp
+    operationHandler = collectionToProcess.resolve dataOp
 
-      if operationHandler instanceof Error
-        return callback(convertToError operationHandler)
+    if operationHandler instanceof Error
+      return callback(convertToError operationHandler)
 
-      # TODO Need to handle runtime errors/unhandled exceptions - or do we?
-      taskDomain = domain.create()
+    # TODO Need to handle runtime errors/unhandled exceptions - or do we?
+    taskDomain = domain.create()
 
-      taskDomain.on 'error', (err) =>
-        err.metadata = {}
-        err.metadata.unhandled = true
-        err.taskId = task.taskId
-        err.requestId = task.requestId
-        return callback(confvertToError operationHandler)
+    taskDomain.on 'error', (err) =>
+      err.metadata = {}
+      err.metadata.unhandled = true
+      err.taskId = task.taskId
+      err.requestId = task.requestId
+      return callback(confvertToError operationHandler)
 
-      domainBoundOperationHandler = taskDomain.bind operationHandler
+    domainBoundOperationHandler = taskDomain.bind operationHandler
 
 
-      domainBoundOperationHandler task.request, completionHandler
+    domainBoundOperationHandler task.request, completionHandler
 
   obj =
     collection: collection
