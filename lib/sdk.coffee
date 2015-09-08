@@ -29,10 +29,10 @@ module.exports = do ->
 
         if task.taskType is 'dataLink'
           console.log "Datalink received"
-          @dataLink.process task, @moduleGenerator task, completionCallback
+          @dataLink.process task, @moduleGenerator.generateModules task, completionCallback
         else if task.taskType is 'businessLogic'
           console.log "businessLogic received"
-          @businessLogic.process task, @moduleGenerator task, completionCallback
+          @businessLogic.process task, @moduleGenerator.generateModules task, completionCallback
 
       receiver.start taskReceivedCallback, (err, result) =>
         if err?
