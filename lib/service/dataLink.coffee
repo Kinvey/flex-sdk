@@ -103,7 +103,7 @@ module.exports = do ->
       entityParser = entityHelper environmentId
 
       responseCallback = callback
-      result = task.request
+      result = task.response
       result.body = entity
       methods = {}
 
