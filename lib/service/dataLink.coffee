@@ -205,7 +205,7 @@ module.exports = do ->
     collectionToProcess = collection task.collectionName
     dataOp = ''
     console.log "Generating completion handler"
-    completionHandler = initCompletionHandler task
+    completionHandler = initCompletionHandler task, callback
 
     console.log "Checking dataop"
     if task.method is 'POST'
