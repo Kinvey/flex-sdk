@@ -24,7 +24,7 @@ module.exports = do ->
       @businessLogic = require './service/businessLogic'
       @moduleGenerator = require './service/modules'
 
-      taskReceivedCallback = (task, completionCallback) ->
+      taskReceivedCallback = (task, completionCallback) =>
         console.log "Task received"
 
         if task.taskType is 'dataLink'
