@@ -35,6 +35,7 @@ module.exports = do ->
     pendingProxyTasks -= 1
 
   generateModules = (task) ->
+    console.log "generating modules"
 
     getSecurityContextString = (authorizationHeader, appMetadata) ->
       try
@@ -104,6 +105,7 @@ module.exports = do ->
       tempObjectStore: tempObjectStore task.request.tempObjectStore
       validation: validation
 
+    console.log "Modules generated, returning API..."
     return api
 
   methods =
