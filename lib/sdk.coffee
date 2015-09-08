@@ -25,10 +25,13 @@ module.exports = do ->
       @moduleGenerator = require './service/modules'
 
       taskReceivedCallback = (task, completionCallback) ->
+        console.log "Task received"
 
         if task.taskType is 'dataLink'
+          console.log "Datalink received"
           @dataLink.process task, @moduleGenerator task, completionCallback
         else if task.taskType is 'businessLogic'
+          console.log "businessLogic received"
           @businessLogic.process task, @moduleGenerator task, completionCallback
 
       receiver.start taskReceivedCallback, (err, result) =>
