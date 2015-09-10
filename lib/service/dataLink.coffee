@@ -87,13 +87,19 @@ module.exports = do ->
     environmentId = task.appMetadata._id
 
     convertToError = (body) ->
-
+      console.log "Converting to error"
       errorResult = new Error (body?.message or body.toString())
+      console.log "Body added"
       errorResult.debugMessage = body.toString()
-      errorResult.metadata = metadata
+      console.log "Debug Message set"
+      errorResult.taskId = task.taskId
+      console.log "taskId set"
       if body?.unhandledException is true
         errorResult.metadata.unhandled = true
+        console.log "unhandledException is set"
 
+      console.log "returning errorResult"
+      console.log errorResult.toString()
       return errorResult
 
     completionHandler = (entity) ->
@@ -224,14 +230,14 @@ module.exports = do ->
       if task.request?.entityId?
         console.log "GetById"
         dataOp = 'onGetById'
-      else if task.query?
+      else if task.request?.query?
         console.log "getByQuery"
         dataOp = 'onGetByQuery'
       else
         console.log "GetAll"
         dataOp = 'onGetAll'
     else if task.method is 'GET' and task.endpoint is '_count'
-      if task.query?
+      if task.request?.query?
         dataOp = 'onGetCountWithQuery'
       else
         dataOp = 'onGetCount'
@@ -239,7 +245,7 @@ module.exports = do ->
       console.log "DataOp is Delete"
       if task.request.entityId?
         dataOp = 'onDeleteById'
-      else if task.query?
+      else if task.request?.query?
         dataOp = 'onDeleteByQuery'
       else
         dataOp = 'onDeleteAll'
