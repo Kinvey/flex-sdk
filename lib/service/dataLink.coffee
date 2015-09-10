@@ -237,7 +237,7 @@ module.exports = do ->
         dataOp = 'onGetCount'
     else if task.method is 'DELETE'
       console.log "DataOp is Delete"
-      if task.entityId?
+      if task.request.entityId?
         dataOp = 'onDeleteById'
       else if task.query?
         dataOp = 'onDeleteByQuery'
