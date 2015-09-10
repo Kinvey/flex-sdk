@@ -83,8 +83,6 @@ module.exports = do ->
     return registeredCollections[collectionName]
 
   initCompletionHandler = (task, callback) ->
-    unless task.originalRequest?
-      task.originalRequest = task.request
 
     environmentId = task.appMetadata._id
 
@@ -164,9 +162,12 @@ module.exports = do ->
         unless result.statusCode?
           result.statusCode = 200
         console.log "About to parse entity(s)"
-        if result.statusCode < 400 and entityParser.isKinveyEntity(entity) is false
-          if entity.constructor isnt Array
-            entity = entityParser.entity entity
+        result.body = JSON.stringify entity
+        #if result.statusCode < 400 and entityParser.isKinveyEntity(entity) is false
+
+          #if entity.constructor isnt Array
+          #  entity = entityParser.entity entity
+
 
         result.continue = true
 
@@ -207,6 +208,10 @@ module.exports = do ->
     console.log "Generating completion handler"
     completionHandler = initCompletionHandler task, callback
 
+    try
+      task.request.body = JSON.parse task.request.body
+    catch e
+
     console.log "Checking dataop"
     if task.method is 'POST'
       console.log "DataOp is insert"
@@ -216,7 +221,7 @@ module.exports = do ->
       dataOp = 'onUpdate'
     else if task.method is 'GET' and task.endpoint isnt '_count'
       console.log "DataOp is GET"
-      if task.entityId?
+      if task.request?.entityId?
         console.log "GetById"
         dataOp = 'onGetById'
       else if task.query?
