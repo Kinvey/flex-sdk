@@ -263,7 +263,7 @@ module.exports = do ->
     console.log "Binding domain for error handling"
     taskDomain = domain.create()
 
-    taskDomain.on 'error', (err) =>
+    taskDomain.on 'error', (err) ->
       err.metadata = {}
       err.metadata.unhandled = true
       err.taskId = task.taskId
