@@ -86,23 +86,15 @@ module.exports = do ->
     environmentId = task.appMetadata._id
 
     convertToError = (body) ->
-      console.log "Converting to error"
       errorResult = new Error (body?.message or body.toString())
-      console.log "Body added"
       errorResult.debugMessage = body.toString()
-      console.log "Debug Message set"
       errorResult.taskId = task.taskId
-      console.log "taskId set"
       if body?.unhandledException is true
         errorResult.metadata.unhandled = true
-        console.log "unhandledException is set"
 
-      console.log "returning errorResult"
-      console.log errorResult.toString()
       return errorResult
 
     completionHandler = (entity) ->
-      console.log "In completion handler"
       entityParser = entityHelper environmentId
 
       responseCallback = callback
@@ -163,10 +155,8 @@ module.exports = do ->
         responseCallback null, task
 
       next = ->
-        console.log "In next handler"
         unless result.statusCode?
           result.statusCode = 200
-        console.log "About to parse entity(s)"
         result.body = JSON.stringify entity
         #if result.statusCode < 400 and entityParser.isKinveyEntity(entity) is false
 
@@ -177,11 +167,9 @@ module.exports = do ->
         result.continue = true
 
         if result.statusCode >= 400
-          console.log "About to parse error"
           convertToError result.body
 
         task.request = result
-        console.log "About to process callback"
         responseCallback null, task
 
       methods =
@@ -203,37 +191,27 @@ module.exports = do ->
     return completionHandler
 
   process = (task, modules, callback) ->
-    console.log "Processing entry"
-    console.log task
     unless task.collectionName?
       return callback new Error "CollectionName not found"
 
     collectionToProcess = collection task.collectionName
     dataOp = ''
-    console.log "Generating completion handler"
     completionHandler = initCompletionHandler task, callback
 
     try
       task.request.body = JSON.parse task.request.body
     catch e
 
-    console.log "Checking dataop"
     if task.method is 'POST'
-      console.log "DataOp is insert"
       dataOp = 'onInsert'
     else if task.method is 'PUT'
-      console.log "DataOp is update"
       dataOp = 'onUpdate'
     else if task.method is 'GET' and task.endpoint isnt '_count'
-      console.log "DataOp is GET"
       if task.request?.entityId?
-        console.log "GetById"
         dataOp = 'onGetById'
       else if task.request?.query?
-        console.log "getByQuery"
         dataOp = 'onGetByQuery'
       else
-        console.log "GetAll"
         dataOp = 'onGetAll'
     else if task.method is 'GET' and task.endpoint is '_count'
       if task.query?
@@ -241,7 +219,6 @@ module.exports = do ->
       else
         dataOp = 'onGetCount'
     else if task.method is 'DELETE'
-      console.log "DataOp is Delete"
       if task.request.entityId?
         dataOp = 'onDeleteById'
       else if task.query?
@@ -249,18 +226,14 @@ module.exports = do ->
       else
         dataOp = 'onDeleteAll'
     else
-      console.log "Problem - no dataOp"
       return callback new Error "Cannot determine data operation"
 
-    console.log "Getting handler function"
     operationHandler = collectionToProcess.resolve dataOp
-    console.log "Handler is #{typeof operationHandler}"
 
     if operationHandler instanceof Error
       return callback(convertToError operationHandler)
 
     # TODO Need to handle runtime errors/unhandled exceptions - or do we?
-    console.log "Binding domain for error handling"
     taskDomain = domain.create()
 
     taskDomain.on 'error', (err) ->
@@ -272,7 +245,6 @@ module.exports = do ->
 
     domainBoundOperationHandler = taskDomain.bind operationHandler
 
-    console.log "about to execute function"
     domainBoundOperationHandler task.request, completionHandler
 
   obj =

@@ -71,7 +71,7 @@ sampleTaskInfo =
 describe 'service creation', () ->
   it 'can create a new service', (done) ->
     service = sdk.service(sampleTaskInfo)
-    should.exist service.data
-    should.exist service.logic
+    should.exist service.dataLink
+    should.exist service.businessLogic
     should.exist service.modules
     done()
