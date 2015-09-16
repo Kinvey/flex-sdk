@@ -103,7 +103,7 @@ module.exports = do ->
 
       return errorResult
 
-    completionHandler = (entity) ->
+    completionHandler = (entity = {}) ->
       entityParser = entityHelper environmentId
 
       responseCallback = callback
@@ -147,7 +147,7 @@ module.exports = do ->
           debug: debug or result.body or {}
         return methods
 
-      forbidden = ->
+      forbidden = (debug) ->
         result.statusCode = 403
         result.body =
           error: "Forbidden"
@@ -183,7 +183,7 @@ module.exports = do ->
         unless result.statusCode?
           result.statusCode = 200
 
-        result.body = JSON.stringify entity
+        result.body = JSON.stringify result.body
 
 #        if result.statusCode < 400 and entityParser.isKinveyEntity(entity) is false
 #          if entity.constructor isnt Array
@@ -196,7 +196,8 @@ module.exports = do ->
       next = ->
         unless result.statusCode?
           result.statusCode = 200
-        result.body = JSON.stringify entity
+
+        result.body = JSON.stringify result.body
         #if result.statusCode < 400 and entityParser.isKinveyEntity(entity) is false
 
           #if entity.constructor isnt Array
@@ -207,7 +208,6 @@ module.exports = do ->
 
 #        if result.statusCode >= 400
 #          convertToError result.body
-
         task.request = result
         responseCallback null, task
 
@@ -281,11 +281,13 @@ module.exports = do ->
       err.metadata.unhandled = true
       err.taskId = task.taskId
       err.requestId = task.requestId
-      return callback operationHandler
+      return callback err
 
     domainBoundOperationHandler = taskDomain.bind operationHandler
 
-    domainBoundOperationHandler task.request, completionHandler
+    domainBoundOperationHandler task.request, (err, result) ->
+      taskDomain.dispose()
+      completionHandler err, result
 
   removeCollection = (collection) ->
     unless collection?

@@ -145,7 +145,7 @@ describe 'dataLink', () ->
     it 'can process an insert', (done) ->
       task = sampleTask()
 
-      data.collection(collectionName).onInsert (request, competion) ->
+      data.collection(collectionName).onInsert (request, complete) ->
         request.entityId = task.request.entityId
         done()
 
@@ -155,7 +155,7 @@ describe 'dataLink', () ->
       task = sampleTask()
       task.method = 'PUT'
 
-      data.collection(collectionName).onUpdate (request, competion) ->
+      data.collection(collectionName).onUpdate (request, complete) ->
         task = sampleTask()
         request.entityId = task.request.entityId
         done()
@@ -170,7 +170,7 @@ describe 'dataLink', () ->
       delete task.query
       delete task.request.query
 
-      data.collection(collectionName).onGetAll (request, competion) ->
+      data.collection(collectionName).onGetAll (request, complete) ->
         task = sampleTask()
         request.entityId = task.request.entityId
         done()
@@ -183,7 +183,7 @@ describe 'dataLink', () ->
       delete task.query
       delete task.request.query
 
-      data.collection(collectionName).onGetById (request, competion) ->
+      data.collection(collectionName).onGetById (request, complete) ->
         task = sampleTask()
         request.entityId = task.request.entityId
         done()
@@ -198,7 +198,7 @@ describe 'dataLink', () ->
       task.request.query = {}
       task.query = {}
 
-      data.collection(collectionName).onGetByQuery (request, competion) ->
+      data.collection(collectionName).onGetByQuery (request, complete) ->
         task = sampleTask()
         request.entityId = task.request.entityId
         done()
@@ -213,7 +213,7 @@ describe 'dataLink', () ->
       delete task.query
       delete task.request.query
 
-      data.collection(collectionName).onDeleteAll (request, competion) ->
+      data.collection(collectionName).onDeleteAll (request, complete) ->
         task = sampleTask()
         request.entityId = task.request.entityId
         done()
@@ -226,7 +226,7 @@ describe 'dataLink', () ->
       delete task.query
       delete task.request.query
 
-      data.collection(collectionName).onDeleteById (request, competion) ->
+      data.collection(collectionName).onDeleteById (request, complete) ->
         task = sampleTask()
         request.entityId = task.request.entityId
         done()
@@ -241,7 +241,7 @@ describe 'dataLink', () ->
       task.request.query = {}
       task.query = {}
 
-      data.collection(collectionName).onDeleteByQuery (request, competion) ->
+      data.collection(collectionName).onDeleteByQuery (request, complete) ->
         task = sampleTask()
         request.entityId = task.request.entityId
         done()
@@ -257,7 +257,7 @@ describe 'dataLink', () ->
       delete task.query
       delete task.request.query
 
-      data.collection(collectionName).onGetCount (request, competion) ->
+      data.collection(collectionName).onGetCount (request, complete) ->
         task = sampleTask()
         request.entityId = task.request.entityId
         done()
@@ -273,7 +273,7 @@ describe 'dataLink', () ->
       task.request.query = {}
       task.query = {}
 
-      data.collection(collectionName).onGetCountWithQuery (request, competion) ->
+      data.collection(collectionName).onGetCountWithQuery (request, complete) ->
         task = sampleTask()
         request.entityId = task.request.entityId
         done()
@@ -284,7 +284,7 @@ describe 'dataLink', () ->
       task = sampleTask()
       task.method = 'GET'
 
-      data.collection(collectionName).onGetAll (request, competion) ->
+      data.collection(collectionName).onGetAll (request, complete) ->
 
       data.process task, {}, (err, result) ->
         err.toString().should.eql 'Error: This data operation is not registered'
@@ -295,7 +295,7 @@ describe 'dataLink', () ->
       task.method = 'POST'
       task.request.body = "this is some string"
 
-      data.collection(collectionName).onInsert (request, competion) ->
+      data.collection(collectionName).onInsert (request, complete) ->
 
       data.process task, {}, (err, result) ->
         err.toString().should.eql 'Error: Requst body is not JSON'
@@ -305,21 +305,201 @@ describe 'dataLink', () ->
       task = sampleTask()
       delete task.method
 
-      data.collection(collectionName).onInsert (request, competion) ->
+      data.collection(collectionName).onInsert (request, complete) ->
 
       data.process task, {}, (err, result) ->
         err.toString().should.eql 'Error: Cannot determine data operation'
         done()
+        
+  describe 'completion handlers', () ->
 
-    it.only 'will return an error if an exception is thrown', (done) ->
+    afterEach (done) ->
+      data.clearAll()
+      done()
+
+    it 'should return a successful response', (done) ->
       task = sampleTask()
 
-      data.collection(collectionName).onInsert (request, competion) ->
-        foo.bar()
+      data.collection(collectionName).onInsert (request, complete) ->
+        complete().ok().next()
 
-      data.process task, {}, (err, result) ->
-        err.toString().should.eql 'Error: Cannot determine data operation'
+      data.process task, {}, (err, result) =>
+        should.not.exist err
+        result.response.statusCode.should.eql 200
+        result.response.body.should.eql '{}'
         done()
+
+    it 'should include a body', (done) ->
+      task = sampleTask()
+
+      data.collection(collectionName).onInsert (request, complete) ->
+        complete({"foo":"bar"}).ok().next()
+
+      data.process task, {}, (err, result) =>
+        should.not.exist err
+        result.response.statusCode.should.eql 200
+        result.response.body.should.eql JSON.stringify {"foo":"bar"}
+        done()
+
+    it 'should return a 201 created', (done) ->
+      task = sampleTask()
+
+      data.collection(collectionName).onInsert (request, complete) ->
+        complete({"foo":"bar"}).created().next()
+
+      data.process task, {}, (err, result) =>
+        should.not.exist err
+        result.response.statusCode.should.eql 201
+        result.response.body.should.eql JSON.stringify {"foo":"bar"}
+        done()
+
+    it 'should return a 202 accepted', (done) ->
+      task = sampleTask()
+
+      data.collection(collectionName).onInsert (request, complete) ->
+        complete({"foo":"bar"}).accepted().next()
+
+      data.process task, {}, (err, result) =>
+        should.not.exist err
+        result.response.statusCode.should.eql 202
+        result.response.body.should.eql JSON.stringify {"foo":"bar"}
+        done()
+
+    it 'should return a 400 bad request', (done) ->
+      task = sampleTask()
+
+      data.collection(collectionName).onInsert (request, complete) ->
+        complete("This is a bad request").badRequest().next()
+
+      data.process task, {}, (err, result) =>
+        should.not.exist err
+        result.response.statusCode.should.eql 400
+        result.response.body = JSON.parse result.response.body
+        result.response.body.error.should.eql 'BadRequest'
+        result.response.body.description.should.eql "Unable to understand request"
+        result.response.body.debug.should.eql 'This is a bad request'
+        done()
+
+    it 'should return a 401 unauthorized', (done) ->
+      task = sampleTask()
+
+      data.collection(collectionName).onInsert (request, complete) ->
+        complete("You are not authorized!").unauthorized().next()
+
+      data.process task, {}, (err, result) =>
+        should.not.exist err
+        result.response.statusCode.should.eql 401
+        result.response.body = JSON.parse result.response.body
+        result.response.body.error.should.eql 'InvalidCredentials'
+        result.response.body.description.should.eql "Invalid credentials. Please retry your request with correct credentials"
+        result.response.body.debug.should.eql 'You are not authorized!'
+        done()
+
+    it 'should return a 403 forbidden', (done) ->
+      task = sampleTask()
+
+      data.collection(collectionName).onInsert (request, complete) ->
+        complete("Forbidden!").forbidden().next()
+
+      data.process task, {}, (err, result) =>
+        should.not.exist err
+        result.response.statusCode.should.eql 403
+        result.response.body = JSON.parse result.response.body
+        result.response.body.error.should.eql 'Forbidden'
+        result.response.body.description.should.eql "The request is forbidden"
+        result.response.body.debug.should.eql 'Forbidden!'
+        done()
+
+    it 'should return a 404 not found', (done) ->
+      task = sampleTask()
+
+      data.collection(collectionName).onInsert (request, complete) ->
+        complete("The request is not found!").notFound().next()
+
+      data.process task, {}, (err, result) =>
+        should.not.exist err
+        result.response.statusCode.should.eql 404
+        result.response.body = JSON.parse result.response.body
+        result.response.body.error.should.eql 'NotFound'
+        result.response.body.description.should.eql "The requested entity or entities were not found in the collection"
+        result.response.body.debug.should.eql 'The request is not found!'
+        done()
+
+    it 'should return a 405 not allowed', (done) ->
+      task = sampleTask()
+
+      data.collection(collectionName).onInsert (request, complete) ->
+        complete("The request is not allowed!").notAllowed().next()
+
+      data.process task, {}, (err, result) =>
+        should.not.exist err
+        result.response.statusCode.should.eql 405
+        result.response.body = JSON.parse result.response.body
+        result.response.body.error.should.eql 'NotAllowed'
+        result.response.body.description.should.eql "The request is not allowed"
+        result.response.body.debug.should.eql 'The request is not allowed!'
+        done()
+
+    it 'should return a 501 not implemented', (done) ->
+      task = sampleTask()
+
+      data.collection(collectionName).onInsert (request, complete) ->
+        complete("This isn't implemented").notImplemented().next()
+
+      data.process task, {}, (err, result) =>
+        should.not.exist err
+        result.response.statusCode.should.eql 501
+        result.response.body = JSON.parse result.response.body
+        result.response.body.error.should.eql 'NotImplemented'
+        result.response.body.description.should.eql "The request invoked a method that is not implemented"
+        result.response.body.debug.should.eql 'This isn\'t implemented'
+        done()
+
+    it 'should return a 550 runtime error', (done) ->
+      task = sampleTask()
+
+      data.collection(collectionName).onInsert (request, complete) ->
+        complete("There was some error in the app!").runtimeError().next()
+
+      data.process task, {}, (err, result) =>
+        should.not.exist err
+        result.response.statusCode.should.eql 550
+        result.response.body = JSON.parse result.response.body
+        result.response.body.error.should.eql 'DataLinkRuntimeError'
+        result.response.body.description.should.eql "The Datalink had a runtime error.  See debug message for details"
+        result.response.body.debug.should.eql 'There was some error in the app!'
+        done()
+
+    it 'should process a next (continuation) handler', (done) ->
+      task = sampleTask()
+
+      data.collection(collectionName).onInsert (request, complete) ->
+        complete({"foo":"bar"}).ok().next()
+
+      data.process task, {}, (err, result) =>
+        should.not.exist err
+        result.response.statusCode.should.eql 200
+        result.response.body.should.eql JSON.stringify {"foo":"bar"}
+        result.response.continue is true
+        done()
+
+    it 'should process a done (completion) handler', (done) ->
+      task = sampleTask()
+
+      data.collection(collectionName).onInsert (request, complete) ->
+        complete({"foo":"bar"}).ok().done()
+
+      data.process task, {}, (err, result) =>
+        should.not.exist err
+        result.response.statusCode.should.eql 200
+        result.response.body.should.eql JSON.stringify {"foo":"bar"}
+        result.response.continue is false
+        done()
+
+
+
+
+
 
 
 
