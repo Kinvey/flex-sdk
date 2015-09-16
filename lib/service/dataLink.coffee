@@ -190,7 +190,6 @@ module.exports = do ->
 #            entity = entityParser.entity entity
 
         result.continue = false
-        task.request = result
         responseCallback null, task
 
       next = ->
@@ -208,7 +207,6 @@ module.exports = do ->
 
 #        if result.statusCode >= 400
 #          convertToError result.body
-        task.request = result
         responseCallback null, task
 
       methods =
