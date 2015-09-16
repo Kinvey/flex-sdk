@@ -12,7 +12,6 @@
 
 util = require 'util'
 receiver = require 'kinvey-code-task-runner'
-moduleGenerator = require './service/modules'
 
 module.exports = do ->
 
@@ -21,7 +20,7 @@ module.exports = do ->
 
       @dataLink = require './service/dataLink'
       @businessLogic = require './service/businessLogic'
-      @moduleGenerator = require './service/modules'
+      @moduleGenerator = require './service/moduleGenerator'
 
       taskReceivedCallback = (task, completionCallback) =>
 

@@ -96,7 +96,7 @@ module.exports = do ->
       backendContext: backendContext appMetadata
       email: email proxyURL, taskMetadata, proxyTaskEmitter
       entity: entity appMetadata._id, useBSONObjectId
-      kinveyDate: kinveyDate()
+      kinveyDate: kinveyDate
       logger: logger proxyURL, taskMetadata, proxyTaskEmitter
       push: push proxyURL, taskMetadata, proxyTaskEmitter
       requestContext: requestContext requestMetadata
