@@ -1,0 +1,2 @@
+exports.start = (callback) ->
+  callback()

@@ -11,7 +11,7 @@
 # Unauthorized reproduction, transmission or distribution of this file and its
 # contents is a violation of applicable laws.
 
-data = require '../../lib/service/data'
+data = require '../../lib/service/dataLink'
 should = require 'should'
 
 collectionName = 'myCollection'

@@ -11,7 +11,7 @@
 # Unauthorized reproduction, transmission or distribution of this file and its
 # contents is a violation of applicable laws.
 
-logic = require '../../lib/service/logic'
+logic = require '../../lib/service/businesslogic'
 should = require 'should'
 
 taskName = 'myTaskName'

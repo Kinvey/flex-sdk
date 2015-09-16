@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "coffee-script": "1.7.1",
-    "request": "2.55.0",
+    "request": "2.44.0",
     "moment": "2.10.6",
     "bson":"0.4.11",
     "kinvey-code-task-runner": "0.0.5"
@@ -15,10 +15,27 @@
   "devDependencies": {
     "mocha": "1.21.4",
     "should": "3.3.2",
-    "coffeelint": "1.8.1"
+    "coffeelint": "1.8.1",
+    "proxyquire": "1.0.1",
+    "sinon": "1.10.3"
   },
   "scripts": {
     "pretest": "./node_modules/.bin/coffeelint --file ./coffeelint.json lib test",
-    "test": "mocha test/lib/*"
+    "test": "mocha test/lib/modules/* test/lib/*",
+    "test-core": "mocha test/lib/*",
+    "test-sdk": "mocha test/lib/sdk.test.coffee",
+    "test-datalink": "mocha test/lib/dataLink.test.coffee",
+    "test-businesslogic": "mocha test/lib/businessLogic.test.coffee",
+    "test-moduleGenerator": "mocha test/lib/moduleGenerator.test.coffee",
+    "test-modules": "mocha test/lib/modules/*",
+    "test-backendcontext": "mocha test/lib/modules/backendContext.test.coffee",
+    "test-email": "mocha test/lib/modules/email.test.coffee",
+    "test-entity": "mocha test/lib/modules/entity.test.coffee",
+    "test-kinveydate": "mocha test/lib/modules/kinveyDate.test.coffee",
+    "test-logger": "mocha test/lib/modules/logger.test.coffee",
+    "test-push": "mocha test/lib/modules/push.test.coffee",
+    "test-requestcontext": "mocha test/lib/modules/requestContext.test.coffee",
+    "test-tempobjectstore": "mocha test/lib/modules/tempObjectStore.test.coffee",
+    "test-validation": "mocha test/lib/modules/validation.test.coffee"
   }
 }

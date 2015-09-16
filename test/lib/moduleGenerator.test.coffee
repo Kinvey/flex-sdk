@@ -11,27 +11,28 @@
 # Unauthorized reproduction, transmission or distribution of this file and its
 # contents is a violation of applicable laws.
 
-modules = require '../../lib/service/modules'
 should = require 'should'
 
 sampleTaskInfo =
-  appId: '12345'
+# this is actually the environment ID; leftover (for now) for backward compatibility
+  appId: 12345
   appMetadata:
     _id: '12345'
     appsecret: 'appsecret'
     mastersecret: 'mastersecret'
     pushService: undefined
-    blFlags: undefined
     restrictions:
       level: 'starter'
     API_version: 3
     name: 'DevApp'
     platform: null
-    url: undefined
-  target: 'onGetById'
+  authKey: "abc123"
   requestId: 'ea85600029b04a18a754d57629cff62d'
   collectionName: 'quick'
-  taskType: 'data'
+  taskType: 'dataLink'
+  containerMappingId: "abc:123"
+  method: 'POST'
+  endpoint: null
   request:
     method: 'POST'
     headers:
@@ -48,29 +49,25 @@ sampleTaskInfo =
       connection: 'keep-alive'
       'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10) AppleWebKit/600.1.25 (KHTML, like Gecko) Version/8.0 Safari/600.1.25'
       referer: 'http://0.0.0.0:4200/environments/kid_Z1BEhx2Cs/business-logic/endpoint/quick/editor'
-    body: {}
-    params: {sort: 'asc'}
     username: 'kid_Z1BEhx2Cs'
     userId: 'kid_Z1BEhx2Cs'
     entityId: '12345'
     collectionName: 'quick'
-    tempObjectStore: {foo:"bar"}
+
   response:
-    status: 200
-    headers:
-      'x-powered-by': 'Express'
-      'x-kinvey-request-id': 'ea85600029b04a18a754d57629cff62d'
-      'access-control-allow-origin': 'http://0.0.0.0:4200'
-      'access-control-allow-credentials': 'true'
-      'access-control-expose-headers': 'Location'
-      'access-control-allow-methods': 'POST'
-      'x-kinvey-api-version': 3
+    status: 0
+    headers: {}
     body: {}
-  applicationId: 'a182cf15971444ec9981a60233b0e931'
 
 describe 'modules creation', () ->
+  moduleGenerator = null
+
+  before (done) ->
+    moduleGenerator = require '../../lib/service/moduleGenerator'
+    done()
+
   it 'can generate modules', (done) ->
-    modules = modules sampleTaskInfo
+    modules = moduleGenerator.generate sampleTaskInfo
     should.exist modules.backendContext
     should.exist modules.email
     should.exist modules.entity
