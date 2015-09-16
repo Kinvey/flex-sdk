@@ -38,6 +38,12 @@ module.exports = do ->
 
       @eventMap[dataOp] = functionToExecute
 
+    unregister: (dataOp) ->
+      unless dataOp? and dataOp in dataRegistrationOperators
+        throw new Error 'Operation not permitted'
+
+      delete @eventMap[dataOp]
+
     onInsert: (functionToExecute) ->
       @register 'onInsert', functionToExecute
 
@@ -67,6 +73,9 @@ module.exports = do ->
 
     onGetCountWithQuery: (functionToExecute) ->
       @register 'onGetCountWithQuery', functionToExecute
+
+    removeHandler: (handler) ->
+      @unregister handler
 
     resolve: (dataOp) ->
       unless @eventMap[dataOp]?
@@ -114,41 +123,71 @@ module.exports = do ->
         result.statusCode = 200
         return methods
 
-      notFound = ->
+      notFound = (debug) ->
         result.statusCode = 404
+        result.body =
+          error: "NotFound"
+          description: "The requested entity or entities were not found in the collection"
+          debug: debug or result.body or {}
         return methods
 
-      badRequest = ->
+      badRequest = (debug) ->
         result.statusCode = 400
+        result.body =
+          error: "BadRequest"
+          description: "Unable to understand request"
+          debug: debug or result.body or {}
         return methods
 
-      unauthorized = ->
+      unauthorized = (debug) ->
         result.statusCode = 401
+        result.body =
+          error: "InvalidCredentials"
+          description: "Invalid credentials. Please retry your request with correct credentials"
+          debug: debug or result.body or {}
         return methods
 
       forbidden = ->
         result.statusCode = 403
+        result.body =
+          error: "Forbidden"
+          description: "The request is forbidden"
+          debug: debug or result.body or {}
         return methods
 
-      notAllowed = ->
+      notAllowed = (debug) ->
         result.statusCode = 405
+        result.body =
+          error: "NotAllowed"
+          description: "The request is not allowed"
+          debug: debug or result.body or {}
         return methods
 
-      notImplemented = ->
+      notImplemented = (debug) ->
         result.statusCode = 501
+        result.body =
+          error: "NotImplemented"
+          description: "The request invoked a method that is not implemented"
+          debug: debug or result.body or {}
         return methods
 
-      runtimeError = ->
+      runtimeError = (debug) ->
         result.statusCode = 550
+        result.body =
+          error: "DataLinkRuntimeError"
+          description: "The Datalink had a runtime error.  See debug message for details"
+          debug: debug or result.body or {}
         return methods
 
       done = ->
         unless result.statusCode?
           result.statusCode = 200
 
-        if result.statusCode < 400 and entityParser.isKinveyEntity(entity) is false
-          if entity.constructor isnt Array
-            entity = entityParser.entity entity
+        result.body = JSON.stringify entity
+
+#        if result.statusCode < 400 and entityParser.isKinveyEntity(entity) is false
+#          if entity.constructor isnt Array
+#            entity = entityParser.entity entity
 
         result.continue = false
         task.request = result
@@ -166,8 +205,8 @@ module.exports = do ->
 
         result.continue = true
 
-        if result.statusCode >= 400
-          convertToError result.body
+#        if result.statusCode >= 400
+#          convertToError result.body
 
         task.request = result
         responseCallback null, task
@@ -201,6 +240,8 @@ module.exports = do ->
     try
       task.request.body = JSON.parse task.request.body
     catch e
+      if task.request.body? and typeof task.request.body isnt 'object'
+        return callback new Error 'Requst body is not JSON'
 
     if task.method is 'POST'
       dataOp = 'onInsert'
@@ -231,9 +272,8 @@ module.exports = do ->
     operationHandler = collectionToProcess.resolve dataOp
 
     if operationHandler instanceof Error
-      return callback(convertToError operationHandler)
+      return callback operationHandler
 
-    # TODO Need to handle runtime errors/unhandled exceptions - or do we?
     taskDomain = domain.create()
 
     taskDomain.on 'error', (err) ->
@@ -241,15 +281,25 @@ module.exports = do ->
       err.metadata.unhandled = true
       err.taskId = task.taskId
       err.requestId = task.requestId
-      return callback(confvertToError operationHandler)
+      return callback operationHandler
 
     domainBoundOperationHandler = taskDomain.bind operationHandler
 
     domainBoundOperationHandler task.request, completionHandler
 
+  removeCollection = (collection) ->
+    unless collection?
+      throw new Error 'Must list collection name'
+
+    delete registeredCollections[collection]
+
+  clearAll = () ->
+    registeredCollections = {}
+
   obj =
     collection: collection
+    removeCollection: removeCollection
+    clearAll: clearAll
     process: process
-
 
   return obj
