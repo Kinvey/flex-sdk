@@ -14,7 +14,7 @@
     "request": "2.44.0",
     "moment": "2.10.6",
     "bson":"0.4.11",
-    "kinvey-code-task-runner": "0.0.5"
+    "kinvey-code-task-runner": "0.1.1"
   },
   "devDependencies": {
     "mocha": "1.21.4",
