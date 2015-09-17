@@ -5,6 +5,10 @@
   "engines": {
     "node": "= 0.10.x"
   },
+  "author": "Kinvey <support@kinvey.com>",
+  "contributors": [
+    "Michael Salinger <mjsalinger@kinvey.com>"
+  ],
   "dependencies": {
     "coffee-script": "1.7.1",
     "request": "2.44.0",
