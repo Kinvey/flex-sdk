@@ -20,49 +20,49 @@ collectionName2 = 'myCollection2'
 sampleTask = () ->
   sampleTaskInfo =
 # this is actually the environment ID; leftover (for now) for backward compatibility
-  appId: 12345
-  appMetadata:
-    _id: '12345'
-    appsecret: 'appsecret'
-    mastersecret: 'mastersecret'
-    pushService: undefined
-    restrictions:
-      level: 'starter'
-    API_version: 3
-    name: 'DevApp'
-    platform: null
-  authKey: "abc123"
-  requestId: 'ea85600029b04a18a754d57629cff62d'
-  collectionName: collectionName
-  taskType: 'dataLink'
-  containerMappingId: "abc:123"
-  method: 'POST'
-  endpoint: null
-  request:
+    appId: 12345
+    appMetadata:
+      _id: '12345'
+      appsecret: 'appsecret'
+      mastersecret: 'mastersecret'
+      pushService: undefined
+      restrictions:
+        level: 'starter'
+      API_version: 3
+      name: 'DevApp'
+      platform: null
+    authKey: "abc123"
+    requestId: 'ea85600029b04a18a754d57629cff62d'
+    collectionName: collectionName
+    taskType: 'dataLink'
+    containerMappingId: "abc:123"
     method: 'POST'
-    headers:
-      host: 'localhost:7007'
-      'X-Kinvey-Custom-Request-Properties': '{"foo":"bar"}'
-      'x-kinvey-include-headers-in-response': 'Connection;Content-Length;Content-Type;Date;Location;X-Kinvey-API-Version;X-Kinvey-Request-Id;X-Powered-By;Server'
-      authorization: 'Basic a2lkX1oxQkVoeDJDczpkYmNiNTUwMWZlOGM0MWQ3YTFmOTkyYjhkNTdiOGEzOA=='
-      'accept-encoding': 'gzip, deflate'
-      'accept-language': 'en-us'
-      'x-kinvey-responsewrapper': 'true'
-      accept: '*/*'
-      origin: 'http://0.0.0.0:4200'
-      'content-length': '0'
-      connection: 'keep-alive'
-      'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10) AppleWebKit/600.1.25 (KHTML, like Gecko) Version/8.0 Safari/600.1.25'
-      referer: 'http://0.0.0.0:4200/environments/kid_Z1BEhx2Cs/business-logic/endpoint/quick/editor'
-    username: 'kid_Z1BEhx2Cs'
-    userId: 'kid_Z1BEhx2Cs'
-    entityId: '12345'
-    collectionName: 'quick'
+    endpoint: null
+    request:
+      method: 'POST'
+      headers:
+        host: 'localhost:7007'
+        'X-Kinvey-Custom-Request-Properties': '{"foo":"bar"}'
+        'x-kinvey-include-headers-in-response': 'Connection;Content-Length;Content-Type;Date;Location;X-Kinvey-API-Version;X-Kinvey-Request-Id;X-Powered-By;Server'
+        authorization: 'Basic a2lkX1oxQkVoeDJDczpkYmNiNTUwMWZlOGM0MWQ3YTFmOTkyYjhkNTdiOGEzOA=='
+        'accept-encoding': 'gzip, deflate'
+        'accept-language': 'en-us'
+        'x-kinvey-responsewrapper': 'true'
+        accept: '*/*'
+        origin: 'http://0.0.0.0:4200'
+        'content-length': '0'
+        connection: 'keep-alive'
+        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10) AppleWebKit/600.1.25 (KHTML, like Gecko) Version/8.0 Safari/600.1.25'
+        referer: 'http://0.0.0.0:4200/environments/kid_Z1BEhx2Cs/business-logic/endpoint/quick/editor'
+      username: 'kid_Z1BEhx2Cs'
+      userId: 'kid_Z1BEhx2Cs'
+      entityId: '12345'
+      collectionName: 'quick'
 
-  response:
-    status: 0
-    headers: {}
-    body: {}
+    response:
+      status: 0
+      headers: {}
+      body: {}
 
 describe 'dataLink', () ->
   describe 'data registration', () ->
@@ -323,7 +323,7 @@ describe 'dataLink', () ->
       data.collection(collectionName).onInsert (request, complete) ->
         complete().ok().next()
 
-      data.process task, {}, (err, result) =>
+      data.process task, {}, (err, result) ->
         should.not.exist err
         result.response.statusCode.should.eql 200
         result.response.body.should.eql '{}'
@@ -335,7 +335,7 @@ describe 'dataLink', () ->
       data.collection(collectionName).onInsert (request, complete) ->
         complete({"foo":"bar"}).ok().next()
 
-      data.process task, {}, (err, result) =>
+      data.process task, {}, (err, result) ->
         should.not.exist err
         result.response.statusCode.should.eql 200
         result.response.body.should.eql JSON.stringify {"foo":"bar"}
@@ -347,7 +347,7 @@ describe 'dataLink', () ->
       data.collection(collectionName).onInsert (request, complete) ->
         complete({"foo":"bar"}).created().next()
 
-      data.process task, {}, (err, result) =>
+      data.process task, {}, (err, result) ->
         should.not.exist err
         result.response.statusCode.should.eql 201
         result.response.body.should.eql JSON.stringify {"foo":"bar"}
@@ -359,7 +359,7 @@ describe 'dataLink', () ->
       data.collection(collectionName).onInsert (request, complete) ->
         complete({"foo":"bar"}).accepted().next()
 
-      data.process task, {}, (err, result) =>
+      data.process task, {}, (err, result) ->
         should.not.exist err
         result.response.statusCode.should.eql 202
         result.response.body.should.eql JSON.stringify {"foo":"bar"}
@@ -371,7 +371,7 @@ describe 'dataLink', () ->
       data.collection(collectionName).onInsert (request, complete) ->
         complete("This is a bad request").badRequest().next()
 
-      data.process task, {}, (err, result) =>
+      data.process task, {}, (err, result) ->
         should.not.exist err
         result.response.statusCode.should.eql 400
         result.response.body = JSON.parse result.response.body
@@ -386,7 +386,7 @@ describe 'dataLink', () ->
       data.collection(collectionName).onInsert (request, complete) ->
         complete("You are not authorized!").unauthorized().next()
 
-      data.process task, {}, (err, result) =>
+      data.process task, {}, (err, result) ->
         should.not.exist err
         result.response.statusCode.should.eql 401
         result.response.body = JSON.parse result.response.body
@@ -401,7 +401,7 @@ describe 'dataLink', () ->
       data.collection(collectionName).onInsert (request, complete) ->
         complete("Forbidden!").forbidden().next()
 
-      data.process task, {}, (err, result) =>
+      data.process task, {}, (err, result) ->
         should.not.exist err
         result.response.statusCode.should.eql 403
         result.response.body = JSON.parse result.response.body
@@ -416,7 +416,7 @@ describe 'dataLink', () ->
       data.collection(collectionName).onInsert (request, complete) ->
         complete("The request is not found!").notFound().next()
 
-      data.process task, {}, (err, result) =>
+      data.process task, {}, (err, result) ->
         should.not.exist err
         result.response.statusCode.should.eql 404
         result.response.body = JSON.parse result.response.body
@@ -431,7 +431,7 @@ describe 'dataLink', () ->
       data.collection(collectionName).onInsert (request, complete) ->
         complete("The request is not allowed!").notAllowed().next()
 
-      data.process task, {}, (err, result) =>
+      data.process task, {}, (err, result) ->
         should.not.exist err
         result.response.statusCode.should.eql 405
         result.response.body = JSON.parse result.response.body
@@ -446,7 +446,7 @@ describe 'dataLink', () ->
       data.collection(collectionName).onInsert (request, complete) ->
         complete("This isn't implemented").notImplemented().next()
 
-      data.process task, {}, (err, result) =>
+      data.process task, {}, (err, result) ->
         should.not.exist err
         result.response.statusCode.should.eql 501
         result.response.body = JSON.parse result.response.body
@@ -461,7 +461,7 @@ describe 'dataLink', () ->
       data.collection(collectionName).onInsert (request, complete) ->
         complete("There was some error in the app!").runtimeError().next()
 
-      data.process task, {}, (err, result) =>
+      data.process task, {}, (err, result) ->
         should.not.exist err
         result.response.statusCode.should.eql 550
         result.response.body = JSON.parse result.response.body
@@ -476,7 +476,7 @@ describe 'dataLink', () ->
       data.collection(collectionName).onInsert (request, complete) ->
         complete({"foo":"bar"}).ok().next()
 
-      data.process task, {}, (err, result) =>
+      data.process task, {}, (err, result) ->
         should.not.exist err
         result.response.statusCode.should.eql 200
         result.response.body.should.eql JSON.stringify {"foo":"bar"}
@@ -489,7 +489,7 @@ describe 'dataLink', () ->
       data.collection(collectionName).onInsert (request, complete) ->
         complete({"foo":"bar"}).ok().done()
 
-      data.process task, {}, (err, result) =>
+      data.process task, {}, (err, result) ->
         should.not.exist err
         result.response.statusCode.should.eql 200
         result.response.body.should.eql JSON.stringify {"foo":"bar"}
