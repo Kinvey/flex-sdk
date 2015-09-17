@@ -107,6 +107,7 @@ complete("Record 123 was not found");
 Status functions set the valid status codes for a Data Link Connector.  The status function also sets the body to a Kinvey-formatted error, and uses the value passed into the `complete` function as the debug property, if it is present.
 
 The available status functions are:
+
 | Function | Status Code | Description |
 | --------- | ----------- |------------|
 | ok | 200 | Used for a normal success response |
