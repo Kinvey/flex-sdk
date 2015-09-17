@@ -108,6 +108,7 @@ Status functions set the valid status codes for a Data Link Connector.  The stat
 
 The available status functions are:
 | Function | Status Code | Description |
+| --------- | ----------- |------------|
 | ok | 200 | Used for a normal success response |
 | created | 201 | Used for creating new records |
 | accepted | 202 | Used when the request has been submitted for processing, but will be processed asynchronously |
