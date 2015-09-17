@@ -135,6 +135,61 @@ complete("The given entity wasn't found").notFound();
 
 Once the status is set, you can end the processing of the dataLink request with either `done` or `next`.  Most requests should normally end with `next`, which will continue the Kinvey request pipeline with Business Logic.  `done` will return the response that was set in the DataLink, and end request processing without executing any further business logic.
 
+```
+// This will continue the request chain
+complete(myEntity).ok().next();
+
+// This will end the request chain with no further processing
+complete(myEntity).ok().done();
+```
+
+## Example
+
+The following is an examp
+
+```
+var sdk = require('kinvey-backend-sdk');
+var dataLink = sdk.dataLink;   // gets the datalink object from the SDK
+
+var notImplementedHandler = function(request, complete) {
+  complete("These methods are not implemented").notImplemented().done();
+};
+
+var getRecordById = function(request, complete) {
+  var entityId = request.entityId;
+  var entity;
+
+  // Do some logic to get the entity id from the remote data store
+  // Assume that data is retrieved and stored in "entity" variable
+
+  // After entity is retrieved, check to see if it exists
+  if (typeof entity === 'undefined' or entity === null or entity = {}) {
+    return complete("The entity could not be found").notFound().next();
+  } else  {
+    // return the entity
+    return complete(entity).ok().next();
+  }
+}
+
+// set the collection
+var widgets = dataLink.collection('widgets');
+
+// wire up the event that we want to process
+widgets.onGetById(getRecordById);
+
+// wire up the events that we are not implementing
+widgets.onGetByQuery(notImplementedHandler);
+widgets.onGetAll(notImplementedHandler);
+widgets.onGetCount(notImplementedHandler);
+widgets.onInsert(notImplementedHandler);
+widgets.onUpdate(notImplementedHandler);
+widgets.onDeleteAll(notImplementedHandler);
+widgets.onDeleteByQuery(notImplementedHandler);
+widgets.onDeleteById(notImplementedHandler);
+```
+
+
+
 
 
 
