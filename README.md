@@ -18,6 +18,13 @@ To use this module, require it in your project and
 var sdk = require('kinvey-backend-sdk');
 ```
 
+You then must initialize the sdk to retrieve a reference to the backend service:
+
+```
+var service = sdk.service(function(err, service) {
+  // code goes here
+};
+
 ## DataLink framework
 
 The DataLink framework can be accessed via the sdk's `dataLink` property.
@@ -145,47 +152,48 @@ complete(myEntity).ok().done();
 
 ## Example
 
-The following is an examp
+The following is an example
 
 ```
 var sdk = require('kinvey-backend-sdk');
-var dataLink = sdk.dataLink;   // gets the datalink object from the SDK
+var service = sdk.service(function(err, service) {
+  var dataLink = service.dataLink;   // gets the datalink object from the service
+  var notImplementedHandler = function(request, complete) {
+    complete("These methods are not implemented").notImplemented().done();
+  };
 
-var notImplementedHandler = function(request, complete) {
-  complete("These methods are not implemented").notImplemented().done();
-};
+  var getRecordById = function(request, complete) {
+    var entityId = request.entityId;
+    var entity;
 
-var getRecordById = function(request, complete) {
-  var entityId = request.entityId;
-  var entity;
+    // Do some logic to get the entity id from the remote data store
+    // Assume that data is retrieved and stored in "entity" variable
 
-  // Do some logic to get the entity id from the remote data store
-  // Assume that data is retrieved and stored in "entity" variable
-
-  // After entity is retrieved, check to see if it exists
-  if (typeof entity === 'undefined' or entity === null or entity = {}) {
-    return complete("The entity could not be found").notFound().next();
-  } else  {
-    // return the entity
-    return complete(entity).ok().next();
+    // After entity is retrieved, check to see if it exists
+    if (typeof entity === 'undefined' || entity === null || entity === {}) {
+      return complete("The entity could not be found").notFound().next();
+    } else  {
+      // return the entity
+      return complete(entity).ok().next();
+    }
   }
-}
 
-// set the collection
-var widgets = dataLink.collection('widgets');
+  // set the collection
+  var widgets = dataLink.collection('widgets');
 
-// wire up the event that we want to process
-widgets.onGetById(getRecordById);
+  // wire up the event that we want to process
+  widgets.onGetById(getRecordById);
 
-// wire up the events that we are not implementing
-widgets.onGetByQuery(notImplementedHandler);
-widgets.onGetAll(notImplementedHandler);
-widgets.onGetCount(notImplementedHandler);
-widgets.onInsert(notImplementedHandler);
-widgets.onUpdate(notImplementedHandler);
-widgets.onDeleteAll(notImplementedHandler);
-widgets.onDeleteByQuery(notImplementedHandler);
-widgets.onDeleteById(notImplementedHandler);
+  // wire up the events that we are not implementing
+  widgets.onGetByQuery(notImplementedHandler);
+  widgets.onGetAll(notImplementedHandler);
+  widgets.onGetCount(notImplementedHandler);
+  widgets.onInsert(notImplementedHandler);
+  widgets.onUpdate(notImplementedHandler);
+  widgets.onDeleteAll(notImplementedHandler);
+  widgets.onDeleteByQuery(notImplementedHandler);
+  widgets.onDeleteById(notImplementedHandler);
+};
 ```
 
 
