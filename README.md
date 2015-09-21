@@ -24,6 +24,7 @@ You then must initialize the sdk to retrieve a reference to the backend service:
 var service = sdk.service(function(err, service) {
   // code goes here
 };
+```
 
 ## DataLink framework
 
