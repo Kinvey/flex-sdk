@@ -13,7 +13,7 @@
     "coffee-script": "1.7.1",
     "request": "2.44.0",
     "moment": "2.10.6",
-    "bson":"0.4.11",
+    "bson":"0.4.15",
     "kinvey-code-task-runner": "0.1.1"
   },
   "devDependencies": {
