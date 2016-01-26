@@ -14,7 +14,7 @@ entityHelper = require './modules/entity'
 domain = require 'domain'
 
 module.exports = do ->
-  registeredCollections = {}
+  registeredServiceObjects = {}
   dataRegistrationOperators = [
     'onInsert'
     'onDeleteById'
@@ -28,8 +28,8 @@ module.exports = do ->
     'onGetCountWithQuery'
   ]
 
-  class Collection
-    constructor: (collectionName) ->
+  class ServiceObject
+    constructor: (serviceObjectName) ->
       @eventMap = {}
 
     register: (dataOp, functionToExecute) ->
@@ -83,12 +83,12 @@ module.exports = do ->
 
       return @eventMap[dataOp]
 
-  collection = (collectionName) ->
+  serviceObject = (serviceObjectName) ->
 
-    unless registeredCollections[collectionName]?
-      registeredCollections[collectionName] = new Collection(collectionName)
+    unless registeredServiceObjects[serviceObjectName]?
+      registeredServiceObjects[serviceObjectName] = new ServiceObject(serviceObjectName)
 
-    return registeredCollections[collectionName]
+    return registeredServiceObjects[serviceObjectName]
 
   initCompletionHandler = (task, callback) ->
 
@@ -127,7 +127,7 @@ module.exports = do ->
         result.statusCode = 404
         result.body =
           error: "NotFound"
-          description: "The requested entity or entities were not found in the collection"
+          description: "The requested entity or entities were not found in the serviceObject"
           debug: debug or result.body or {}
         return methods
 
@@ -228,10 +228,10 @@ module.exports = do ->
     return completionHandler
 
   process = (task, modules, callback) ->
-    unless task.collectionName?
-      return callback new Error "CollectionName not found"
+    unless task.serviceObjectName?
+      return callback new Error "ServiceObject name not found"
 
-    collectionToProcess = collection task.collectionName
+    serviceObjectToProcess = serviceObject task.serviceObjectName
     dataOp = ''
     completionHandler = initCompletionHandler task, callback
 
@@ -267,7 +267,7 @@ module.exports = do ->
     else
       return callback new Error "Cannot determine data operation"
 
-    operationHandler = collectionToProcess.resolve dataOp
+    operationHandler = serviceObjectToProcess.resolve dataOp
 
     if operationHandler instanceof Error
       return callback operationHandler
@@ -287,18 +287,18 @@ module.exports = do ->
       taskDomain.dispose()
       completionHandler err, result
 
-  removeCollection = (collection) ->
-    unless collection?
-      throw new Error 'Must list collection name'
+  removeServiceObject = (serviceObject) ->
+    unless serviceObject?
+      throw new Error 'Must list ServiceObject name'
 
-    delete registeredCollections[collection]
+    delete registeredServiceObjects[serviceObject]
 
   clearAll = () ->
-    registeredCollections = {}
+    registeredServiceObjects = {}
 
   obj =
-    collection: collection
-    removeCollection: removeCollection
+    serviceObject: serviceObject
+    removeServiceObject: removeServiceObject
     clearAll: clearAll
     process: process
 

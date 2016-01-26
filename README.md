@@ -79,8 +79,8 @@ The request object contains the following properties
 | --------- | ----------- |
 | method    | the HTTP method (GET, POST, PUT, DELETE) |
 | headers   | the HTTP request headers |
-| entityId  | executed when the DELETE command is invoked on a collection |
-| collectionName | the name of the collection |
+| entityId  | executed when the DELETE command is invoked on a serviceObject |
+| serviceObjectName | the name of the serviceObject |
 | body | the HTTP body |
 | query | the query object |
 
@@ -179,8 +179,8 @@ var service = sdk.service(function(err, service) {
     }
   }
 
-  // set the collection
-  var widgets = dataLink.collection('widgets');
+  // set the serviceObject
+  var widgets = dataLink.serviceObject('widgets');
 
   // wire up the event that we want to process
   widgets.onGetById(getRecordById);

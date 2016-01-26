@@ -1,5 +1,8 @@
 ## Changelog
 
+### 1.0.0
+* Updated all 'collection' references to 'serviceObject' in sdk and documentation
+
 ### 0.1.2
 * Updated bson library to v0.4.15
 
