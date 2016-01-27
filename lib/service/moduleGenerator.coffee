@@ -83,7 +83,7 @@ module.exports = do ->
 
     taskMetadata =
       taskType: task.taskType
-      collectionName: task.collectionName
+      serviceObjectName: task.serviceObjectName
       target: task.target
       taskId: task.taskId
       containerId: task.containerId

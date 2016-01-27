@@ -14,8 +14,8 @@
 data = require '../../lib/service/dataLink'
 should = require 'should'
 
-collectionName = 'myCollection'
-collectionName2 = 'myCollection2'
+serviceObjectName = 'myServiceObject'
+serviceObjectName2 = 'myServiceObject2'
 
 sampleTask = () ->
   sampleTaskInfo =
@@ -33,7 +33,7 @@ sampleTask = () ->
       platform: null
     authKey: "abc123"
     requestId: 'ea85600029b04a18a754d57629cff62d'
-    collectionName: collectionName
+    serviceObjectName: serviceObjectName
     taskType: 'dataLink'
     containerMappingId: "abc:123"
     method: 'POST'
@@ -57,7 +57,7 @@ sampleTask = () ->
       username: 'kid_Z1BEhx2Cs'
       userId: 'kid_Z1BEhx2Cs'
       entityId: '12345'
-      collectionName: 'quick'
+      serviceObjectName: 'quick'
 
     response:
       status: 0
@@ -67,73 +67,73 @@ sampleTask = () ->
 describe 'dataLink', () ->
   describe 'data registration', () ->
     it 'can register an insert', (done) ->
-      data.collection(collectionName).onInsert () ->
+      data.serviceObject(serviceObjectName).onInsert () ->
         done()
 
-      fn = data.collection(collectionName).resolve 'onInsert'
+      fn = data.serviceObject(serviceObjectName).resolve 'onInsert'
       fn()
 
     it 'can register a deleteAll', (done) ->
-      data.collection(collectionName).onDeleteAll () ->
+      data.serviceObject(serviceObjectName).onDeleteAll () ->
         done()
 
-      fn = data.collection(collectionName).resolve 'onDeleteAll'
+      fn = data.serviceObject(serviceObjectName).resolve 'onDeleteAll'
       fn()
 
     it 'can register a deleteById', (done) ->
-      data.collection(collectionName).onDeleteById () ->
+      data.serviceObject(serviceObjectName).onDeleteById () ->
         done()
 
-      fn = data.collection(collectionName).resolve 'onDeleteById'
+      fn = data.serviceObject(serviceObjectName).resolve 'onDeleteById'
       fn()
 
     it 'can register a deleteByQuery', (done) ->
-      data.collection(collectionName).onDeleteByQuery () ->
+      data.serviceObject(serviceObjectName).onDeleteByQuery () ->
         done()
 
-      fn = data.collection(collectionName).resolve 'onDeleteByQuery'
+      fn = data.serviceObject(serviceObjectName).resolve 'onDeleteByQuery'
       fn()
 
     it 'can register an update', (done) ->
-      data.collection(collectionName).onUpdate () ->
+      data.serviceObject(serviceObjectName).onUpdate () ->
         done()
 
-      fn = data.collection(collectionName).resolve 'onUpdate'
+      fn = data.serviceObject(serviceObjectName).resolve 'onUpdate'
       fn()
 
     it 'can register a getAll', (done) ->
-      data.collection(collectionName).onGetAll () ->
+      data.serviceObject(serviceObjectName).onGetAll () ->
         done()
 
-      fn = data.collection(collectionName).resolve 'onGetAll'
+      fn = data.serviceObject(serviceObjectName).resolve 'onGetAll'
       fn()
 
     it 'can register a getById', (done) ->
-      data.collection(collectionName).onGetById () ->
+      data.serviceObject(serviceObjectName).onGetById () ->
         done()
 
-      fn = data.collection(collectionName).resolve 'onGetById'
+      fn = data.serviceObject(serviceObjectName).resolve 'onGetById'
       fn()
 
     it 'can register a getByQuery', (done) ->
-      data.collection(collectionName).onGetByQuery () ->
+      data.serviceObject(serviceObjectName).onGetByQuery () ->
         done()
 
-      fn = data.collection(collectionName).resolve 'onGetByQuery'
+      fn = data.serviceObject(serviceObjectName).resolve 'onGetByQuery'
       fn()
 
     it 'can register a getCount', (done) ->
-      data.collection(collectionName).onGetCount () ->
+      data.serviceObject(serviceObjectName).onGetCount () ->
         done()
 
-      fn = data.collection(collectionName).resolve 'onGetCount'
+      fn = data.serviceObject(serviceObjectName).resolve 'onGetCount'
       fn()
 
     it 'can register a getCount by query', (done) ->
-      data.collection(collectionName).onGetCount () ->
+      data.serviceObject(serviceObjectName).onGetCount () ->
         done()
 
-      fn = data.collection(collectionName).resolve 'onGetCount'
+      fn = data.serviceObject(serviceObjectName).resolve 'onGetCount'
       fn()
 
   describe 'processing', () ->
@@ -145,7 +145,7 @@ describe 'dataLink', () ->
     it 'can process an insert', (done) ->
       task = sampleTask()
 
-      data.collection(collectionName).onInsert (request, complete) ->
+      data.serviceObject(serviceObjectName).onInsert (request, complete) ->
         request.entityId = task.request.entityId
         done()
 
@@ -155,7 +155,7 @@ describe 'dataLink', () ->
       task = sampleTask()
       task.method = 'PUT'
 
-      data.collection(collectionName).onUpdate (request, complete) ->
+      data.serviceObject(serviceObjectName).onUpdate (request, complete) ->
         task = sampleTask()
         request.entityId = task.request.entityId
         done()
@@ -170,7 +170,7 @@ describe 'dataLink', () ->
       delete task.query
       delete task.request.query
 
-      data.collection(collectionName).onGetAll (request, complete) ->
+      data.serviceObject(serviceObjectName).onGetAll (request, complete) ->
         task = sampleTask()
         request.entityId = task.request.entityId
         done()
@@ -183,7 +183,7 @@ describe 'dataLink', () ->
       delete task.query
       delete task.request.query
 
-      data.collection(collectionName).onGetById (request, complete) ->
+      data.serviceObject(serviceObjectName).onGetById (request, complete) ->
         task = sampleTask()
         request.entityId = task.request.entityId
         done()
@@ -198,7 +198,7 @@ describe 'dataLink', () ->
       task.request.query = {}
       task.query = {}
 
-      data.collection(collectionName).onGetByQuery (request, complete) ->
+      data.serviceObject(serviceObjectName).onGetByQuery (request, complete) ->
         task = sampleTask()
         request.entityId = task.request.entityId
         done()
@@ -213,7 +213,7 @@ describe 'dataLink', () ->
       delete task.query
       delete task.request.query
 
-      data.collection(collectionName).onDeleteAll (request, complete) ->
+      data.serviceObject(serviceObjectName).onDeleteAll (request, complete) ->
         task = sampleTask()
         request.entityId = task.request.entityId
         done()
@@ -226,7 +226,7 @@ describe 'dataLink', () ->
       delete task.query
       delete task.request.query
 
-      data.collection(collectionName).onDeleteById (request, complete) ->
+      data.serviceObject(serviceObjectName).onDeleteById (request, complete) ->
         task = sampleTask()
         request.entityId = task.request.entityId
         done()
@@ -241,7 +241,7 @@ describe 'dataLink', () ->
       task.request.query = {}
       task.query = {}
 
-      data.collection(collectionName).onDeleteByQuery (request, complete) ->
+      data.serviceObject(serviceObjectName).onDeleteByQuery (request, complete) ->
         task = sampleTask()
         request.entityId = task.request.entityId
         done()
@@ -257,7 +257,7 @@ describe 'dataLink', () ->
       delete task.query
       delete task.request.query
 
-      data.collection(collectionName).onGetCount (request, complete) ->
+      data.serviceObject(serviceObjectName).onGetCount (request, complete) ->
         task = sampleTask()
         request.entityId = task.request.entityId
         done()
@@ -273,7 +273,7 @@ describe 'dataLink', () ->
       task.request.query = {}
       task.query = {}
 
-      data.collection(collectionName).onGetCountWithQuery (request, complete) ->
+      data.serviceObject(serviceObjectName).onGetCountWithQuery (request, complete) ->
         task = sampleTask()
         request.entityId = task.request.entityId
         done()
@@ -284,7 +284,7 @@ describe 'dataLink', () ->
       task = sampleTask()
       task.method = 'GET'
 
-      data.collection(collectionName).onGetAll (request, complete) ->
+      data.serviceObject(serviceObjectName).onGetAll (request, complete) ->
 
       data.process task, {}, (err, result) ->
         err.toString().should.eql 'Error: This data operation is not registered'
@@ -295,7 +295,7 @@ describe 'dataLink', () ->
       task.method = 'POST'
       task.request.body = "this is some string"
 
-      data.collection(collectionName).onInsert (request, complete) ->
+      data.serviceObject(serviceObjectName).onInsert (request, complete) ->
 
       data.process task, {}, (err, result) ->
         err.toString().should.eql 'Error: Requst body is not JSON'
@@ -305,7 +305,7 @@ describe 'dataLink', () ->
       task = sampleTask()
       delete task.method
 
-      data.collection(collectionName).onInsert (request, complete) ->
+      data.serviceObject(serviceObjectName).onInsert (request, complete) ->
 
       data.process task, {}, (err, result) ->
         err.toString().should.eql 'Error: Cannot determine data operation'
@@ -320,7 +320,7 @@ describe 'dataLink', () ->
     it 'should return a successful response', (done) ->
       task = sampleTask()
 
-      data.collection(collectionName).onInsert (request, complete) ->
+      data.serviceObject(serviceObjectName).onInsert (request, complete) ->
         complete().ok().next()
 
       data.process task, {}, (err, result) ->
@@ -332,7 +332,7 @@ describe 'dataLink', () ->
     it 'should include a body', (done) ->
       task = sampleTask()
 
-      data.collection(collectionName).onInsert (request, complete) ->
+      data.serviceObject(serviceObjectName).onInsert (request, complete) ->
         complete({"foo":"bar"}).ok().next()
 
       data.process task, {}, (err, result) ->
@@ -344,7 +344,7 @@ describe 'dataLink', () ->
     it 'should return a 201 created', (done) ->
       task = sampleTask()
 
-      data.collection(collectionName).onInsert (request, complete) ->
+      data.serviceObject(serviceObjectName).onInsert (request, complete) ->
         complete({"foo":"bar"}).created().next()
 
       data.process task, {}, (err, result) ->
@@ -356,7 +356,7 @@ describe 'dataLink', () ->
     it 'should return a 202 accepted', (done) ->
       task = sampleTask()
 
-      data.collection(collectionName).onInsert (request, complete) ->
+      data.serviceObject(serviceObjectName).onInsert (request, complete) ->
         complete({"foo":"bar"}).accepted().next()
 
       data.process task, {}, (err, result) ->
@@ -368,7 +368,7 @@ describe 'dataLink', () ->
     it 'should return a 400 bad request', (done) ->
       task = sampleTask()
 
-      data.collection(collectionName).onInsert (request, complete) ->
+      data.serviceObject(serviceObjectName).onInsert (request, complete) ->
         complete("This is a bad request").badRequest().next()
 
       data.process task, {}, (err, result) ->
@@ -383,7 +383,7 @@ describe 'dataLink', () ->
     it 'should return a 401 unauthorized', (done) ->
       task = sampleTask()
 
-      data.collection(collectionName).onInsert (request, complete) ->
+      data.serviceObject(serviceObjectName).onInsert (request, complete) ->
         complete("You are not authorized!").unauthorized().next()
 
       data.process task, {}, (err, result) ->
@@ -398,7 +398,7 @@ describe 'dataLink', () ->
     it 'should return a 403 forbidden', (done) ->
       task = sampleTask()
 
-      data.collection(collectionName).onInsert (request, complete) ->
+      data.serviceObject(serviceObjectName).onInsert (request, complete) ->
         complete("Forbidden!").forbidden().next()
 
       data.process task, {}, (err, result) ->
@@ -413,7 +413,7 @@ describe 'dataLink', () ->
     it 'should return a 404 not found', (done) ->
       task = sampleTask()
 
-      data.collection(collectionName).onInsert (request, complete) ->
+      data.serviceObject(serviceObjectName).onInsert (request, complete) ->
         complete("The request is not found!").notFound().next()
 
       data.process task, {}, (err, result) ->
@@ -421,14 +421,14 @@ describe 'dataLink', () ->
         result.response.statusCode.should.eql 404
         result.response.body = JSON.parse result.response.body
         result.response.body.error.should.eql 'NotFound'
-        result.response.body.description.should.eql "The requested entity or entities were not found in the collection"
+        result.response.body.description.should.eql "The requested entity or entities were not found in the serviceObject"
         result.response.body.debug.should.eql 'The request is not found!'
         done()
 
     it 'should return a 405 not allowed', (done) ->
       task = sampleTask()
 
-      data.collection(collectionName).onInsert (request, complete) ->
+      data.serviceObject(serviceObjectName).onInsert (request, complete) ->
         complete("The request is not allowed!").notAllowed().next()
 
       data.process task, {}, (err, result) ->
@@ -443,7 +443,7 @@ describe 'dataLink', () ->
     it 'should return a 501 not implemented', (done) ->
       task = sampleTask()
 
-      data.collection(collectionName).onInsert (request, complete) ->
+      data.serviceObject(serviceObjectName).onInsert (request, complete) ->
         complete("This isn't implemented").notImplemented().next()
 
       data.process task, {}, (err, result) ->
@@ -458,7 +458,7 @@ describe 'dataLink', () ->
     it 'should return a 550 runtime error', (done) ->
       task = sampleTask()
 
-      data.collection(collectionName).onInsert (request, complete) ->
+      data.serviceObject(serviceObjectName).onInsert (request, complete) ->
         complete("There was some error in the app!").runtimeError().next()
 
       data.process task, {}, (err, result) ->
@@ -473,7 +473,7 @@ describe 'dataLink', () ->
     it 'should process a next (continuation) handler', (done) ->
       task = sampleTask()
 
-      data.collection(collectionName).onInsert (request, complete) ->
+      data.serviceObject(serviceObjectName).onInsert (request, complete) ->
         complete({"foo":"bar"}).ok().next()
 
       data.process task, {}, (err, result) ->
@@ -486,7 +486,7 @@ describe 'dataLink', () ->
     it 'should process a done (completion) handler', (done) ->
       task = sampleTask()
 
-      data.collection(collectionName).onInsert (request, complete) ->
+      data.serviceObject(serviceObjectName).onInsert (request, complete) ->
         complete({"foo":"bar"}).ok().done()
 
       data.process task, {}, (err, result) ->

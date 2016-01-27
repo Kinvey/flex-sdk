@@ -28,7 +28,7 @@ sampleTaskInfo =
     platform: null
   authKey: "abc123"
   requestId: 'ea85600029b04a18a754d57629cff62d'
-  collectionName: 'quick'
+  serviceObjectName: 'quick'
   taskType: 'dataLink'
   containerMappingId: "abc:123"
   method: 'POST'
@@ -52,7 +52,7 @@ sampleTaskInfo =
     username: 'kid_Z1BEhx2Cs'
     userId: 'kid_Z1BEhx2Cs'
     entityId: '12345'
-    collectionName: 'quick'
+    serviceObjectName: 'quick'
 
   response:
     status: 0
