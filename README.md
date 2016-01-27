@@ -34,34 +34,34 @@ The DataLink framework can be accessed via the sdk's `dataLink` property.
 var dataLink = sdk.dataLink;
 ```
 
-## Registering collections
+## Registering ServiceObjects
 
-The backend SDK works by defining collections, and then wiring up data access event handlers to those collections.  To register a collection, use the `collection` method of the `dataLink` framework:
+The backend SDK works by defining ServiceObjects, and then wiring up data access event handlers to those ServiceObjects.  To register a ServiceObject, use the `serviceObject` method of the `dataLink` framework:
 
 ```
-// To register the 'widgets' collection:
-var widgets = sdk.dataLink.collection('widgets');
+// To register the 'widgets' ServiceObject:
+var widgets = sdk.dataLink.serviceObject('widgets');
 ```
 
 ## Data Events
 
-Each collection object exposes data events that are invoked when the corresponding Kinvey collection endpoing is invoked.  The data event takes a single handler function to be executed.
+Each ServiceObject exposes data events that are invoked by Kinvey collections.  The data event takes a single handler function to be executed.
 
 
 | event     | description |
 | --------- | ----------- |
-| onInsert  | executed on collection inserts (or POST to REST API) |
-| onUpdate  | executed on collection updates (or PUT to the REST API) |
+| onInsert  | executed on inserts (or POST to REST API) |
+| onUpdate  | executed on updates (or PUT to the REST API) |
 | onDeleteById | executed when a single entity is to be deleted |
 | onDeleteByQuery | executed when a query is included as part of a DELETE |
-| onDeleteAll | executed when the DELETE command is invoked on a collection |
+| onDeleteAll | executed when the DELETE command is invoked |
 | onGetById | get a single entity by Id |
 | onGetByQuery | retrieve results based on a query |
-| onGetAll | get all entities in a given collection |
-| onGetCount | get the count of the entities in a collection |
+| onGetAll | get all entities in a given ServiceObject |
+| onGetCount | get the count of the entities in a ServiceObject |
 | onGetCountByQuery | get the count of the entities in a query result |
 
-For example, to get all entities in the `widgets` collection:
+For example, to get all entities in `widgets`:
 
 ```
 widgets.onGetAll(callbackFunction);
