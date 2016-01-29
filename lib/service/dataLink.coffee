@@ -228,10 +228,10 @@ module.exports = do ->
     return completionHandler
 
   process = (task, modules, callback) ->
-    unless task.serviceObjectName?
+    unless task.request.serviceObjectName?
       return callback new Error "ServiceObject name not found"
 
-    serviceObjectToProcess = serviceObject task.serviceObjectName
+    serviceObjectToProcess = serviceObject task.request.serviceObjectName
     dataOp = ''
     completionHandler = initCompletionHandler task, callback
 

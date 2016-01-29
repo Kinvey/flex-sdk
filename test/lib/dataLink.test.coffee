@@ -15,7 +15,6 @@ data = require '../../lib/service/dataLink'
 should = require 'should'
 
 serviceObjectName = 'myServiceObject'
-serviceObjectName2 = 'myServiceObject2'
 
 sampleTask = () ->
   sampleTaskInfo =
@@ -33,7 +32,6 @@ sampleTask = () ->
       platform: null
     authKey: "abc123"
     requestId: 'ea85600029b04a18a754d57629cff62d'
-    serviceObjectName: serviceObjectName
     taskType: 'dataLink'
     containerMappingId: "abc:123"
     method: 'POST'
@@ -57,7 +55,7 @@ sampleTask = () ->
       username: 'kid_Z1BEhx2Cs'
       userId: 'kid_Z1BEhx2Cs'
       entityId: '12345'
-      serviceObjectName: 'quick'
+      serviceObjectName: serviceObjectName
 
     response:
       status: 0
