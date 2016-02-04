@@ -1,6 +1,6 @@
 ## Changelog
 
-### 1.0.0
+### 0.2.0
 * Updated all 'collection' references to 'serviceObject' in sdk and documentation
 
 ### 0.1.2
