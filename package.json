@@ -9,6 +9,8 @@
   "contributors": [
     "Michael Salinger <mjsalinger@kinvey.com>"
   ],
+  "repository"   : { "type": "git", "url": "Kinvey/backend-sdk" },
+  "license": "Apache-2.0",
   "dependencies": {
     "coffee-script": "1.7.1",
     "request": "2.44.0",
