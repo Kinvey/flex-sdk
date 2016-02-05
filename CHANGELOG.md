@@ -1,5 +1,9 @@
 ## Changelog
 
+### 0.2.1
+* Fixed licenses
+* Fixed copyrights
+
 ### 0.2.0
 * Updated all 'collection' references to 'serviceObject' in sdk and documentation
 
