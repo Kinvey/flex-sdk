@@ -11,6 +11,7 @@
 # the License.
 
 entityHelper = require './modules/entity'
+kinveyErrors = require 'kinvey-datalink-errors'
 domain = require 'domain'
 
 module.exports = do ->
@@ -29,7 +30,7 @@ module.exports = do ->
   ]
 
   class ServiceObject
-    constructor: (serviceObjectName) ->
+    constructor: (@serviceObjectName) ->
       @eventMap = {}
 
     register: (dataOp, functionToExecute) ->
@@ -93,15 +94,6 @@ module.exports = do ->
   initCompletionHandler = (task, callback) ->
 
     environmentId = task.appMetadata._id
-
-    convertToError = (body) ->
-      errorResult = new Error (body?.message or body.toString())
-      errorResult.debugMessage = body.toString()
-      errorResult.taskId = task.taskId
-      if body?.unhandledException is true
-        errorResult.metadata.unhandled = true
-
-      return errorResult
 
     completionHandler = (entity = {}) ->
       entityParser = entityHelper environmentId
@@ -185,6 +177,8 @@ module.exports = do ->
 
         result.body = JSON.stringify result.body
 
+        # TODO:  Ensure that the result is a kinveyEntity or array of kinveyEntities or {count} object
+
 #        if result.statusCode < 400 and entityParser.isKinveyEntity(entity) is false
 #          if entity.constructor isnt Array
 #            entity = entityParser.entity entity
@@ -197,16 +191,10 @@ module.exports = do ->
           result.statusCode = 200
 
         result.body = JSON.stringify result.body
-        #if result.statusCode < 400 and entityParser.isKinveyEntity(entity) is false
 
-          #if entity.constructor isnt Array
-          #  entity = entityParser.entity entity
-
+        # TODO:  Ensure that the result is a kinveyEntity or array of kinveyEntities or {count} object
 
         result.continue = true
-
-#        if result.statusCode >= 400
-#          convertToError result.body
         responseCallback null, task
 
       methods =
@@ -229,7 +217,11 @@ module.exports = do ->
 
   process = (task, modules, callback) ->
     unless task.request.serviceObjectName?
-      return callback new Error "ServiceObject name not found"
+      result = task.response
+      result.body = kinveyErrors.generateKinveyError 'NotFound', 'ServiceObject name not found'
+      result.statusCode = result.body.statusCode
+      delete result.body.statusCode
+      return callback task
 
     serviceObjectToProcess = serviceObject task.request.serviceObjectName
     dataOp = ''
@@ -239,7 +231,11 @@ module.exports = do ->
       task.request.body = JSON.parse task.request.body
     catch e
       if task.request.body? and typeof task.request.body isnt 'object'
-        return callback new Error 'Requst body is not JSON'
+        result = task.response
+        result.body = kinveyErrors.generateKinveyError 'BadRequest', 'Requst body is not JSON'
+        result.statusCode = result.body.statusCode
+        delete result.body.statusCode
+        return callback task
 
     if task.method is 'POST'
       dataOp = 'onInsert'
@@ -265,12 +261,20 @@ module.exports = do ->
       else
         dataOp = 'onDeleteAll'
     else
-      return callback new Error "Cannot determine data operation"
+      result = task.response
+      result.body = kinveyErrors.generateKinveyError 'BadRequest', 'Cannot determine data operation'
+      result.statusCode = result.body.statusCode
+      delete result.body.statusCode
+      return callback task
 
     operationHandler = serviceObjectToProcess.resolve dataOp
 
     if operationHandler instanceof Error
-      return callback operationHandler
+      result = task.response
+      result.body = kinveyErrors.generateKinveyError 'BadRequest', operationHandler
+      result.statusCode = result.body.statusCode
+      delete result.body.statusCode
+      return callback task
 
     taskDomain = domain.create()
 

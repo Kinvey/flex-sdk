@@ -18,6 +18,7 @@ serviceObjectName = 'myServiceObject'
 sampleTask = () ->
   sampleTaskInfo =
 # this is actually the environment ID; leftover (for now) for backward compatibility
+    taskId: 123456
     appId: 12345
     appMetadata:
       _id: '12345'
@@ -284,7 +285,8 @@ describe 'dataLink', () ->
       data.serviceObject(serviceObjectName).onGetAll (request, complete) ->
 
       data.process task, {}, (err, result) ->
-        err.toString().should.eql 'Error: This data operation is not registered'
+        err.taskId.should.eql task.taskId
+        err.response.body.debug.should.eql 'This data operation is not registered'
         done()
 
     it 'will return an error if the request body isn\'t JSON', (done) ->
@@ -295,7 +297,7 @@ describe 'dataLink', () ->
       data.serviceObject(serviceObjectName).onInsert (request, complete) ->
 
       data.process task, {}, (err, result) ->
-        err.toString().should.eql 'Error: Requst body is not JSON'
+        err.response.body.debug.should.eql 'Requst body is not JSON'
         done()
 
     it 'will return an error if the method isn\'t set', (done) ->
@@ -305,7 +307,7 @@ describe 'dataLink', () ->
       data.serviceObject(serviceObjectName).onInsert (request, complete) ->
 
       data.process task, {}, (err, result) ->
-        err.toString().should.eql 'Error: Cannot determine data operation'
+        err.response.body.debug.should.eql 'Cannot determine data operation'
         done()
         
   describe 'completion handlers', () ->
