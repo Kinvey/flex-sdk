@@ -1,5 +1,8 @@
 ## Changelog
 
+### 0.2.3
+* Bumped kinvey-task-receiver to v0.1.3
+
 ### 0.2.2
 * Updated so backend-sdk generated errors return the entire task
 
