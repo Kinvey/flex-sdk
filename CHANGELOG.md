@@ -1,5 +1,8 @@
 ## Changelog
 
+### 0.2.2
+* Updated so backend-sdk generated errors return the entire task
+
 ### 0.2.1
 * Fixed licenses
 * Fixed copyrights
