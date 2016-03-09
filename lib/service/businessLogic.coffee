@@ -10,6 +10,10 @@
 # or implied. See the License for the specific language governing permissions and limitations under
 # the License.
 
+kinveyCompletionHandler = require('./kinveyCompletionHandler')
+kinveyErrors = require 'kinvey-datalink-errors'
+domain = require 'domain'
+
 module.exports = do ->
   registeredFunctions = {}
 
@@ -26,18 +30,47 @@ module.exports = do ->
     unless task.taskName?
       return callback new Error "No taskname to execute"
 
+    businessLogicCompletionHandler = kinveyCompletionHandler task, callback
+
+    try
+      task.request.body = JSON.parse task.request.body
+    catch e
+      if task.request.body? and typeof task.request.body isnt 'object'
+        result = task.response
+        result.body = kinveyErrors.generateKinveyError 'BadRequest', 'Requst body is not JSON'
+        result.statusCode = result.body.statusCode
+        delete result.body.statusCode
+        return callback task
+
     logicHandler = resolve task.taskName
 
     if logicHandler instanceof Error
-      return callback logicHandler
+      result = task.response
+      result.body = kinveyErrors.generateKinveyError 'BadRequest', logicHandler
+      result.statusCode = result.body.statusCode
+      delete result.body.statusCode
+      return callback task
 
-    logicHandler task.request, task.response, (err, result) ->
-      if err?
-        return callback err
+    taskDomain = domain.create()
 
-      callback null, result
+    taskDomain.on 'error', (err) ->
+      err.metadata = {}
+      err.metadata.unhandled = true
+      err.taskId = task.taskId
+      err.requestId = task.requestId
+      return callback err
+
+    domainBoundOperationHandler = taskDomain.bind logicHandler
+
+    domainBoundOperationHandler task.request, (err, result) ->
+      taskDomain.dispose()
+      businessLogicCompletionHandler err, result
+
+  clearAll = () ->
+    registeredFunctions = {}
 
   obj =
+    clearAll: clearAll
     register: register
     resolve: resolve
     process: process
