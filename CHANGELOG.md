@@ -1,5 +1,8 @@
 ## Changelog
 
+### 0.3.0
+* Added Kinvey Business Logic hook processing capability
+
 ### 0.2.3
 * Bumped kinvey-task-receiver to v0.1.3
 
