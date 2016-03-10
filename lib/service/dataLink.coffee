@@ -10,7 +10,7 @@
 # or implied. See the License for the specific language governing permissions and limitations under
 # the License.
 
-entityHelper = require './modules/entity'
+kinveyCompletionHandler = require('./kinveyCompletionHandler')
 kinveyErrors = require 'kinvey-datalink-errors'
 domain = require 'domain'
 
@@ -91,130 +91,6 @@ module.exports = do ->
 
     return registeredServiceObjects[serviceObjectName]
 
-  initCompletionHandler = (task, callback) ->
-
-    environmentId = task.appMetadata._id
-
-    completionHandler = (entity = {}) ->
-      entityParser = entityHelper environmentId
-
-      responseCallback = callback
-      result = task.response
-      result.body = entity
-      methods = {}
-
-      created = ->
-        result.statusCode = 201
-        return methods
-
-      accepted = ->
-        result.statusCode = 202
-        return methods
-
-      ok = ->
-        result.statusCode = 200
-        return methods
-
-      notFound = (debug) ->
-        result.statusCode = 404
-        result.body =
-          error: "NotFound"
-          description: "The requested entity or entities were not found in the serviceObject"
-          debug: debug or result.body or {}
-        return methods
-
-      badRequest = (debug) ->
-        result.statusCode = 400
-        result.body =
-          error: "BadRequest"
-          description: "Unable to understand request"
-          debug: debug or result.body or {}
-        return methods
-
-      unauthorized = (debug) ->
-        result.statusCode = 401
-        result.body =
-          error: "InvalidCredentials"
-          description: "Invalid credentials. Please retry your request with correct credentials"
-          debug: debug or result.body or {}
-        return methods
-
-      forbidden = (debug) ->
-        result.statusCode = 403
-        result.body =
-          error: "Forbidden"
-          description: "The request is forbidden"
-          debug: debug or result.body or {}
-        return methods
-
-      notAllowed = (debug) ->
-        result.statusCode = 405
-        result.body =
-          error: "NotAllowed"
-          description: "The request is not allowed"
-          debug: debug or result.body or {}
-        return methods
-
-      notImplemented = (debug) ->
-        result.statusCode = 501
-        result.body =
-          error: "NotImplemented"
-          description: "The request invoked a method that is not implemented"
-          debug: debug or result.body or {}
-        return methods
-
-      runtimeError = (debug) ->
-        result.statusCode = 550
-        result.body =
-          error: "DataLinkRuntimeError"
-          description: "The Datalink had a runtime error.  See debug message for details"
-          debug: debug or result.body or {}
-        return methods
-
-      done = ->
-        unless result.statusCode?
-          result.statusCode = 200
-
-        result.body = JSON.stringify result.body
-
-        # TODO:  Ensure that the result is a kinveyEntity or array of kinveyEntities or {count} object
-
-#        if result.statusCode < 400 and entityParser.isKinveyEntity(entity) is false
-#          if entity.constructor isnt Array
-#            entity = entityParser.entity entity
-
-        result.continue = false
-        responseCallback null, task
-
-      next = ->
-        unless result.statusCode?
-          result.statusCode = 200
-
-        result.body = JSON.stringify result.body
-
-        # TODO:  Ensure that the result is a kinveyEntity or array of kinveyEntities or {count} object
-
-        result.continue = true
-        responseCallback null, task
-
-      methods =
-        created: created
-        accepted: accepted
-        ok: ok
-        done: done
-        next: next
-        notFound: notFound
-        badRequest: badRequest
-        unauthorized: unauthorized
-        forbidden: forbidden
-        notAllowed: notAllowed
-        notImplemented: notImplemented
-        runtimeError: runtimeError
-
-      return methods
-
-    return completionHandler
-
   process = (task, modules, callback) ->
     unless task.request.serviceObjectName?
       result = task.response
@@ -225,14 +101,14 @@ module.exports = do ->
 
     serviceObjectToProcess = serviceObject task.request.serviceObjectName
     dataOp = ''
-    completionHandler = initCompletionHandler task, callback
+    dataLinkCompletionHandler = kinveyCompletionHandler task, callback
 
     try
       task.request.body = JSON.parse task.request.body
     catch e
       if task.request.body? and typeof task.request.body isnt 'object'
         result = task.response
-        result.body = kinveyErrors.generateKinveyError 'BadRequest', 'Requst body is not JSON'
+        result.body = kinveyErrors.generateKinveyError 'BadRequest', 'Request body is not JSON'
         result.statusCode = result.body.statusCode
         delete result.body.statusCode
         return callback task
@@ -289,7 +165,7 @@ module.exports = do ->
 
     domainBoundOperationHandler task.request, (err, result) ->
       taskDomain.dispose()
-      completionHandler err, result
+      dataLinkCompletionHandler err, result
 
   removeServiceObject = (serviceObject) ->
     unless serviceObject?

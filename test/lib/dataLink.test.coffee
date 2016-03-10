@@ -297,7 +297,7 @@ describe 'dataLink', () ->
       data.serviceObject(serviceObjectName).onInsert (request, complete) ->
 
       data.process task, {}, (err, result) ->
-        err.response.body.debug.should.eql 'Requst body is not JSON'
+        err.response.body.debug.should.eql 'Request body is not JSON'
         done()
 
     it 'will return an error if the method isn\'t set', (done) ->
