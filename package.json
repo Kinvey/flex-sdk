@@ -1,6 +1,6 @@
 {
   "name": "kinvey-backend-sdk",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Backend SDK",
   "engines": {
     "node": "= 0.10.x"
