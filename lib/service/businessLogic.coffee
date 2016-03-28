@@ -26,7 +26,7 @@ module.exports = do ->
 
     return registeredFunctions[taskName]
 
-  process = (task, callback) ->
+  process = (task, modules, callback) ->
     unless task.taskName?
       return callback new Error "No taskname to execute"
 

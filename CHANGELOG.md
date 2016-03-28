@@ -1,5 +1,8 @@
 ## Changelog
 
+### 0.3.1
+* Added `modules` param to business logic module generator
+
 ### 0.3.0
 * Added Kinvey Business Logic hook processing capability
 
