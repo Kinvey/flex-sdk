@@ -1,5 +1,8 @@
 ## Changelog
 
+### 0.3.1
+* Added `modules` param to SDK business logic handler
+
 ### 0.3.0
 * Added Kinvey Business Logic hook processing capability
 
