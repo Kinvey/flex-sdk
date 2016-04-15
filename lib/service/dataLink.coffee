@@ -12,7 +12,6 @@
 
 kinveyCompletionHandler = require('./kinveyCompletionHandler')
 kinveyErrors = require 'kinvey-datalink-errors'
-domain = require 'domain'
 
 module.exports = do ->
   registeredServiceObjects = {}
@@ -152,19 +151,7 @@ module.exports = do ->
       delete result.body.statusCode
       return callback task
 
-    taskDomain = domain.create()
-
-    taskDomain.on 'error', (err) ->
-      err.metadata = {}
-      err.metadata.unhandled = true
-      err.taskId = task.taskId
-      err.requestId = task.requestId
-      return callback err
-
-    domainBoundOperationHandler = taskDomain.bind operationHandler
-
-    domainBoundOperationHandler task.request, (err, result) ->
-      taskDomain.dispose()
+    operationHandler task.request, (err, result) ->
       dataLinkCompletionHandler err, result
 
   removeServiceObject = (serviceObject) ->

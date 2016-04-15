@@ -1,5 +1,8 @@
 ## Changelog
 
+### 0.3.2
+* Fixed an issue where outgoing HTTP requests caused backend-sdk calls to time out
+
 ### 0.3.1
 * Added `modules` param to SDK business logic handler
 
