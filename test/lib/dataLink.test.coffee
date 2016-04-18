@@ -203,6 +203,37 @@ describe 'dataLink', () ->
 
       data.process task, {}, () ->
 
+    it 'can process a get by query with a query just in the top level task', (done) ->
+      query = { foo: 'bar' }
+      task = sampleTask()
+      task.method = 'GET'
+      delete task.entityId
+      delete task.request.entityId
+      task.query = query
+
+      data.serviceObject(serviceObjectName).onGetByQuery (request, complete) ->
+        task = sampleTask()
+        request.query.should.eql query
+        done()
+
+      data.process task, {}, () ->
+
+
+    it 'can process a get by query with a query just in the request', (done) ->
+      query = { foo: 'bar' }
+      task = sampleTask()
+      task.method = 'GET'
+      delete task.entityId
+      delete task.request.entityId
+      task.request.query = query
+
+      data.serviceObject(serviceObjectName).onGetByQuery (request, complete) ->
+        task = sampleTask()
+        request.query.should.eql query
+        done()
+
+      data.process task, {}, () ->
+
     it 'can process a delete all', (done) ->
       task = sampleTask()
       task.method = 'DELETE'

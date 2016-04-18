@@ -98,6 +98,9 @@ module.exports = do ->
       delete result.body.statusCode
       return callback task
 
+    # Handle a bug in KCS - if query is part of the task, put it in the request
+    task.request.query = task.request.query ? task.query
+
     serviceObjectToProcess = serviceObject task.request.serviceObjectName
     dataOp = ''
     dataLinkCompletionHandler = kinveyCompletionHandler task, callback
