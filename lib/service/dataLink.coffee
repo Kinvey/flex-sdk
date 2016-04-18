@@ -115,6 +115,16 @@ module.exports = do ->
         delete result.body.statusCode
         return callback task
 
+    try
+      task.request.query = JSON.parse task.request.query
+    catch e
+      if task.request.query? and typeof task.request.query isnt 'object'
+        result = task.response
+        result.body = kinveyErrors.generateKinveyError 'BadRequest', 'Request query is not JSON'
+        result.statusCode = result.body.statusCode
+        delete result.body.statusCode
+        return callback task
+
     if task.method is 'POST'
       dataOp = 'onInsert'
     else if task.method is 'PUT'
