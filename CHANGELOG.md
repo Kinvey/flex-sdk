@@ -1,5 +1,8 @@
 ## Changelog
 
+### 0.3.4
+* Parse request.query if it is stringified
+
 ### 0.3.3
 * Updated task handler to put the query in the request if it is in the top level only
 
