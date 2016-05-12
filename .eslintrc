@@ -1,11 +1,17 @@
 {
   "extends": "airbnb/base",
   "env": {
-    "node": true
+    "node": true,
+    "mocha": true
   },
   "rules": {
+    "arrow-body-style": "warn",
     "comma-dangle": 0,
     "no-param-reassign": 0,
+    "no-return-assign": "warn",
+    "no-shadow": "warn",
+    "no-unused-expressions": "off",
+    "no-unused-vars": "warn",
     "max-len": ["warn", 120, 4],
     "consistent-return": "warn",
     "radix": "off"
