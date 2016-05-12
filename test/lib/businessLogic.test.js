@@ -87,7 +87,7 @@ describe 'business logic', () ->
       logic.register taskName, (request, complete) ->
         complete().ok().next()
 
-      logic.process task, (err, result) ->
+      logic.process task, null, (err, result) ->
         should.not.exist err
         result.response.statusCode.should.eql 200
         result.response.body.should.eql '{}'
@@ -100,7 +100,7 @@ describe 'business logic', () ->
       logic.register taskName, (request, complete) ->
         complete({"foo":"bar"}).ok().next()
 
-      logic.process task, (err, result) ->
+      logic.process task, null, (err, result) ->
         #should.not.exist err
         result.response.statusCode.should.eql 200
         result.response.body.should.eql JSON.stringify {"foo":"bar"}
@@ -113,7 +113,7 @@ describe 'business logic', () ->
       logic.register taskName, (request, complete) ->
         complete({"foo":"bar"}).created().next()
 
-      logic.process task, (err, result) ->
+      logic.process task, null, (err, result) ->
         should.not.exist err
         result.response.statusCode.should.eql 201
         result.response.body.should.eql JSON.stringify {"foo":"bar"}
@@ -126,7 +126,7 @@ describe 'business logic', () ->
       logic.register taskName, (request, complete) ->
         complete({"foo":"bar"}).accepted().next()
 
-      logic.process task, (err, result) ->
+      logic.process task, null, (err, result) ->
         should.not.exist err
         result.response.statusCode.should.eql 202
         result.response.body.should.eql JSON.stringify {"foo":"bar"}
@@ -139,7 +139,7 @@ describe 'business logic', () ->
       logic.register taskName, (request, complete) ->
         complete("This is a bad request").badRequest().next()
 
-      logic.process task, (err, result) ->
+      logic.process task, null, (err, result) ->
         should.not.exist err
         result.response.statusCode.should.eql 400
         result.response.body = JSON.parse result.response.body
@@ -155,7 +155,7 @@ describe 'business logic', () ->
       logic.register taskName, (request, complete) ->
         complete("You are not authorized!").unauthorized().next()
 
-      logic.process task, (err, result) ->
+      logic.process task, null, (err, result) ->
         should.not.exist err
         result.response.statusCode.should.eql 401
         result.response.body = JSON.parse result.response.body
@@ -171,7 +171,7 @@ describe 'business logic', () ->
       logic.register taskName, (request, complete) ->
         complete("Forbidden!").forbidden().next()
 
-      logic.process task, (err, result) ->
+      logic.process task, null, (err, result) ->
         should.not.exist err
         result.response.statusCode.should.eql 403
         result.response.body = JSON.parse result.response.body
@@ -187,7 +187,7 @@ describe 'business logic', () ->
       logic.register taskName, (request, complete) ->
         complete("The request is not found!").notFound().next()
 
-      logic.process task, (err, result) ->
+      logic.process task, null, (err, result) ->
         should.not.exist err
         result.response.statusCode.should.eql 404
         result.response.body = JSON.parse result.response.body
@@ -203,7 +203,7 @@ describe 'business logic', () ->
       logic.register taskName, (request, complete) ->
         complete("The request is not allowed!").notAllowed().next()
 
-      logic.process task, (err, result) ->
+      logic.process task, null, (err, result) ->
         should.not.exist err
         result.response.statusCode.should.eql 405
         result.response.body = JSON.parse result.response.body
@@ -219,7 +219,7 @@ describe 'business logic', () ->
       logic.register taskName, (request, complete) ->
         complete("This isn't implemented").notImplemented().next()
 
-      logic.process task, (err, result) ->
+      logic.process task, null, (err, result) ->
         should.not.exist err
         result.response.statusCode.should.eql 501
         result.response.body = JSON.parse result.response.body
@@ -235,7 +235,7 @@ describe 'business logic', () ->
       logic.register taskName, (request, complete) ->
         complete("There was some error in the app!").runtimeError().next()
 
-      logic.process task, (err, result) ->
+      logic.process task, null, (err, result) ->
         should.not.exist err
         result.response.statusCode.should.eql 550
         result.response.body = JSON.parse result.response.body
@@ -251,7 +251,7 @@ describe 'business logic', () ->
       logic.register taskName, (request, complete) ->
         complete({"foo":"bar"}).ok().next()
 
-      logic.process task, (err, result) ->
+      logic.process task, null, (err, result) ->
         should.not.exist err
         result.response.statusCode.should.eql 200
         result.response.body.should.eql JSON.stringify {"foo":"bar"}
@@ -265,7 +265,7 @@ describe 'business logic', () ->
       logic.register taskName, (request, complete) ->
         complete({"foo":"bar"}).ok().done()
 
-      logic.process task, (err, result) ->
+      logic.process task, null, (err, result) ->
         should.not.exist err
         result.response.statusCode.should.eql 200
         result.response.body.should.eql JSON.stringify {"foo":"bar"}

@@ -80,7 +80,6 @@ describe 'modules / kinvey', () ->
 
     it 'returns an kinveyized JS object of type Object', (done) ->
       ke = kinveyInstance.entity()
-      console.log ke
       kinveyInstance.isKinveyEntity(ke).should.be.true
       done()
 

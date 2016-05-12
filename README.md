@@ -10,18 +10,18 @@ This module provides an easy way to connect to a Kinvey Business Logic (BL) inst
 
 To install this project, add it to your `package.json` file and install it via `npm`
 ```
-npm install kinvey-backend-sdk
+npm install kinvey-backend-sdk --save
 ```
 
 To use this module, require it in your project and
 ```
-var sdk = require('kinvey-backend-sdk');
+let sdk = require('kinvey-backend-sdk');
 ```
 
 You then must initialize the sdk to retrieve a reference to the backend service:
 
 ```
-var service = sdk.service(function(err, service) {
+let service = sdk.service((err, service) => {
   // code goes here
 };
 ```
@@ -31,7 +31,7 @@ var service = sdk.service(function(err, service) {
 The DataLink framework can be accessed via the sdk's `dataLink` property.
 
 ```
-var dataLink = sdk.dataLink;
+let dataLink = sdk.dataLink;
 ```
 
 ## Registering ServiceObjects
@@ -40,7 +40,7 @@ The backend SDK works by defining ServiceObjects, and then wiring up data access
 
 ```
 // To register the 'widgets' ServiceObject:
-var widgets = sdk.dataLink.serviceObject('widgets');
+let widgets = sdk.dataLink.serviceObject('widgets');
 ```
 
 ## Data Events
@@ -156,19 +156,19 @@ complete(myEntity).ok().done();
 The following is an example
 
 ```
-var sdk = require('kinvey-backend-sdk');
-var service = sdk.service(function(err, service) {
-  var dataLink = service.dataLink;   // gets the datalink object from the service
-  var notImplementedHandler = function(request, complete) {
+let sdk = require('kinvey-backend-sdk');
+let service = sdk.service((err, service) => {
+  let dataLink = service.dataLink;   // gets the datalink object from the service
+  let notImplementedHandler = (request, complete) => {
     complete("These methods are not implemented").notImplemented().done();
   };
 
-  var getRecordById = function(request, complete) {
-    var entityId = request.entityId;
-    var entity;
+  let getRecordById = (request, complete) => {
+    let entityId = request.entityId;
+    let entity = null;
 
     // Do some logic to get the entity id from the remote data store
-    // Assume that data is retrieved and stored in "entity" variable
+    // Assume that data is retrieved and stored in "entity" letiable
 
     // After entity is retrieved, check to see if it exists
     if (typeof entity === 'undefined' || entity === null || entity === {}) {
@@ -180,7 +180,7 @@ var service = sdk.service(function(err, service) {
   }
 
   // set the serviceObject
-  var widgets = dataLink.serviceObject('widgets');
+  let widgets = dataLink.serviceObject('widgets');
 
   // wire up the event that we want to process
   widgets.onGetById(getRecordById);

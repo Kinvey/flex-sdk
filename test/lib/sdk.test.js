@@ -24,8 +24,6 @@ describe 'service creation', () ->
   it 'can create a new service', (done) ->
     sdk.service (err, service) ->
       should.not.exist err
-      should.exist service.dataLink
-      should.exist service.businessLogic
-      should.exist service.moduleGenerator
+      should.exist service
       done()
 

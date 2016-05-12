@@ -56,6 +56,9 @@ describe 'modules / validation', () ->
 
     validationResults = validationModule.doValidation spec, { requiredProp: 123, rangeProp: 300 }
     Array.isArray(validationResults).should.be.true
+
+    console.log JSON.stringify validationResults
+
     validationResults.length.should.eql 2
     validationResults[0].attr.should.eql 'requiredProp2'
     validationResults[1].attr.should.eql 'rangeProp'
