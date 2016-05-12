@@ -19,33 +19,17 @@ const validationModule = require('../../../lib/service/modules/validation');
 
 describe('modules / validation', () => {
   it('throws an error if first argument is not specified or not an object', (done) => {
-    (() => {
-      return validationModule.doValidation();
-    }).should['throw']();
-    (() => {
-      return validationModule.doValidation(null, {});
-    }).should['throw']();
-    (() => {
-      return validationModule.doValidation(1, {});
-    }).should['throw']();
-    (() => {
-      return validationModule.doValidation(true, {});
-    }).should['throw']();
+    (() => validationModule.doValidation()).should.throw();
+    (() => validationModule.doValidation(null, {})).should.throw();
+    (() => validationModule.doValidation(1, {})).should.throw();
+    (() => validationModule.doValidation(true, {})).should.throw();
     return done();
   });
   it('throws an error if second argument is not specified or not an object', (done) => {
-    (() => {
-      return validationModule.doValidation({});
-    }).should['throw']();
-    (() => {
-      return validationModule.doValidation({}, null);
-    }).should['throw']();
-    (() => {
-      return validationModule.doValidation({}, 1);
-    }).should['throw']();
-    (() => {
-      return validationModule.doValidation({}, true);
-    }).should['throw']();
+    (() => validationModule.doValidation({})).should.throw();
+    (() => validationModule.doValidation({}, null)).should.throw();
+    (() => validationModule.doValidation({}, 1)).should.throw();
+    (() => validationModule.doValidation({}, true)).should.throw();
     return done();
   });
   it('can validate multiple properties successfully', (done) => {

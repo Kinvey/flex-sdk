@@ -7,7 +7,7 @@
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
@@ -54,11 +54,11 @@ describe('modules / push', () => {
     requestStub.post.reset();
     return done();
   });
-  it("'send' and 'sendMessage' point to the same method", (done) => {
+  it('\'send\' and \'sendMessage\' point to the same method', (done) => {
     pushInstance.send.should.eql(pushInstance.sendMessage);
     return done();
   });
-  it("'broadcast' and 'broadcastMessage' point to the same method", (done) => {
+  it('\'broadcast\' and \'broadcastMessage\' point to the same method', (done) => {
     pushInstance.broadcast.should.eql(pushInstance.broadcastMessage);
     return done();
   });
@@ -67,14 +67,14 @@ describe('modules / push', () => {
       requestStub.post.callsArg(1);
       (() => {
         return pushInstance.send(recipients, 'hello');
-      }).should.not["throw"]();
+      }).should.not.throw();
       return done();
     });
     it('should include x-kinvey-wait-for-confirmation = false if no callback is specified', (done) => {
       requestStub.post.callsArg(1);
       (() => {
         return pushInstance.send(recipients, 'hello');
-      }).should.not["throw"]();
+      }).should.not.throw();
       requestStub.post.args[0][0].headers['x-kinvey-wait-for-confirmation'].should.eql('false');
       return done();
     });
@@ -121,10 +121,10 @@ describe('modules / push', () => {
         return done();
       });
     });
-    it("POSTs to the proxy's /push/sendMessage URL", (done) => {
+    it('POSTs to the proxy\'s /push/sendMessage URL', (done) => {
       requestStub.post.callsArgWith(1, {});
       return pushInstance.send(recipients, 'hello', (err, result) => {
-        requestStub.post.args[0][0].url.should.eql(fakeProxyURL + "/push/sendMessage");
+        requestStub.post.args[0][0].url.should.eql(`${fakeProxyURL}/push/sendMessage`);
         return done();
       });
     });
@@ -132,17 +132,17 @@ describe('modules / push', () => {
       requestStub.post.callsArgWith(1, {});
       (() => {
         return pushInstance.send(null, 'hello');
-      }).should["throw"](/.*users.*/);
+      }).should.throw(/.*users.*/);
       (() => {
         return pushInstance.send();
-      }).should["throw"](/.*users.*/);
+      }).should.throw(/.*users.*/);
       return done();
     });
     it('throws an error if no message is specified', (done) => {
       requestStub.post.callsArgWith(1, {});
       (() => {
         return pushInstance.send(recipients, null);
-      }).should["throw"](/.*message.*/);
+      }).should.throw(/.*message.*/);
       return done();
     });
     it('send the appropriate arguments to the proxy', (done) => {
@@ -170,14 +170,14 @@ describe('modules / push', () => {
       requestStub.post.callsArg(1);
       (() => {
         return pushInstance.broadcast('hello');
-      }).should.not["throw"]();
+      }).should.not.throw();
       return done();
     });
     it('should include x-kinvey-wait-for-confirmation = false if no callback is specified', (done) => {
       requestStub.post.callsArg(1);
       (() => {
         return pushInstance.broadcast('hello');
-      }).should.not["throw"]();
+      }).should.not.throw();
       requestStub.post.args[0][0].headers['x-kinvey-wait-for-confirmation'].should.eql('false');
       return done();
     });
@@ -224,10 +224,10 @@ describe('modules / push', () => {
         return done();
       });
     });
-    it("POSTs to the proxy's /push/sendBroadcast URL", (done) => {
+    it('POSTs to the proxy\'s /push/sendBroadcast URL', (done) => {
       requestStub.post.callsArgWith(1, {});
       return pushInstance.broadcast('hello', (err, result) => {
-        requestStub.post.args[0][0].url.should.eql(fakeProxyURL + "/push/sendBroadcast");
+        requestStub.post.args[0][0].url.should.eql(`${fakeProxyURL}/push/sendBroadcast`);
         return done();
       });
     });
@@ -235,10 +235,10 @@ describe('modules / push', () => {
       requestStub.post.callsArgWith(1, {});
       (() => {
         return pushInstance.broadcast();
-      }).should["throw"](/.*message.*/);
+      }).should.throw(/.*message.*/);
       (() => {
         return pushInstance.broadcast(null);
-      }).should["throw"](/.*message.*/);
+      }).should.throw(/.*message.*/);
       return done();
     });
     return it('sends the appropriate arguments to the proxy', (done) => {
@@ -263,14 +263,14 @@ describe('modules / push', () => {
       requestStub.post.callsArg(1);
       (() => {
         return pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload);
-      }).should.not["throw"]();
+      }).should.not.throw();
       return done();
     });
     it('should include x-kinvey-wait-for-confirmation = false if no callback is specified', (done) => {
       requestStub.post.callsArg(1);
       (() => {
         return pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload);
-      }).should.not["throw"]();
+      }).should.not.throw();
       requestStub.post.args[0][0].headers['x-kinvey-wait-for-confirmation'].should.eql('false');
       return done();
     });
@@ -317,10 +317,10 @@ describe('modules / push', () => {
         return done();
       });
     });
-    it("POSTs to the proxy's /push/sendMessage URL", (done) => {
+    it('POSTs to the proxy\'s /push/sendMessage URL', (done) => {
       requestStub.post.callsArgWith(1, {});
       return pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload, (err, result) => {
-        requestStub.post.args[0][0].url.should.eql(fakeProxyURL + "/push/sendMessage");
+        requestStub.post.args[0][0].url.should.eql(`${fakeProxyURL}/push/sendMessage`);
         return done();
       });
     });
@@ -328,10 +328,10 @@ describe('modules / push', () => {
       requestStub.post.callsArgWith(1, {});
       (() => {
         return pushInstance.sendPayload(null, iOSAps, iOSExtras, androidPayload);
-      }).should["throw"](/.*users.*/);
+      }).should.throw(/.*users.*/);
       (() => {
         return pushInstance.sendPayload();
-      }).should["throw"](/.*users.*/);
+      }).should.throw(/.*users.*/);
       return done();
     });
     return it('sends the appropriate arguments to the proxy', (done) => {
@@ -340,9 +340,9 @@ describe('modules / push', () => {
         const requestBody = requestStub.post.args[0][0].json;
         requestBody.destination.should.eql(recipients);
         requestBody.messageContent.should.eql({
-          iOSAps: iOSAps,
-          iOSExtras: iOSExtras,
-          androidPayload: androidPayload
+          iOSAps,
+          iOSExtras,
+          androidPayload
         });
         const outgoingRequestHeaders = requestStub.post.args[0][0].headers;
         outgoingRequestHeaders.should.have.property('x-kinvey-task-id');
@@ -361,14 +361,14 @@ describe('modules / push', () => {
       requestStub.post.callsArg(1);
       (() => {
         return pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload);
-      }).should.not["throw"]();
+      }).should.not.throw();
       return done();
     });
     it('should include x-kinvey-wait-for-confirmation = false if no callback is specified', (done) => {
       requestStub.post.callsArg(1);
       (() => {
         return pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload);
-      }).should.not["throw"]();
+      }).should.not.throw();
       requestStub.post.args[0][0].headers['x-kinvey-wait-for-confirmation'].should.eql('false');
       return done();
     });
@@ -415,10 +415,10 @@ describe('modules / push', () => {
         return done();
       });
     });
-    it("POSTs to the proxy's /push/sendBroadcast URL", (done) => {
+    it('POSTs to the proxy\'s /push/sendBroadcast URL', (done) => {
       requestStub.post.callsArgWith(1, {});
       return pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload, (err, result) => {
-        requestStub.post.args[0][0].url.should.eql(fakeProxyURL + "/push/sendBroadcast");
+        requestStub.post.args[0][0].url.should.eql(`${fakeProxyURL}/push/sendBroadcast`);
         return done();
       });
     });
@@ -427,9 +427,9 @@ describe('modules / push', () => {
       return pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload, (err, result) => {
         const requestBody = requestStub.post.args[0][0].json;
         requestBody.messageContent.should.eql({
-          iOSAps: iOSAps,
-          iOSExtras: iOSExtras,
-          androidPayload: androidPayload
+          iOSAps,
+          iOSExtras,
+          androidPayload
         });
         const outgoingRequestHeaders = requestStub.post.args[0][0].headers;
         outgoingRequestHeaders.should.have.property('x-kinvey-task-id');

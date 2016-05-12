@@ -34,7 +34,7 @@
     "sinon": "1.10.3"
   },
   "scripts": {
-    "pretest": "./node_modules/.bin/eslint lib",
+    "pretest": "./node_modules/.bin/eslint lib test",
     "test": "mocha test/lib/modules/* test/lib/*",
     "test-core": "mocha test/lib/*",
     "test-sdk": "mocha test/lib/sdk.test.js",

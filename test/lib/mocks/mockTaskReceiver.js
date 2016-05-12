@@ -16,4 +16,4 @@
 
 exports.start = (callback) => {
   callback();
-}
+};

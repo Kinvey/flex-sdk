@@ -7,7 +7,7 @@
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
@@ -23,9 +23,9 @@ describe('modules / logger', () => {
   let loggerModule = null;
   let loggerInstance = null;
   let requestStub = null;
-  let emitter = new EventEmitter();
-  let fakeProxyURL = 'http://proxy.proxy';
-  let taskMetadata = {
+  const emitter = new EventEmitter();
+  const fakeProxyURL = 'http://proxy.proxy';
+  const taskMetadata = {
     taskId: 'abcd1234',
     containerId: 'wxyz9876'
   };
@@ -48,14 +48,14 @@ describe('modules / logger', () => {
     requestStub.post.callsArg(1);
     (() => {
       return loggerInstance.warn('hello');
-    }).should.not["throw"]();
+    }).should.not.throw();
     return done();
   });
   it('should include x-kinvey-wait-for-confirmation = false if no callback is specified', (done) => {
     requestStub.post.callsArg(1);
     (() => {
       return loggerInstance.warn('hello');
-    }).should.not["throw"]();
+    }).should.not.throw();
     requestStub.post.args[0][0].headers['x-kinvey-wait-for-confirmation'].should.eql('false');
     return done();
   });
@@ -100,10 +100,10 @@ describe('modules / logger', () => {
       return done();
     });
   });
-  it("POSTs to the proxy's /log URL", (done) => {
+  it('POSTs to the proxy\'s /log URL', (done) => {
     requestStub.post.callsArgWith(1, {});
     return loggerInstance.warn('hello', (err) => {
-      requestStub.post.args[0][0].url.should.eql(fakeProxyURL + "/log");
+      requestStub.post.args[0][0].url.should.eql(`${fakeProxyURL}/log`);
       return done();
     });
   });
@@ -111,13 +111,13 @@ describe('modules / logger', () => {
     requestStub.post.callsArgWith(1, {});
     return loggerInstance.warn(null, (err) => {
       const requestBody = requestStub.post.args[0][0].json;
-      (requestBody.message === null).should.be["true"];
+      (requestBody.message === null).should.be.true;
       return done();
     });
   });
   it('when called with an Error as the message, sends the results of error.toString()', (done) => {
     requestStub.post.callsArgWith(1, {});
-    return loggerInstance.warn(new Error("hello"), (err) => {
+    return loggerInstance.warn(new Error('hello'), (err) => {
       const requestBody = requestStub.post.args[0][0].json;
       requestBody.message.should.eql('Error: hello');
       return done();

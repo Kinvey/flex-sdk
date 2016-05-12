@@ -7,7 +7,7 @@
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
@@ -30,11 +30,11 @@ const sampleTaskInfo = {
     name: 'DevApp',
     platform: null
   },
-  authKey: "abc123",
+  authKey: 'abc123',
   requestId: 'ea85600029b04a18a754d57629cff62d',
   serviceObjectName: 'quick',
   taskType: 'dataLink',
-  containerMappingId: "abc:123",
+  containerMappingId: 'abc:123',
   method: 'POST',
   endpoint: null,
   request: {
@@ -73,8 +73,7 @@ describe('modules creation', () => {
     return done();
   });
   return it('can generate modules', (done) => {
-    var modules;
-    modules = moduleGenerator.generate(sampleTaskInfo);
+    const modules = moduleGenerator.generate(sampleTaskInfo);
     should.exist(modules.backendContext);
     should.exist(modules.email);
     should.exist(modules.entity);

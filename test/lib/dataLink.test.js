@@ -7,7 +7,7 @@
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
@@ -34,10 +34,10 @@ const sampleTask = () => {
       name: 'DevApp',
       platform: null
     },
-    authKey: "abc123",
+    authKey: 'abc123',
     requestId: 'ea85600029b04a18a754d57629cff62d',
     taskType: 'dataLink',
-    containerMappingId: "abc:123",
+    containerMappingId: 'abc:123',
     method: 'POST',
     endpoint: null,
     request: {
@@ -60,7 +60,7 @@ const sampleTask = () => {
       username: 'kid_Z1BEhx2Cs',
       userId: 'kid_Z1BEhx2Cs',
       entityId: '12345',
-      serviceObjectName: serviceObjectName
+      serviceObjectName
     },
     response: {
       status: 0,
@@ -309,7 +309,7 @@ describe('dataLink', () => {
       return data.process(task, {}, () => {});
     });
     it('will return an error if the handler isn\'t registered', (done) => {
-      let task = sampleTask();
+      const task = sampleTask();
       task.method = 'GET';
       data.serviceObject(serviceObjectName).onGetAll((request, complete) => {});
       return data.process(task, {}, (err, result) => {
@@ -319,9 +319,9 @@ describe('dataLink', () => {
       });
     });
     it('will return an error if the request body isn\'t JSON', (done) => {
-      let task = sampleTask();
+      const task = sampleTask();
       task.method = 'POST';
-      task.request.body = "this is some string";
+      task.request.body = 'this is some string';
       data.serviceObject(serviceObjectName).onInsert((request, complete) => {});
       return data.process(task, {}, (err, result) => {
         err.response.body.debug.should.eql('Request body is not JSON');
@@ -329,7 +329,7 @@ describe('dataLink', () => {
       });
     });
     return it('will return an error if the method isn\'t set', (done) => {
-      let task = sampleTask();
+      const task = sampleTask();
       delete task.method;
       data.serviceObject(serviceObjectName).onInsert((request, complete) => {});
       return data.process(task, {}, (err, result) => {
@@ -344,7 +344,7 @@ describe('dataLink', () => {
       return done();
     });
     it('should return a successful response', (done) => {
-      let task = sampleTask();
+      const task = sampleTask();
       data.serviceObject(serviceObjectName).onInsert((request, complete) => {
         return complete().ok().next();
       });
@@ -359,14 +359,14 @@ describe('dataLink', () => {
       const task = sampleTask();
       data.serviceObject(serviceObjectName).onInsert((request, complete) => {
         return complete({
-          "foo": "bar"
+          foo: 'bar'
         }).ok().next();
       });
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
         result.response.body.should.eql(JSON.stringify({
-          "foo": "bar"
+          foo: 'bar'
         }));
         return done();
       });
@@ -375,14 +375,14 @@ describe('dataLink', () => {
       const task = sampleTask();
       data.serviceObject(serviceObjectName).onInsert((request, complete) => {
         return complete({
-          "foo": "bar"
+          foo: 'bar'
         }).created().next();
       });
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(201);
         result.response.body.should.eql(JSON.stringify({
-          "foo": "bar"
+          foo: 'bar'
         }));
         return done();
       });
@@ -391,14 +391,14 @@ describe('dataLink', () => {
       const task = sampleTask();
       data.serviceObject(serviceObjectName).onInsert((request, complete) => {
         return complete({
-          "foo": "bar"
+          foo: 'bar'
         }).accepted().next();
       });
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(202);
         result.response.body.should.eql(JSON.stringify({
-          "foo": "bar"
+          foo: 'bar'
         }));
         return done();
       });
@@ -406,14 +406,14 @@ describe('dataLink', () => {
     it('should return a 400 bad request', (done) => {
       const task = sampleTask();
       data.serviceObject(serviceObjectName).onInsert((request, complete) => {
-        return complete("This is a bad request").badRequest().next();
+        return complete('This is a bad request').badRequest().next();
       });
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(400);
         result.response.body = JSON.parse(result.response.body);
         result.response.body.error.should.eql('BadRequest');
-        result.response.body.description.should.eql("Unable to understand request");
+        result.response.body.description.should.eql('Unable to understand request');
         result.response.body.debug.should.eql('This is a bad request');
         return done();
       });
@@ -421,14 +421,14 @@ describe('dataLink', () => {
     it('should return a 401 unauthorized', (done) => {
       const task = sampleTask();
       data.serviceObject(serviceObjectName).onInsert((request, complete) => {
-        return complete("You are not authorized!").unauthorized().next();
+        return complete('You are not authorized!').unauthorized().next();
       });
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(401);
         result.response.body = JSON.parse(result.response.body);
         result.response.body.error.should.eql('InvalidCredentials');
-        result.response.body.description.should.eql("Invalid credentials. Please retry your request with correct credentials");
+        result.response.body.description.should.eql('Invalid credentials. Please retry your request with correct credentials');
         result.response.body.debug.should.eql('You are not authorized!');
         return done();
       });
@@ -436,14 +436,14 @@ describe('dataLink', () => {
     it('should return a 403 forbidden', (done) => {
       const task = sampleTask();
       data.serviceObject(serviceObjectName).onInsert((request, complete) => {
-        return complete("Forbidden!").forbidden().next();
+        return complete('Forbidden!').forbidden().next();
       });
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(403);
         result.response.body = JSON.parse(result.response.body);
         result.response.body.error.should.eql('Forbidden');
-        result.response.body.description.should.eql("The request is forbidden");
+        result.response.body.description.should.eql('The request is forbidden');
         result.response.body.debug.should.eql('Forbidden!');
         return done();
       });
@@ -451,14 +451,14 @@ describe('dataLink', () => {
     it('should return a 404 not found', (done) => {
       const task = sampleTask();
       data.serviceObject(serviceObjectName).onInsert((request, complete) => {
-        return complete("The request is not found!").notFound().next();
+        return complete('The request is not found!').notFound().next();
       });
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(404);
         result.response.body = JSON.parse(result.response.body);
         result.response.body.error.should.eql('NotFound');
-        result.response.body.description.should.eql("The requested entity or entities were not found in the serviceObject");
+        result.response.body.description.should.eql('The requested entity or entities were not found in the serviceObject');
         result.response.body.debug.should.eql('The request is not found!');
         return done();
       });
@@ -466,14 +466,14 @@ describe('dataLink', () => {
     it('should return a 405 not allowed', (done) => {
       const task = sampleTask();
       data.serviceObject(serviceObjectName).onInsert((request, complete) => {
-        return complete("The request is not allowed!").notAllowed().next();
+        return complete('The request is not allowed!').notAllowed().next();
       });
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(405);
         result.response.body = JSON.parse(result.response.body);
         result.response.body.error.should.eql('NotAllowed');
-        result.response.body.description.should.eql("The request is not allowed");
+        result.response.body.description.should.eql('The request is not allowed');
         result.response.body.debug.should.eql('The request is not allowed!');
         return done();
       });
@@ -481,14 +481,14 @@ describe('dataLink', () => {
     it('should return a 501 not implemented', (done) => {
       const task = sampleTask();
       data.serviceObject(serviceObjectName).onInsert((request, complete) => {
-        return complete("This isn't implemented").notImplemented().next();
+        return complete('This isn\'t implemented').notImplemented().next();
       });
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(501);
         result.response.body = JSON.parse(result.response.body);
         result.response.body.error.should.eql('NotImplemented');
-        result.response.body.description.should.eql("The request invoked a method that is not implemented");
+        result.response.body.description.should.eql('The request invoked a method that is not implemented');
         result.response.body.debug.should.eql('This isn\'t implemented');
         return done();
       });
@@ -496,14 +496,14 @@ describe('dataLink', () => {
     it('should return a 550 runtime error', (done) => {
       const task = sampleTask();
       data.serviceObject(serviceObjectName).onInsert((request, complete) => {
-        return complete("There was some error in the app!").runtimeError().next();
+        return complete('There was some error in the app!').runtimeError().next();
       });
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(550);
         result.response.body = JSON.parse(result.response.body);
         result.response.body.error.should.eql('DataLinkRuntimeError');
-        result.response.body.description.should.eql("The Datalink had a runtime error.  See debug message for details");
+        result.response.body.description.should.eql('The Datalink had a runtime error.  See debug message for details');
         result.response.body.debug.should.eql('There was some error in the app!');
         return done();
       });
@@ -512,16 +512,16 @@ describe('dataLink', () => {
       const task = sampleTask();
       data.serviceObject(serviceObjectName).onInsert((request, complete) => {
         return complete({
-          "foo": "bar"
+          foo: 'bar'
         }).ok().next();
       });
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
         result.response.body.should.eql(JSON.stringify({
-          "foo": "bar"
+          foo: 'bar'
         }));
-        result.response["continue"] === true;
+        result.response.continue === true;
         return done();
       });
     });
@@ -529,16 +529,16 @@ describe('dataLink', () => {
       const task = sampleTask();
       data.serviceObject(serviceObjectName).onInsert((request, complete) => {
         return complete({
-          "foo": "bar"
+          foo: 'bar'
         }).ok().done();
       });
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
         result.response.body.should.eql(JSON.stringify({
-          "foo": "bar"
+          foo: 'bar'
         }));
-        result.response["continue"] === false;
+        result.response.continue === false;
         return done();
       });
     });

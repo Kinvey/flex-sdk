@@ -25,11 +25,10 @@ describe('service creation', () => {
     sdk = proxyquire('../../lib/sdk', { 'code-task-receiver': mockTaskReceiver });
     return done();
   });
-  return it('can create a new service', (done) => {
-    return sdk.service(function(err, service) {
+  return it('can create a new service', (done) =>
+    sdk.service((err, service) => {
       should.not.exist(err);
       should.exist(service);
       return done();
-    });
-  });
+    }));
 });

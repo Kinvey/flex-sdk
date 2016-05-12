@@ -37,27 +37,27 @@ describe('date string conversion', () => {
       return done();
     });
     it('returns the original string if it is already a Mongo ISODate string', (done) => {
-      const isoDateString = 'ISODate("' + new Date().toISOString() + '")';
+      const isoDateString = `ISODate("${new Date().toISOString()}")`;
       kinveyDate.toKinveyDateString(isoDateString).should.eql(isoDateString);
       return done();
     });
-    it("returns 'Invalid date' if the incoming string is not parsable by Moment", (done) => {
-      kinveyDate.toKinveyDateString("not a date").should.eql('Invalid date');
+    it('returns \'Invalid date\' if the incoming string is not parsable by Moment', (done) => {
+      kinveyDate.toKinveyDateString('not a date').should.eql('Invalid date');
       return done();
     });
     it('returns a correct Mongo ISODate string when a valid date string is passed in', (done) => {
       const date = new Date();
-      kinveyDate.toKinveyDateString(date.toISOString()).should.eql('ISODate("' + date.toISOString() + '")');
+      kinveyDate.toKinveyDateString(date.toISOString()).should.eql(`ISODate("${date.toISOString()}")`);
       return done();
     });
     it('returns a correct Mongo ISODate string when a valid date object is passed in', (done) => {
       const date = new Date();
-      kinveyDate.toKinveyDateString(date).should.eql('ISODate("' + date.toISOString() + '")');
+      kinveyDate.toKinveyDateString(date).should.eql(`ISODate("${date.toISOString()}")`);
       return done();
     });
     return it('returns a correct Mongo ISODate string when a valid Moment is passed in', (done) => {
       const date = new Date();
-      kinveyDate.toKinveyDateString(moment(date)).should.eql('ISODate("' + date.toISOString() + '")');
+      kinveyDate.toKinveyDateString(moment(date)).should.eql(`ISODate("${date.toISOString()}")`);
       return done();
     });
   });
@@ -73,39 +73,39 @@ describe('date string conversion', () => {
       return done();
     });
     it('throws an error if the Mongo ISODate string contains an invalid date', (done) => {
-      kinveyDate.fromKinveyDateString('ISODate("').should["throw"]();
-      kinveyDate.fromKinveyDateString('ISODate("abc').should["throw"]();
+      kinveyDate.fromKinveyDateString('ISODate("').should.throw();
+      kinveyDate.fromKinveyDateString('ISODate("abc').should.throw();
       return done();
     });
     it('defaults to returning a Date if no format is specified', (done) => {
       const dateString = new Date().toISOString();
-      const convertedDate = kinveyDate.fromKinveyDateString('ISODate("' + dateString + '")');
+      const convertedDate = kinveyDate.fromKinveyDateString(`ISODate("${dateString}")`);
       Object.prototype.toString.call(convertedDate).should.eql('[object Date]');
       convertedDate.toISOString().should.eql(dateString);
       return done();
     });
     it("returns 'Invalid Format.' if format is not 'string', 'date', 'moment' or undefined", (done) => {
       const dateString = new Date().toISOString();
-      kinveyDate.fromKinveyDateString('ISODate("' + dateString + '")', 'invalid').should.eql('Invalid Format.');
+      kinveyDate.fromKinveyDateString(`ISODate("${dateString}")`, 'invalid').should.eql('Invalid Format.');
       return done();
     });
     it("returns a Date if format is 'date'", (done) => {
       const dateString = new Date().toISOString();
-      const convertedDate = kinveyDate.fromKinveyDateString('ISODate("' + dateString + '")', 'date');
+      const convertedDate = kinveyDate.fromKinveyDateString(`ISODate("${dateString}")`, 'date');
       Object.prototype.toString.call(convertedDate).should.eql('[object Date]');
       convertedDate.toISOString().should.eql(dateString);
       return done();
     });
     it("returns a string if format is 'string'", (done) => {
       const dateString = new Date().toISOString();
-      const convertedDate = kinveyDate.fromKinveyDateString('ISODate("' + dateString + '")', 'string');
+      const convertedDate = kinveyDate.fromKinveyDateString(`ISODate("${dateString}")`, 'string');
       'string'.should.eql(typeof convertedDate);
       convertedDate.should.eql(dateString);
       return done();
     });
     return it("returns a Moment if format is 'moment'", (done) => {
       const dateString = new Date().toISOString();
-      const convertedDate = kinveyDate.fromKinveyDateString('ISODate("' + dateString + '")', 'moment');
+      const convertedDate = kinveyDate.fromKinveyDateString(`ISODate("${dateString}")`, 'moment');
       moment.isMoment(convertedDate).should.be.true;
       convertedDate.isValid().should.be.true;
       convertedDate.toISOString().should.eql(dateString);

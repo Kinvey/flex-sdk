@@ -7,7 +7,7 @@
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
@@ -23,9 +23,9 @@ describe('modules / email', () => {
   let emailModule = null;
   let emailInstance = null;
   let requestStub = null;
-  let emitter = new EventEmitter();
-  let fakeProxyURL = 'http://proxy.proxy';
-  let taskMetadata = {
+  const emitter = new EventEmitter();
+  const fakeProxyURL = 'http://proxy.proxy';
+  const taskMetadata = {
     taskId: 'abcd1234',
     containerId: 'wxyz9876'
   };
@@ -33,7 +33,7 @@ describe('modules / email', () => {
     requestStub = {
       post: sinon.stub()
     };
-    let requestDefaultsStub = sinon.stub();
+    const requestDefaultsStub = sinon.stub();
     requestDefaultsStub.returns(requestStub);
     require.cache[require.resolve('request')].exports.defaults = requestDefaultsStub;
     emailModule = require('../../../lib/service/modules/email');
@@ -48,14 +48,14 @@ describe('modules / email', () => {
     requestStub.post.callsArg(1);
     (() => {
       return emailInstance.send('from', 'to', 'subject', 'textBody');
-    }).should.not["throw"]();
+    }).should.not.throw();
     return done();
   });
   it('should include x-kinvey-wait-for-confirmation = false if no callback is specified', (done) => {
     requestStub.post.callsArg(1);
     (() => {
       return emailInstance.send('from', 'to', 'subject', 'textBody');
-    }).should.not["throw"]();
+    }).should.not.throw();
     requestStub.post.args[0][0].headers['x-kinvey-wait-for-confirmation'].should.eql('false');
     return done();
   });
@@ -82,28 +82,28 @@ describe('modules / email', () => {
     emailInstance.send('from', 'to', 'subject', 'textBody');
     return requestStub.post.args[0][0].headers['x-kinvey-wait-for-confirmation'].should.eql('false');
   });
-  it("throws if 'from', 'to', 'subject' and 'textBody' are not all specified", (done) => {
+  it('throws if \'from\', \'to\', \'subject\' and \'textBody\' are not all specified', (done) => {
     (() => {
       return emailInstance.send();
-    }).should["throw"]();
+    }).should.throw();
     (() => {
       return emailInstance.send('from');
-    }).should["throw"]();
+    }).should.throw();
     (() => {
       return emailInstance.send('from', 'to');
-    }).should["throw"]();
+    }).should.throw();
     (() => {
       return emailInstance.send('from', 'to', 'subject');
-    }).should["throw"]();
+    }).should.throw();
     (() => {
       return emailInstance.send(null, 'to', 'subject', 'textBody');
-    }).should["throw"]();
+    }).should.throw();
     (() => {
       return emailInstance.send('from', null, 'subject', 'textBody');
-    }).should["throw"]();
+    }).should.throw();
     (() => {
       return emailInstance.send('from', 'to', null, 'textBody');
-    }).should["throw"]();
+    }).should.throw();
     return done();
   });
   it('can pass a callback instead of replyTo argument', (done) => {
@@ -164,17 +164,17 @@ describe('modules / email', () => {
       return done();
     });
   });
-  it("POSTs to the proxy's /email/send URL", (done) => {
+  it('POSTs to the proxy\'s /email/send URL', (done) => {
     requestStub.post.callsArgWith(1, {});
     return emailInstance.send('from', 'to', 'subject', 'textBody', (err) => {
-      requestStub.post.args[0][0].url.should.eql(fakeProxyURL + "/email/send");
+      requestStub.post.args[0][0].url.should.eql(`${fakeProxyURL}/email/send`);
       return done();
     });
   });
   it('sends a null replyTo parameter if no replyTo argument is specified', (done) => {
     requestStub.post.callsArgWith(1, {});
     return emailInstance.send('from', 'to', 'subject', 'textBody', (err) => {
-      let requestBody = requestStub.post.args[0][0].json;
+      const requestBody = requestStub.post.args[0][0].json;
       (requestBody.replyTo === null).should.be.true;
       return done();
     });
@@ -182,7 +182,7 @@ describe('modules / email', () => {
   it('sends a null html parameter if no htmlBody argument is specified', (done) => {
     requestStub.post.callsArgWith(1, {});
     return emailInstance.send('from', 'to', 'subject', 'textBody', (err) => {
-      let requestBody = requestStub.post.args[0][0].json;
+      const requestBody = requestStub.post.args[0][0].json;
       (requestBody.html === null).should.be.true;
       return done();
     });
@@ -190,7 +190,7 @@ describe('modules / email', () => {
   it('sends a null cc parameter if no cc argument is specified', (done) => {
     requestStub.post.callsArgWith(1, {});
     return emailInstance.send('from', 'to', 'subject', 'textBody', 'htmlBody', (err) => {
-      let requestBody = requestStub.post.args[0][0].json;
+      const requestBody = requestStub.post.args[0][0].json;
       (requestBody.cc === null).should.be.true;
       return done();
     });
@@ -198,7 +198,7 @@ describe('modules / email', () => {
   it('sends a null bcc parameter if no bcc argument is specified', (done) => {
     requestStub.post.callsArgWith(1, {});
     return emailInstance.send('from', 'to', 'subject', 'textBody', 'htmlBody', 'cc', (err) => {
-      let requestBody = requestStub.post.args[0][0].json;
+      const requestBody = requestStub.post.args[0][0].json;
       (requestBody.bcc === null).should.be.true;
       return done();
     });
@@ -206,7 +206,7 @@ describe('modules / email', () => {
   it('sends the appropriate arguments to the proxy', (done) => {
     requestStub.post.callsArgWith(1, {});
     return emailInstance.send('fromTest', 'toTest', 'subjectTest', 'textBodyTest', 'replyToTest', 'htmlBodyTest', 'ccTest', 'bccTest', (err) => {
-      let requestBody = requestStub.post.args[0][0].json;
+      const requestBody = requestStub.post.args[0][0].json;
       requestBody.from.should.eql('fromTest');
       requestBody.to.should.eql('toTest');
       requestBody.subject.should.eql('subjectTest');
@@ -215,7 +215,7 @@ describe('modules / email', () => {
       requestBody.html.should.eql('htmlBodyTest');
       requestBody.cc.should.eql('ccTest');
       requestBody.bcc.should.eql('bccTest');
-      let outgoingRequestHeaders = requestStub.post.args[0][0].headers;
+      const outgoingRequestHeaders = requestStub.post.args[0][0].headers;
       outgoingRequestHeaders.should.have.property('x-kinvey-task-id');
       outgoingRequestHeaders.should.have.property('x-kinvey-container-id');
       outgoingRequestHeaders['x-kinvey-task-id'].should.equal(taskMetadata.taskId);

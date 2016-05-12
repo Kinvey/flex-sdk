@@ -16,8 +16,7 @@
 
 const _ = require('lodash');
 const should = require('should');
-let testTempObjectStore = {};
-const testEnvironmentId = "test environment ID";
+const testTempObjectStore = {};
 const objectStoreModule = require('../../../lib/service/modules/tempObjectStore');
 const tempObjectStore = objectStoreModule(testTempObjectStore);
 

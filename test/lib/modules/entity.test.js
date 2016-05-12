@@ -7,7 +7,7 @@
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
@@ -16,11 +16,10 @@
 
 const should = require('should');
 const kinveyModule = require('../../../lib/service/modules/entity');
-const testEnvironmentId = "test environment ID";
+const testEnvironmentId = 'test environment ID';
 
 describe('modules / kinvey', () => {
   let kinveyInstance = null;
-  let BSONUtilsInstance = null;
   const stubEntityProperties = ['_id', '_acl', '_kmd'];
   const stubEntityACLProperties = ['creator'];
   const stubEntityKMDProperties = ['lmt', 'ect'];
@@ -48,7 +47,7 @@ describe('modules / kinvey', () => {
       return done();
     });
     it('returns false when a string is passed in', (done) => {
-      kinveyInstance.isKinveyEntity("hello").should.be.false;
+      kinveyInstance.isKinveyEntity('hello').should.be.false;
       return done();
     });
     it('returns false when a number is passed in', (done) => {
@@ -185,8 +184,8 @@ describe('modules / kinvey', () => {
       describe('addReader', (done) => {
         it('adds a reader for stub entity with no readers', (done) => {
           const ke = kinveyInstance.entity();
-          ke._acl.addReader("12345");
-          ke._acl.getReaders().should.eql(["12345"]);
+          ke._acl.addReader('12345');
+          ke._acl.getReaders().should.eql(['12345']);
           return done();
         });
         it('adds a reader for stub entity with existing readers', (done) => {
@@ -279,8 +278,8 @@ describe('modules / kinvey', () => {
       describe('addWriters', (done) => {
         it('adds a writers for stub entity with no writers', (done) => {
           const ke = kinveyInstance.entity();
-          ke._acl.addWriter("12345");
-          ke._acl.getWriters().should.eql(["12345"]);
+          ke._acl.addWriter('12345');
+          ke._acl.getWriters().should.eql(['12345']);
           return done();
         });
         it('adds a reader for stub entity with existing readers', (done) => {
