@@ -313,8 +313,10 @@ describe('dataLink', () => {
       task.method = 'GET';
       data.serviceObject(serviceObjectName).onGetAll((request, complete) => {});
       return data.process(task, {}, (err, result) => {
-        err.taskId.should.eql(task.taskId);
-        err.response.body.debug.should.eql('This data operation is not registered');
+        result.response.continue.should.eql(false);
+        result.response.statusCode.should.eql(501);
+        result.response.body.should.eql('{\"error\":\"NotImplemented\",\"description\":\"The' +
+          ' request invoked a method that is not implemented\",\"debug\":\"These methods are not implemented\"}');
         return done();
       });
     });
