@@ -27,6 +27,7 @@ describe('service creation', () => {
   });
   return it('can create a new service', (done) =>
     sdk.service((err, service) => {
+      console.log('hi');
       should.not.exist(err);
       should.exist(service.dataLink);
       should.exist(service.businessLogic);

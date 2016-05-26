@@ -150,11 +150,13 @@ describe('dataLink', () => {
   describe('discovery', () => {
     it('returns an array of all registered serviceObjects', (done) => {
       const testName = 'testObj';
+      const sampleTask = {};
       data.serviceObject(testName);
-      const serviceObjectNames = data.getServiceObjects();
-      should.exist(serviceObjectNames[0]);
-      serviceObjectNames[0].should.eql(testName);
-      done();
+      data.getServiceObjects(sampleTask, () => {
+        should.exist(sampleTask.serviceObjects[0]);
+        sampleTask.serviceObjects[0].should.eql(testName);
+        done();
+      });
     });
   });
   describe('processing', () => {
