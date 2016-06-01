@@ -71,6 +71,10 @@ const sampleTask = () => {
 };
 
 describe('dataLink', () => {
+  afterEach((done) => {
+    data.clearAll();
+    return done();
+  });
   describe('data registration', () => {
     it('can register an insert', (done) => {
       data.serviceObject(serviceObjectName).onInsert(() => {
@@ -143,11 +147,19 @@ describe('dataLink', () => {
       return fn();
     });
   });
-  describe('processing', () => {
-    afterEach((done) => {
-      data.clearAll();
-      return done();
+  describe('discovery', () => {
+    it('returns an array of all registered serviceObjects', (done) => {
+      const testName = 'testObj';
+      const sampleTask = {};
+      data.serviceObject(testName);
+      data.getServiceObjects(sampleTask, () => {
+        should.exist(sampleTask.serviceObjects[0]);
+        sampleTask.serviceObjects[0].should.eql(testName);
+        done();
+      });
     });
+  });
+  describe('processing', () => {
     it('can process an insert', (done) => {
       const task = sampleTask();
       data.serviceObject(serviceObjectName).onInsert((request, complete) => {
@@ -341,10 +353,6 @@ describe('dataLink', () => {
     });
   });
   return describe('completion handlers', () => {
-    afterEach((done) => {
-      data.clearAll();
-      return done();
-    });
     it('should return a successful response', (done) => {
       const task = sampleTask();
       data.serviceObject(serviceObjectName).onInsert((request, complete) => {
