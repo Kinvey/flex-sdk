@@ -20,45 +20,12 @@ const serviceObjectName = 'myServiceObject';
 
 const sampleTask = () => {
   return {
-    taskId: 123456,
-    appId: 12345,
-    appMetadata: {
-      _id: '12345',
-      appsecret: 'appsecret',
-      mastersecret: 'mastersecret',
-      pushService: void 0,
-      restrictions: {
-        level: 'starter'
-      },
-      API_version: 3,
-      name: 'DevApp',
-      platform: null
-    },
-    authKey: 'abc123',
-    requestId: 'ea85600029b04a18a754d57629cff62d',
     taskType: 'dataLink',
-    containerMappingId: 'abc:123',
     method: 'POST',
     endpoint: null,
     request: {
       method: 'POST',
-      headers: {
-        host: 'localhost:7007',
-        'X-Kinvey-Custom-Request-Properties': '{"foo":"bar"}',
-        'x-kinvey-include-headers-in-response': 'Connection;Content-Length;Content-Type;Date;Location;X-Kinvey-API-Version;X-Kinvey-Request-Id;X-Powered-By;Server',
-        authorization: 'Basic a2lkX1oxQkVoeDJDczpkYmNiNTUwMWZlOGM0MWQ3YTFmOTkyYjhkNTdiOGEzOA==',
-        'accept-encoding': 'gzip, deflate',
-        'accept-language': 'en-us',
-        'x-kinvey-responsewrapper': 'true',
-        accept: '*/*',
-        origin: 'http://0.0.0.0:4200',
-        'content-length': '0',
-        connection: 'keep-alive',
-        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10) AppleWebKit/600.1.25 (KHTML, like Gecko) Version/8.0 Safari/600.1.25',
-        referer: 'http://0.0.0.0:4200/environments/kid_Z1BEhx2Cs/business-logic/endpoint/quick/editor'
-      },
-      username: 'kid_Z1BEhx2Cs',
-      userId: 'kid_Z1BEhx2Cs',
+      headers: {},
       entityId: '12345',
       serviceObjectName
     },
@@ -388,7 +355,7 @@ describe('dataLink', () => {
       return data.process(task, {}, () => {});
     });
   });
-  return describe('completion handlers', () => {
+  describe('completion handlers', () => {
     it('should return a successful response', (done) => {
       const task = sampleTask();
       data.serviceObject(serviceObjectName).onInsert((request, complete) => {
@@ -571,7 +538,7 @@ describe('dataLink', () => {
         return done();
       });
     });
-    return it('should process a done (completion) handler', (done) => {
+    it('should process a done (completion) handler', (done) => {
       const task = sampleTask();
       data.serviceObject(serviceObjectName).onInsert((request, complete) => {
         return complete({
