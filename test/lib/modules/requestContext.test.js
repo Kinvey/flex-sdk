@@ -12,8 +12,6 @@
  * the License.
  */
 
-'use strict';
-
 const should = require('should');
 const requestContextModule = require('../../../lib/service/modules/requestContext');
 

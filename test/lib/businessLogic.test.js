@@ -12,8 +12,6 @@
  * the License.
  */
 
-'use strict';
-
 const logic = require('../../lib/service/businesslogic');
 const should = require('should');
 const testTaskName = 'myTaskName';

@@ -12,8 +12,6 @@
  * the License.
  */
 
-'use strict';
-
 const should = require('should');
 const moment = require('moment');
 const kinveyDate = require('../../../lib/service/modules/kinveyDate');

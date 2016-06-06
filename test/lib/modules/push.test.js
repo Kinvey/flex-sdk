@@ -12,8 +12,6 @@
  * the License.
  */
 
-'use strict';
-
 const EventEmitter = require('events').EventEmitter;
 const should = require('should');
 const sinon = require('sinon');

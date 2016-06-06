@@ -12,8 +12,6 @@
  * the License.
  */
 
-'use strict';
-
 const should = require('should');
 const kinveyModule = require('../../../lib/service/modules/entity');
 const testEnvironmentId = 'test environment ID';

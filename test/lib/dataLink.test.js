@@ -12,8 +12,6 @@
  * the License.
  */
 
-'use strict';
-
 const data = require('../../lib/service/dataLink');
 const should = require('should');
 const serviceObjectName = 'myServiceObject';

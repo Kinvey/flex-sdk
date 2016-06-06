@@ -12,8 +12,6 @@
  * the License.
  */
 
-'use strict';
-
 const should = require('should');
 const backendContextModule = require('../../../lib/service/modules/backendContext');
 

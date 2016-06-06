@@ -12,8 +12,6 @@
  * the License.
  */
 
-'use strict';
-
 exports.start = (callback) => {
   callback();
 };

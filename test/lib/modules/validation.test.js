@@ -12,8 +12,6 @@
  * the License.
  */
 
-'use strict';
-
 const should = require('should');
 const validationModule = require('../../../lib/service/modules/validation');
 

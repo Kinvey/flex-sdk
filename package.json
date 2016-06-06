@@ -3,7 +3,7 @@
   "version": "0.3.1",
   "description": "Backend SDK",
   "engines": {
-    "node": "= 6.1.x"
+    "node": "= 6.2.x"
   },
   "author": "Kinvey <support@kinvey.com>",
   "contributors": [
@@ -16,24 +16,24 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "bson": "0.4.15",
+    "bson": "0.4.23",
     "kinvey-code-task-runner": "0.1.3",
     "kinvey-datalink-errors": "0.2.2",
-    "lodash": "4.11.1",
+    "lodash.forown": "4.2.0",
     "lodash.get": "4.3.0",
+    "lodash.has": "4.4.0",
     "lodash.isempty": "4.2.1",
-    "moment": "2.10.6",
-    "request": "2.44.0"
+    "moment": "2.13.0",
+    "request": "2.72.0"
   },
   "devDependencies": {
-    "jslint": "1.8.1",
-    "dirty-chai": "1.2.2",
-    "eslint": "2.7.0",
-    "eslint-config-airbnb": "6.2.0",
-    "mocha": "1.21.4",
-    "proxyquire": "1.0.1",
+    "eslint": "2.11.1",
+    "eslint-config-airbnb-base": "3.0.1",
+    "eslint-plugin-import": "1.8.1",
+    "mocha": "2.5.3",
+    "proxyquire": "1.7.9",
     "should": "3.3.2",
-    "sinon": "1.10.3"
+    "sinon": "1.17.4"
   },
   "scripts": {
     "pretest": "./node_modules/.bin/eslint lib test",
