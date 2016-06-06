@@ -160,6 +160,73 @@ describe('dataLink', () => {
     });
   });
   describe('processing', () => {
+    describe('error cases', () => {
+      it("should return a 'BadRequest' response with a non-JSON body", (done) => {
+        const task = {
+          request: {
+            serviceObjectName: 'testObject',
+            body: "{;'"
+          },
+          response: {
+            body: {}
+          }
+        };
+        return data.process(task, null, (err) => {
+          err.response.statusCode.should.eql(400);
+          err.response.body.debug.should.eql('Request body contains invalid JSON');
+          return done();
+        });
+      });
+      it("should return a 'BadRequest' response with a non-JSON query", (done) => {
+        const task = {
+          request: {
+            serviceObjectName: 'testObject',
+            body: {},
+            query: "{;'"
+          },
+          response: {
+            body: {}
+          }
+        };
+        return data.process(task, null, (err) => {
+          err.response.statusCode.should.eql(400);
+          err.response.body.debug.should.eql('Request query contains invalid JSON');
+          return done();
+        });
+      });
+      it('will return an error if the handler isn\'t registered', (done) => {
+        const task = sampleTask();
+        task.method = 'GET';
+        data.serviceObject(serviceObjectName).onGetAll((request, complete) => {});
+        return data.process(task, {}, (err, result) => {
+          result.response.continue.should.eql(false);
+          result.response.statusCode.should.eql(501);
+          result.response.body.should.eql('{\"error\":\"NotImplemented\",\"description\":\"The' +
+            ' request invoked a method that is not implemented\",\"debug\":\"These methods are not implemented\"}');
+          return done();
+        });
+      });
+      it('will return an error if the ServiceObject name isn\'t set', (done) => {
+        const task = {
+          response: {
+            body: {}
+          }
+        };
+        return data.process(task, {}, (err, result) => {
+          err.response.body.debug.should.eql('ServiceObject name not found');
+          return done();
+        });
+      });
+      it('will return an error if the method isn\'t set', (done) => {
+        const task = sampleTask();
+        delete task.method;
+        data.serviceObject(serviceObjectName).onInsert((request, complete) => {});
+        return data.process(task, {}, (err, result) => {
+          err.response.body.debug.should.eql('Cannot determine data operation');
+          return done();
+        });
+      });
+    });
     it('can process an insert', (done) => {
       const task = sampleTask();
       data.serviceObject(serviceObjectName).onInsert((request, complete) => {
@@ -319,37 +386,6 @@ describe('dataLink', () => {
         return done();
       });
       return data.process(task, {}, () => {});
-    });
-    it('will return an error if the handler isn\'t registered', (done) => {
-      const task = sampleTask();
-      task.method = 'GET';
-      data.serviceObject(serviceObjectName).onGetAll((request, complete) => {});
-      return data.process(task, {}, (err, result) => {
-        result.response.continue.should.eql(false);
-        result.response.statusCode.should.eql(501);
-        result.response.body.should.eql('{\"error\":\"NotImplemented\",\"description\":\"The' +
-          ' request invoked a method that is not implemented\",\"debug\":\"These methods are not implemented\"}');
-        return done();
-      });
-    });
-    it('will return an error if the request body isn\'t JSON', (done) => {
-      const task = sampleTask();
-      task.method = 'POST';
-      task.request.body = 'this is some string';
-      data.serviceObject(serviceObjectName).onInsert((request, complete) => {});
-      return data.process(task, {}, (err, result) => {
-        err.response.body.debug.should.eql('Request body is not JSON');
-        return done();
-      });
-    });
-    return it('will return an error if the method isn\'t set', (done) => {
-      const task = sampleTask();
-      delete task.method;
-      data.serviceObject(serviceObjectName).onInsert((request, complete) => {});
-      return data.process(task, {}, (err, result) => {
-        err.response.body.debug.should.eql('Cannot determine data operation');
-        return done();
-      });
     });
   });
   return describe('completion handlers', () => {

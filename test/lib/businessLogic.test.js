@@ -75,9 +75,22 @@ const sampleTask = (name) => {
   };
 };
 
+const sampleBadTask = (name) => {
+  return {
+    request: {
+      body: 'abc'
+    },
+    response: {
+      status: 0,
+      headers: {},
+      body: {}
+    }
+  };
+};
+
 describe('business logic', () => {
   describe('logic registration', () => {
-    return it('can register a logic task', (done) => {
+    it('can register a logic task', (done) => {
       logic.register(testTaskName, (request, complete) => {
         return done();
       });
@@ -89,6 +102,23 @@ describe('business logic', () => {
     afterEach((done) => {
       logic.clearAll();
       return done();
+    });
+    it("should return a 'BadRequest' response with a null task name", (done) => {
+      const task = sampleTask(null);
+      return logic.process(task, null, (err) => {
+        err.response.statusCode.should.eql(400);
+        err.response.body.debug.should.eql('No task name to execute');
+        return done();
+      });
+    });
+    it("should return a 'BadRequest' response with a non-JSON task", (done) => {
+      const task = sampleBadTask(null);
+      return logic.process(task, null, (err) => {
+        console.log(require('util').inspect(err));
+        err.response.statusCode.should.eql(400);
+        err.response.body.debug.should.eql('Request body is not JSON');
+        return done();
+      });
     });
     it('should return a successful response', (done) => {
       const taskName = quickRandom();
@@ -279,7 +309,7 @@ describe('business logic', () => {
         result.response.body.should.eql(JSON.stringify({
           foo: 'bar'
         }));
-        result.response.continue === true;
+        result.response.continue = true;
         return done();
       });
     });
@@ -297,7 +327,7 @@ describe('business logic', () => {
         result.response.body.should.eql(JSON.stringify({
           foo: 'bar'
         }));
-        result.response.continue === false;
+        result.response.continue = false;
         return done();
       });
     });
