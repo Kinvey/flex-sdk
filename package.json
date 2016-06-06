@@ -22,7 +22,7 @@
     "lodash.forown": "4.2.0",
     "lodash.get": "4.3.0",
     "lodash.has": "4.4.0",
-    "lodash.isempty": "4.2.1",
+    "lodash.isnil": "4.0.0",
     "moment": "2.13.0",
     "request": "2.72.0"
   },
