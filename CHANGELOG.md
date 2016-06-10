@@ -1,5 +1,14 @@
 ## Changelog
 
+### 0.3.4
+* Parse request.query if it is stringified
+
+### 0.3.3
+* Updated task handler to put the query in the request if it is in the top level only
+
+### 0.3.2
+* Fixed an issue where outgoing HTTP requests caused backend-sdk calls to time out
+
 ### 0.3.1
 * Added `modules` param to SDK business logic handler
 
