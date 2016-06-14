@@ -12,6 +12,6 @@
  * the License.
  */
 
-exports.start = (callback) => {
-  callback();
+exports.start = (options, taskReceivedCallback, receiverStartedCallback) => {
+  receiverStartedCallback();
 };

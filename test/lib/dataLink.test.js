@@ -345,7 +345,7 @@ describe('dataLink', () => {
       delete task.request.entityId;
       task.request.query = {};
       task.query = {};
-      data.serviceObject(serviceObjectName).onGetCountWithQuery((request, complete) => {
+      data.serviceObject(serviceObjectName).onGetCountByQuery((request, complete) => {
         task = sampleTask();
         request.entityId = task.request.entityId;
         return done();

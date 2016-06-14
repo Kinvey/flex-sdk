@@ -20,7 +20,7 @@ const mockTaskReceiver = require('./mocks/mockTaskReceiver.js');
 describe('service creation', () => {
   let sdk = null;
   before((done) => {
-    sdk = proxyquire('../../lib/sdk', { 'code-task-receiver': mockTaskReceiver });
+    sdk = proxyquire('../../lib/sdk', { 'kinvey-code-task-runner': mockTaskReceiver });
     return done();
   });
   return it('can create a new service', (done) =>
