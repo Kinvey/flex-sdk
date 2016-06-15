@@ -1,5 +1,9 @@
 ## Changelog
 
+### 0.4.0
+* Complete rewrite in es6, targeting node 6
+* Back 1531 make backend sdk work externally
+
 ### 0.3.4
 * Parse request.query if it is stringified
 
