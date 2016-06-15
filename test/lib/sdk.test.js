@@ -14,16 +14,17 @@
 
 const should = require('should');
 const proxyquire = require('proxyquire');
+const sinon = require('sinon');
 
 const mockTaskReceiver = require('./mocks/mockTaskReceiver.js');
 
 describe('service creation', () => {
   let sdk = null;
   before((done) => {
-    sdk = proxyquire('../../lib/sdk', { 'code-task-receiver': mockTaskReceiver });
+    sdk = proxyquire('../../lib/sdk', { 'kinvey-code-task-runner': mockTaskReceiver });
     return done();
   });
-  return it('can create a new service', (done) =>
+  it('can create a new service', (done) =>
     sdk.service((err, service) => {
       should.not.exist(err);
       should.exist(service.dataLink);
@@ -31,4 +32,37 @@ describe('service creation', () => {
       should.exist(service.moduleGenerator);
       return done();
     }));
+
+  it('should set the type to http by default', (done) => {
+    const spy = sinon.spy(mockTaskReceiver, 'start');
+    sdk.service((err, service) => {
+      spy.args[0][0].type.should.eql('http');
+      mockTaskReceiver.start.restore();
+      done();
+    });
+  });
+
+  it('should accept an optional host and port', (done) => {
+    const spy = sinon.spy(mockTaskReceiver, 'start');
+    const host = 'localhost';
+    const port = '7777';
+    sdk.service({ host, port }, (err, service) => {
+      spy.args[0][0].type.should.eql('http');
+      spy.args[0][0].host.should.eql(host);
+      spy.args[0][0].port.should.eql(port);
+      mockTaskReceiver.start.restore();
+      done();
+    });
+  });
+
+  it('should set the type to tcp if the SDK_RECEIVER environment variable is set', (done) => {
+    const spy = sinon.spy(mockTaskReceiver, 'start');
+    process.env.SDK_RECEIVER = 'tcp';
+    sdk.service((err, service) => {
+      spy.args[0][0].type.should.eql('tcp');
+      delete process.env.SDK_RECEIVER;
+      mockTaskReceiver.start.restore();
+      done();
+    });
+  });
 });
