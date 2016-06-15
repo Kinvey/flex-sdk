@@ -26,6 +26,17 @@ const service = sdk.service((err, service) => {
 };
 ```
 
+
+When running locally, you can specify a host and port to listen on by passing an options object with an optional host and port.  If no host/port is specified, localhost:10001 will be used:
+
+```
+const service = sdk.service({ host: 'somehost', port: 7777 }, (err, service) => {
+  // code goes here
+};
+```
+
+To run your code locally, execute `node .` in the root of your project.  Routes conform to the Kinvey Data Link specification.  
+
 ## DataLink framework
 
 The DataLink framework can be accessed via the sdk's `dataLink` property.
