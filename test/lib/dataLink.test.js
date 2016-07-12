@@ -113,15 +113,18 @@ describe('dataLink', () => {
     });
   });
   describe('discovery', () => {
+    afterEach((done) => {
+      data.clearAll();
+      return done();
+    });
     it('returns an array of all registered serviceObjects', (done) => {
       const testName = 'testObj';
-      const sampleTask = {};
       data.serviceObject(testName);
-      data.getServiceObjects(sampleTask, () => {
-        should.exist(sampleTask.serviceObjects[0]);
-        sampleTask.serviceObjects[0].should.eql(testName);
-        done();
-      });
+      const discoveredServiceObjects = data.getServiceObjects();
+      discoveredServiceObjects.length.should.eql(1);
+      should.exist(discoveredServiceObjects[0]);
+      discoveredServiceObjects[0].should.eql(testName);
+      done();
     });
   });
   describe('processing', () => {
