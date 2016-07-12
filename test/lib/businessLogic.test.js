@@ -55,8 +55,9 @@ const sampleBadTask = () => {
 
 describe('business logic', () => {
   describe('logic registration', () => {
-    afterEach(() => {
+    afterEach((done) => {
       logic.clearAll();
+      return done();
     });
     it('can register a logic task', (done) => {
       logic.register(testTaskName, (request, complete) => {
@@ -67,11 +68,16 @@ describe('business logic', () => {
     });
   });
   describe('discovery', () => {
+    afterEach((done) => {
+      logic.clearAll();
+      return done();
+    });
     it('returns an array of all registered business logic handlers', (done) => {
       const testHandlerName = 'testObj';
       logic.register(testHandlerName, () => {});
       const discoveredHandlers = logic.getHandlers();
       should.exist(discoveredHandlers[0]);
+      (discoveredHandlers.length).should.eql(1);
       discoveredHandlers[0].should.eql(testHandlerName);
       done();
     });
