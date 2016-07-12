@@ -1,8 +1,12 @@
 ## Changelog
 
+### 0.4.1
+* BACK-1670: Added support for business logic handler discovery
+* Modified service discovery response structure
+
 ### 0.4.0
 * Complete rewrite in es6, targeting node 6
-* Back 1531 make backend sdk work externally
+* BACK-1531: make backend sdk work externally
 
 ### 0.3.4
 * Parse request.query if it is stringified
