@@ -113,10 +113,15 @@ describe('dataLink', () => {
     });
   });
   describe('discovery', () => {
+    afterEach((done) => {
+      data.clearAll();
+      return done();
+    });
     it('returns an array of all registered serviceObjects', (done) => {
       const testName = 'testObj';
       data.serviceObject(testName);
       const discoveredServiceObjects = data.getServiceObjects();
+      (discoveredServiceObjects.length).should.eql(1);
       should.exist(discoveredServiceObjects[0]);
       discoveredServiceObjects[0].should.eql(testName);
       done();
