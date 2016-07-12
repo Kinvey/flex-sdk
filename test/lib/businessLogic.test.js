@@ -77,7 +77,7 @@ describe('business logic', () => {
       logic.register(testHandlerName, () => {});
       const discoveredHandlers = logic.getHandlers();
       should.exist(discoveredHandlers[0]);
-      (discoveredHandlers.length).should.eql(1);
+      discoveredHandlers.length.should.eql(1);
       discoveredHandlers[0].should.eql(testHandlerName);
       done();
     });
