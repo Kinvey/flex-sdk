@@ -30,6 +30,7 @@ describe('service creation', () => {
       should.exist(service.dataLink);
       should.exist(service.businessLogic);
       should.exist(service.moduleGenerator);
+      should.exist(service.logger);
       return done();
     }));
 
