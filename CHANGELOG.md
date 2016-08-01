@@ -1,5 +1,8 @@
 ## Changelog
 
+### 0.4.2
+* BACK-1600: Added improved SDK logger with threshold support
+
 ### 0.4.1
 * BACK-1670: Added support for business logic handler discovery
 * Modified service discovery response structure
