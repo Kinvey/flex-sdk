@@ -33,7 +33,9 @@
     "mocha": "2.5.3",
     "proxyquire": "1.7.9",
     "should": "3.3.2",
-    "sinon": "1.17.4"
+    "sinon": "1.17.4",
+    "test-console": "1.0.0",
+    "uuid": "2.0.2"
   },
   "scripts": {
     "pretest": "./node_modules/.bin/eslint lib test",
