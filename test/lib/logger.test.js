@@ -15,7 +15,7 @@
 const should = require('should');
 const sinon = require('sinon');
 const uuid = require('node-uuid');
-const stdout = require("test-console").stdout;
+const stdout = require('test-console').stdout;
 
 const logger = require('../../lib/service/logger');
 
@@ -23,7 +23,7 @@ const logger = require('../../lib/service/logger');
  * Helper function to generate sample logging output
  */
 function generateLogOutput(message, logThreshold, dlcId, backingServerId) {
-  return `{"message":"${message}","level":"${logThreshold}","dlcId":"${dlcId}","backingServerId":"${backingServerId}"}`
+  return `{"message":"${message}","level":"${logThreshold}","dlcId":"${dlcId}","backingServerId":"${backingServerId}"}`;
 }
 
 describe('sdk logging', () => {
@@ -43,17 +43,19 @@ describe('sdk logging', () => {
         const spy = sinon.spy(logger, 'info');
         logger.info(logString);
         spy.getCall(0).args[0].should.eql(logString);
-        spy.returnValues[0].should.eql(sampleMessage);
+        spy.returnValues[0].should.eql(`${sampleMessage}\n`);
         logger.info.restore();
         done();
       });
-      it('writes the correct output to stdout', (done) => {
+      it('writes the correct output (and number of lines) to stdout', (done) => {
         sampleMessage = generateLogOutput(logString, 'info', dlcId, backingServerId);
         const inspect = stdout.inspect();
         logger.info(logString);
+        logger.info(logString);
         inspect.restore();
-        inspect.output.should.eql([`${sampleMessage}`]);
-        done()
+        inspect.output[0].should.eql(`${sampleMessage}\n`);
+        inspect.output[1].should.eql(`${sampleMessage}\n`);
+        done();
       });
     });
     describe('warn', () => {
@@ -62,7 +64,7 @@ describe('sdk logging', () => {
         const spy = sinon.spy(logger, 'warn');
         logger.warn(logString);
         spy.getCall(0).args[0].should.eql(logString);
-        spy.returnValues[0].should.eql(sampleMessage);
+        spy.returnValues[0].should.eql(`${sampleMessage}\n`);
         logger.warn.restore();
         done();
       });
@@ -70,18 +72,20 @@ describe('sdk logging', () => {
         sampleMessage = generateLogOutput(logString, 'warning', dlcId, backingServerId);
         const inspect = stdout.inspect();
         logger.warn(logString);
+        logger.warn(logString);
         inspect.restore();
-        inspect.output.should.eql([`${sampleMessage}`]);
-        done()
+        inspect.output[0].should.eql(`${sampleMessage}\n`);
+        inspect.output[1].should.eql(`${sampleMessage}\n`);
+        done();
       });
     });
-    describe('error', (done) => {
+    describe('error', () => {
       it('successfully logs an \'error\' message', (done) => {
         sampleMessage = generateLogOutput(logString, 'error', dlcId, backingServerId);
         const spy = sinon.spy(logger, 'error');
         logger.error(logString);
         spy.getCall(0).args[0].should.eql(logString);
-        spy.returnValues[0].should.eql(sampleMessage);
+        spy.returnValues[0].should.eql(`${sampleMessage}\n`);
         logger.error.restore();
         done();
       });
@@ -89,18 +93,20 @@ describe('sdk logging', () => {
         sampleMessage = generateLogOutput(logString, 'error', dlcId, backingServerId);
         const inspect = stdout.inspect();
         logger.error(logString);
+        logger.error(logString);
         inspect.restore();
-        inspect.output.should.eql([`${sampleMessage}`]);
-        done()
+        inspect.output[0].should.eql(`${sampleMessage}\n`);
+        inspect.output[1].should.eql(`${sampleMessage}\n`);
+        done();
       });
     });
-    describe('fatal', (done) => {
+    describe('fatal', () => {
       it('successfully logs an \'fatal\' message', (done) => {
         sampleMessage = generateLogOutput(logString, 'fatal', dlcId, backingServerId);
         const spy = sinon.spy(logger, 'fatal');
         logger.fatal(logString);
         spy.getCall(0).args[0].should.eql(logString);
-        spy.returnValues[0].should.eql(sampleMessage);
+        spy.returnValues[0].should.eql(`${sampleMessage}\n`);
         logger.fatal.restore();
         done();
       });
@@ -108,9 +114,11 @@ describe('sdk logging', () => {
         sampleMessage = generateLogOutput(logString, 'fatal', dlcId, backingServerId);
         const inspect = stdout.inspect();
         logger.fatal(logString);
+        logger.fatal(logString);
         inspect.restore();
-        inspect.output.should.eql([`${sampleMessage}`]);
-        done()
+        inspect.output[0].should.eql(`${sampleMessage}\n`);
+        inspect.output[1].should.eql(`${sampleMessage}\n`);
+        done();
       });
     });
   });
