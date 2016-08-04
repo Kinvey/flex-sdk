@@ -19,6 +19,7 @@
     "no-useless-escape": "off",
     "max-len": ["warn", 120, 4],
     "consistent-return": "warn",
+    "prefer-template": "warn",
     "radix": "off",
     "guard-for-in": "warn"
   }
