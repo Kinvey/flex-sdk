@@ -26,13 +26,6 @@ function generateLogOutput(message, logThreshold, dlcId, backingServerId) {
   return `{"message":"${message}","level":"${logThreshold}","dlcId":"${dlcId}","backingServerId":"${backingServerId}"}`;
 }
 
-/**
- * Helper function which removes whitespace characters from a string for simple log string comparison
- */
-function removeWhitespaceChars(input) {
-  return input.replace(/\s/g, '');
-}
-
 describe('sdk logging', () => {
   let logString = '';
   let dlcId = '';
@@ -50,16 +43,18 @@ describe('sdk logging', () => {
         const spy = sinon.spy(logger, 'info');
         logger.info(logString);
         spy.getCall(0).args[0].should.eql(logString);
-        removeWhitespaceChars(spy.returnValues[0]).should.eql(sampleMessage);
+        spy.returnValues[0].should.eql(`${sampleMessage}\n`);
         logger.info.restore();
         done();
       });
-      it('writes the correct output to stdout', (done) => {
+      it('writes the correct output (and number of lines) to stdout', (done) => {
         sampleMessage = generateLogOutput(logString, 'info', dlcId, backingServerId);
         const inspect = stdout.inspect();
         logger.info(logString);
+        logger.info(logString);
         inspect.restore();
-        removeWhitespaceChars(inspect.output[0]).should.eql(sampleMessage);
+        inspect.output[0].should.eql(`${sampleMessage}\n`);
+        inspect.output[1].should.eql(`${sampleMessage}\n`);
         done();
       });
     });
@@ -69,7 +64,7 @@ describe('sdk logging', () => {
         const spy = sinon.spy(logger, 'warn');
         logger.warn(logString);
         spy.getCall(0).args[0].should.eql(logString);
-        removeWhitespaceChars(spy.returnValues[0]).should.eql(sampleMessage);
+        spy.returnValues[0].should.eql(`${sampleMessage}\n`);
         logger.warn.restore();
         done();
       });
@@ -77,8 +72,10 @@ describe('sdk logging', () => {
         sampleMessage = generateLogOutput(logString, 'warning', dlcId, backingServerId);
         const inspect = stdout.inspect();
         logger.warn(logString);
+        logger.warn(logString);
         inspect.restore();
-        removeWhitespaceChars(inspect.output[0]).should.eql(sampleMessage);
+        inspect.output[0].should.eql(`${sampleMessage}\n`);
+        inspect.output[1].should.eql(`${sampleMessage}\n`);
         done();
       });
     });
@@ -88,7 +85,7 @@ describe('sdk logging', () => {
         const spy = sinon.spy(logger, 'error');
         logger.error(logString);
         spy.getCall(0).args[0].should.eql(logString);
-        removeWhitespaceChars(spy.returnValues[0]).should.eql(sampleMessage);
+        spy.returnValues[0].should.eql(`${sampleMessage}\n`);
         logger.error.restore();
         done();
       });
@@ -96,8 +93,10 @@ describe('sdk logging', () => {
         sampleMessage = generateLogOutput(logString, 'error', dlcId, backingServerId);
         const inspect = stdout.inspect();
         logger.error(logString);
+        logger.error(logString);
         inspect.restore();
-        removeWhitespaceChars(inspect.output[0]).should.eql(sampleMessage);
+        inspect.output[0].should.eql(`${sampleMessage}\n`);
+        inspect.output[1].should.eql(`${sampleMessage}\n`);
         done();
       });
     });
@@ -107,7 +106,7 @@ describe('sdk logging', () => {
         const spy = sinon.spy(logger, 'fatal');
         logger.fatal(logString);
         spy.getCall(0).args[0].should.eql(logString);
-        removeWhitespaceChars(spy.returnValues[0]).should.eql(sampleMessage);
+        spy.returnValues[0].should.eql(`${sampleMessage}\n`);
         logger.fatal.restore();
         done();
       });
@@ -115,8 +114,10 @@ describe('sdk logging', () => {
         sampleMessage = generateLogOutput(logString, 'fatal', dlcId, backingServerId);
         const inspect = stdout.inspect();
         logger.fatal(logString);
+        logger.fatal(logString);
         inspect.restore();
-        removeWhitespaceChars(inspect.output[0]).should.eql(sampleMessage);
+        inspect.output[0].should.eql(`${sampleMessage}\n`);
+        inspect.output[1].should.eql(`${sampleMessage}\n`);
         done();
       });
     });
