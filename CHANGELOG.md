@@ -1,5 +1,9 @@
 ## Changelog
 
+### 0.4.3
+* BACK-1600: Fixed SDK logger bug which prevented output from reaching service logs and removed unneeded metadata from logger output
+* Minor style refactoring
+
 ### 0.4.2
 * BACK-1600: Added improved SDK logger with threshold support
 
