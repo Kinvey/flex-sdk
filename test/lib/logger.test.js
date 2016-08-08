@@ -22,102 +22,98 @@ const logger = require('../../lib/service/logger');
 /**
  * Helper function to generate sample logging output
  */
-function generateLogOutput(message, logThreshold, dlcId, backingServerId) {
-  return `{"message":"${message}","level":"${logThreshold}","dlcId":"${dlcId}","backingServerId":"${backingServerId}"}`;
+function generateLogOutput(message, logThreshold) {
+  return `{"message":"${message}","level":"${logThreshold}"}\n`;
 }
 
 describe('sdk logging', () => {
   let logString = '';
-  let dlcId = '';
-  let backingServerId = '';
   let sampleMessage = '';
   describe('log levels', () => {
     beforeEach(() => {
       logString = uuid.v4();
-      dlcId = process.env.DLC_ID = uuid.v4();
-      backingServerId = process.env.BACKING_SERVER_ID = uuid.v4();
     });
     describe('info', () => {
       it('successfully logs an \'info\' message', (done) => {
-        sampleMessage = generateLogOutput(logString, 'info', dlcId, backingServerId);
+        sampleMessage = generateLogOutput(logString, 'info');
         const spy = sinon.spy(logger, 'info');
         logger.info(logString);
         spy.getCall(0).args[0].should.eql(logString);
-        spy.returnValues[0].should.eql(`${sampleMessage}\n`);
+        spy.returnValues[0].should.eql(sampleMessage);
         logger.info.restore();
         done();
       });
-      it('writes the correct output (and number of lines) to stdout', (done) => {
-        sampleMessage = generateLogOutput(logString, 'info', dlcId, backingServerId);
+      it('writes the correct output to stdout (on multiple lines)', (done) => {
+        sampleMessage = generateLogOutput(logString, 'info');
         const inspect = stdout.inspect();
         logger.info(logString);
         logger.info(logString);
         inspect.restore();
-        inspect.output[0].should.eql(`${sampleMessage}\n`);
-        inspect.output[1].should.eql(`${sampleMessage}\n`);
+        inspect.output[0].should.eql(sampleMessage);
+        inspect.output[1].should.eql(sampleMessage);
         done();
       });
     });
     describe('warn', () => {
       it('successfully logs an \'warning\' message', (done) => {
-        sampleMessage = generateLogOutput(logString, 'warning', dlcId, backingServerId);
+        sampleMessage = generateLogOutput(logString, 'warning');
         const spy = sinon.spy(logger, 'warn');
         logger.warn(logString);
         spy.getCall(0).args[0].should.eql(logString);
-        spy.returnValues[0].should.eql(`${sampleMessage}\n`);
+        spy.returnValues[0].should.eql(sampleMessage);
         logger.warn.restore();
         done();
       });
-      it('writes the correct output to stdout', (done) => {
-        sampleMessage = generateLogOutput(logString, 'warning', dlcId, backingServerId);
+      it('writes the correct output to stdout (on multiple lines)', (done) => {
+        sampleMessage = generateLogOutput(logString, 'warning');
         const inspect = stdout.inspect();
         logger.warn(logString);
         logger.warn(logString);
         inspect.restore();
-        inspect.output[0].should.eql(`${sampleMessage}\n`);
-        inspect.output[1].should.eql(`${sampleMessage}\n`);
+        inspect.output[0].should.eql(sampleMessage);
+        inspect.output[1].should.eql(sampleMessage);
         done();
       });
     });
     describe('error', () => {
       it('successfully logs an \'error\' message', (done) => {
-        sampleMessage = generateLogOutput(logString, 'error', dlcId, backingServerId);
+        sampleMessage = generateLogOutput(logString, 'error');
         const spy = sinon.spy(logger, 'error');
         logger.error(logString);
         spy.getCall(0).args[0].should.eql(logString);
-        spy.returnValues[0].should.eql(`${sampleMessage}\n`);
+        spy.returnValues[0].should.eql(sampleMessage);
         logger.error.restore();
         done();
       });
-      it('writes the correct output to stdout', (done) => {
-        sampleMessage = generateLogOutput(logString, 'error', dlcId, backingServerId);
+      it('writes the correct output to stdout (on multiple lines)', (done) => {
+        sampleMessage = generateLogOutput(logString, 'error');
         const inspect = stdout.inspect();
         logger.error(logString);
         logger.error(logString);
         inspect.restore();
-        inspect.output[0].should.eql(`${sampleMessage}\n`);
-        inspect.output[1].should.eql(`${sampleMessage}\n`);
+        inspect.output[0].should.eql(sampleMessage);
+        inspect.output[1].should.eql(sampleMessage);
         done();
       });
     });
     describe('fatal', () => {
       it('successfully logs an \'fatal\' message', (done) => {
-        sampleMessage = generateLogOutput(logString, 'fatal', dlcId, backingServerId);
+        sampleMessage = generateLogOutput(logString, 'fatal');
         const spy = sinon.spy(logger, 'fatal');
         logger.fatal(logString);
         spy.getCall(0).args[0].should.eql(logString);
-        spy.returnValues[0].should.eql(`${sampleMessage}\n`);
+        spy.returnValues[0].should.eql(sampleMessage);
         logger.fatal.restore();
         done();
       });
-      it('writes the correct output to stdout', (done) => {
-        sampleMessage = generateLogOutput(logString, 'fatal', dlcId, backingServerId);
+      it('writes the correct output to stdout (on multiple lines)', (done) => {
+        sampleMessage = generateLogOutput(logString, 'fatal');
         const inspect = stdout.inspect();
         logger.fatal(logString);
         logger.fatal(logString);
         inspect.restore();
-        inspect.output[0].should.eql(`${sampleMessage}\n`);
-        inspect.output[1].should.eql(`${sampleMessage}\n`);
+        inspect.output[0].should.eql(sampleMessage);
+        inspect.output[1].should.eql(sampleMessage);
         done();
       });
     });
