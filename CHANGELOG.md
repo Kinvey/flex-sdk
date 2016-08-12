@@ -1,5 +1,8 @@
 ## Changelog
 
+### 0.4.4
+* Updated readme with information on business logic and asynchronous, long-running code
+
 ### 0.4.3
 * BACK-1600: Fixed SDK logger bug which prevented output from reaching service logs and removed unneeded metadata from logger output
 * Minor style refactoring
