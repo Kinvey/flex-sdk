@@ -178,7 +178,7 @@ const service = sdk.service(function(err, service) {
     // Assume that data is retrieved and stored in "entity" variable
 
     // After entity is retrieved, check to see if it exists
-    if (typeof entity === 'undefined' || entity === null || entity === {}) {
+    if (typeof entity === 'undefined' || entity === null) {
       return complete("The entity could not be found").notFound().next();
     } else  {
       // return the entity
