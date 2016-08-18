@@ -371,7 +371,7 @@ const service = sdk.service(function(err, service) {
      };
      
     options = {
-        url: 'http://baas.kinvey.com/appdata/<MY_APP_KEY?/someCollection',
+        url: 'https://baas.kinvey.com/appdata/<MY_APP_KEY?/someCollection',
         auth: auth,
         json: {
             someData: calcSomeData(),
@@ -379,7 +379,7 @@ const service = sdk.service(function(err, service) {
         }
      }
         
-    requset.get(options, (err, response, body) => {
+    request.get(options, (err, response, body) => {
       // if error, return an error
       if (err) {
         return console.log('Error: ' + err);
