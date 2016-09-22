@@ -13,7 +13,6 @@
  */
 
 const _ = require('lodash');
-const should = require('should');
 const testTempObjectStore = {};
 const objectStoreModule = require('../../../lib/service/modules/tempObjectStore');
 const tempObjectStore = objectStoreModule(testTempObjectStore);

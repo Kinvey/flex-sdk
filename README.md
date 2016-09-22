@@ -2,8 +2,6 @@
 
 This is the SDK for Backend code execution for kinvey-hosted Data Link Connectors and Logic tasks. The module provides a framework for building kinvey-backed Data Link Connectors easily.
 
-
-
 This module provides an easy way to connect to a Kinvey Business Logic (BL) instance running on docker. It is up to the user to download, configure and start the docker image itself before running code using this module. Two [utility](#Utilities) functions are provided to automate setting up the docker image.
 
 ## Installation

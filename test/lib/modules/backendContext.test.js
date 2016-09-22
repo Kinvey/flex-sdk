@@ -12,7 +12,6 @@
  * the License.
  */
 
-const should = require('should');
 const backendContextModule = require('../../../lib/service/modules/backendContext');
 
 describe('modules / backendContext', () => {

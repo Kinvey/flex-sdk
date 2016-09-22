@@ -12,7 +12,6 @@
  * the License.
  */
 
-const should = require('should');
 const sinon = require('sinon');
 const uuid = require('node-uuid');
 const stdout = require('test-console').stdout;
