@@ -329,7 +329,7 @@ describe('dataStore', () => {
         should.not.exist(result);
         err.message.should.eql('DataStoreError');
         err.description.should.eql('Bad Request');
-        err.debug.should.eql('entityId is required')
+        err.debug.should.eql('entityId is required');
         return done();
       });
     });
@@ -682,7 +682,7 @@ describe('dataStore', () => {
         should.not.exist(result);
         err.message.should.eql('DataStoreError');
         err.description.should.eql('Bad Request');
-        err.debug.should.eql('entityId is required')
+        err.debug.should.eql('entityId is required');
         return done();
       });
     });

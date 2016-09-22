@@ -79,7 +79,7 @@ describe('modules creation', () => {
     should.exist(modules.push);
     should.exist(modules.requestContext);
     should.exist(modules.tempObjectStore);
-    should.exist(modules.query);
+    should.exist(modules.Query);
     should.exist(modules.dataStore);
     return done();
   });
