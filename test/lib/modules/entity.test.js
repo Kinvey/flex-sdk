@@ -27,7 +27,7 @@ describe('modules / kinvey', () => {
   });
   describe('isKinveyEntity function', () => {
     it('returns false when null is passed in', (done) => {
-      (kinveyInstance.isKinveyEntity(null)).should.be.false();
+      kinveyInstance.isKinveyEntity(null).should.be.false();
       return done();
     });
     it('returns false when undefined is passed in', (done) => {
