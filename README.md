@@ -420,15 +420,15 @@ You can use any non-Kinvey libraries or modules you want by including them in yo
 
 The following modules are available:
 
-* [backendContext](#backend-context-module) Provides methods to access information about the current backend context.
-* [dataStore](#data-store-module) Fetch, query, and write to Kinvey collections.
-* [email](#email-module) Send Email notifications
-* [Kinvey Entity](#kinvey-entity-module) Kinvey entity utilities
-* [kinveyDate](#kinvey-date-module) Kinvey date utilities
-* [push](#push-module) Send push notifications to a user's device
-* [Query](#query-module) Create queries to be used by the dataStore.  
-* [requestContext](#request-context-module) Provides methods to access information about the current request context.
-* [tempObjectStore](#temp-object-store-module) Key-value store for persisting temporary data between a pre- and post-hook.
+* [backendContext](#backendcontext) Provides methods to access information about the current backend context.
+* [dataStore](#datastore) Fetch, query, and write to Kinvey collections.
+* [email](#email) Send Email notifications
+* [Kinvey Entity](#kinvey-entity) Kinvey entity utilities
+* [kinveyDate](#kinvey-date) Kinvey date utilities
+* [push](#push) Send push notifications to a user's device
+* [Query](#query) Create queries to be used by the dataStore.  
+* [requestContext](#request-context) Provides methods to access information about the current request context.
+* [tempObjectStore](#temp-object-store) Key-value store for persisting temporary data between a pre- and post-hook.
 
 ### [backendContext](#backend-context-module)
 
@@ -1014,6 +1014,157 @@ function handler(request, complete, modules) {
   });
 });
 ```
+
+### [requestContext](#requestcontext-module)
+
+Used to return data and perform functions against the current request context.
+
+| Method             | Behavior           |
+|:-------------------|:-------------------|
+| `getAuthenticatedUserId()` | Returns the ID of the user who submitted the request. When the app or master secret is used to authenticate, the application ID is returned. |
+| `getAuthenticatedUsername()` | Returns the username of the user who submitted the request. |
+| `getAuthoritativeUsername()` | Returns the authoritative username of the user who submitted the request.  The authoritative username is determined based on the type of user.  If the user logged in with a token obtained from Mobile Identity Connect, and a MIC Enterprise ID is defined, this method returns the value defined in that field from the enterprise identity source.  If the user logged in in with a MIC token and no MIC enterprise id is defined, or a social login, the social provider's `id` is used. If the user logs in with a Kinvey native login, the `user.username` value is used. |
+| `getSecurityContext()` | Returns the context of the current user - possible values are __user__ for a user account, __app__ for the app account with app secret, and __master__ for the app account with master secret |
+
+#### Custom Request Properties
+Kinvey Client libraries provide API to pass Custom Request Properties when communicating with Kinvey services. The requestContext module provides methods to read and manipulate those properties.
+
+
+| Method             | Behavior           |
+|:-------------------|:-------------------|
+| `getCustomRequestProperty(propertyName)` | Takes string value `propertyName` and returns value of key `propertyName` from the Custom Request Properties object. Returns `undefined` if key `propertyName` does not exist. |
+| `setCustomReqeustProperty(propertyName, propertyValue)` | Creates Custom Request Property `propertyName` using the provided string `propertyName`, and assigns `propertyValue` as its value. If `propertyName` doesn't exist, it will be created. `propertyValue` can be any valid JSON value.|
+
+The Custom Request Properties object will be available throughout the entire Kinvey Request pipeline. For example, you can add/modify a Custom Request Property in a preFetch hook, and those changes will be available in a postFetch hook on the same transaction.
+
+##### Example Code
+```
+//Assume {officeLocation: 'Paris'} was provided as the Custom Request Properties object
+
+function handlerForPrefetch(request, complete, modules){
+ 
+  const requestContext = modules.requestContext;
+  const officeLocation = requestContext.getCustomRequestProperty('officeLocation');
+  
+  if (officeLocation === 'Paris'){
+  	  try {
+  	     //Perform some 'preprocessing' logic for requests from Paris
+  	     //...
+  	     //Set didPreprocess to true in the Custom Request Properties
+  	     requestContext.setCustomRequestProperty('didPreprocess', true);
+  	  } catch (error) {
+	     //If preprocessing fails due to an error, set didPreprocess to false
+	     requestContext.setCustomRequestProperty('didPreprocess', false);
+  	  }  
+  }
+ 
+  //Continue the execution
+  complete().ok().next();
+  
+}
+```
+
+The above code checks the Custom Request Properties for a property, `officeLocation`. If the `officeLocation` is Paris, then some custom pre-processing is done as part of the pre-fetch hook. If the pre-processing succeeds, we set `didPreprocess` to `true` in the Custom Request Properties. If an error is encountered during preprocessing, we set `didPreprocess` to `false`.
+
+We could implement a post-fetch hook that looks for the `didPreprocess` flag on the Custom Request Properties object:
+
+```
+//Assume {officeLocation: 'Paris', didPreprocess: true} was provided as the Custom Request Properties object
+
+function handlerForPostFetch(request, complete, modules){
+ 
+  const requestContext = modules.requestContext;
+  const officeLocation = requestContext.getCustomRequestProperty('officeLocation');
+  const didPreprocess = requestContext.getCustomRequestProperty('didPreprocess');
+  
+  if (officeLocation === 'Paris'){
+  	  if (didPreprocess === true) {
+  	  	//perform some post-processing specific to pre-process success
+  	  } else {
+  	  	//optionally perform some other post-processing
+  	  }
+  }
+ 
+  //Finish the execution
+  complete().ok().done();
+  
+}
+```
+
+For details on passing Custom Request Properties to Kinvey backend services, please see the API reference for the Kinvey Client Library of your choice.
+
+#### Client App Version
+All of the Kinvey client libraries provide API to pass a client-app-specific version string (for implementation details, see the Kinvey Dev Center reference documentation for the library of your choice). The requestContext module provides a `clientAppVersion` namespace, which includes API to retrieve details about the version of the client app making the request. 
+
+**Note** Kinvey *recommends* (but does not require) using version strings that conform to the pattern `major.minor.patch`, where all values are integers and `minor` and `patch` are optional. The `majorVersion()`, `minorVersion()` and `patchVersion()` methods defined below are convenience methods designed to work with version strings conforming to this pattern. If `major`, `minor` or `patch` contain any non-digit characters (i.e. 'v1' contains a non-digit character, 'v'), the corresponding convenience method will return `NaN`.
+
+The requestContext.clientAppVersion namespace provides the following methods: 
+
+| Method             | Behavior           |
+|:-------------------|:-------------------|
+| `stringValue()` | Returns the client app version value as a `String`. Returns `null` if no client app version is passed in. |
+| `majorVersion()` | Returns the first dot-separated field of the client app version string (or the entire version string if there are no 'dot' characters) as a `Number`, or `NaN` if that field contains any non-digit characters. See [A note on version numbering](#version-numbering) above for details on formatting version strings. |
+| `minorVersion()` | Returns the second dot-separated field of the client-app version string as a `Number`, or `NaN` if that field contains any non-digit characters. See [A note on version numbering](#version-numbering) above for details on formatting version strings. |
+| `patchVersion()` | Returns the third dot-separated field of the client-app version string as a `Number`, or `NaN` if that field contains any non-digit characters. See [A note on version numbering](#version-numbering) above for details on formatting version strings. |
+
+
+##### Example Code
+
+Assuming a client app version string of "1.1.5":
+
+```
+
+function handler(request, complete, modules){
+  const context = modules.requestContext;
+  
+  const majorVersion = context.clientAppVersion.majorVersion(); //majorVersion will be 1
+  const minorVersion = context.clientAppVersion.minorVersion(); //minorVersion will be 1
+  const patchVersion = context.clientAppVersion.patchVersion(); //patchVersion will be 5
+  
+  if (majorVersion < 2) {								//will be true
+  	//Perform some version 1 compatible logic
+  	if ((minorVersion >= 1) && (patchVersion === 5)) {	//Will be true
+  		//perform some logic for a specific patch release
+  	}
+  } else if (majorVersion >= 2) {						//Will be false
+  	//Perform some version 2+ compatible logic
+  }
+ 
+  
+  //Finish the execution
+  complete().ok().done();
+  
+}
+```
+
+Assuming a client app version string of "1.0.1-beta":
+
+```
+
+function handler(request, response, modules){
+  const context = modules.backendContext;
+  
+  const versionString = context.clientAppVersion.stringValue(); //versionString will be "1.0.1-beta"
+  const majorVersion = context.clientAppVersion.majorVersion();   //majorVersion will be 1
+  const patchVersion = context.clientAppVersion.patchVersion();   //patchVersion will be NaN
+  
+  if (majorVersion < 2) { 						//Will be true
+  	//Perform some version 1 compatible logic
+  	if (patchVersion > 1) {						//Will be FALSE as patchVersion is NaN
+  		//Perform some patch-specific logic
+  	}
+  }
+   
+  if (versionString.match("beta") !== null){	//Will be true
+  	//Perform some beta-specific logic
+  }
+  
+  //Finish the execution
+  complete().ok().done();
+  
+}
+```
+
 
 ### [Temp Object Store](#temp-object-store-module)
 
