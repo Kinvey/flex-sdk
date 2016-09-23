@@ -16,7 +16,7 @@ const data = require('../../lib/service/dataLink');
 const should = require('should');
 const serviceObjectName = 'myServiceObject';
 
-const sampleTask = () => {
+function sampleTask() {
   return {
     taskType: 'dataLink',
     method: 'POST',
@@ -33,7 +33,7 @@ const sampleTask = () => {
       body: {}
     }
   };
-};
+}
 
 describe('dataLink', () => {
   afterEach((done) => {
@@ -42,72 +42,52 @@ describe('dataLink', () => {
   });
   describe('data registration', () => {
     it('can register an insert', (done) => {
-      data.serviceObject(serviceObjectName).onInsert(() => {
-        return done();
-      });
+      data.serviceObject(serviceObjectName).onInsert(() => done());
       const fn = data.serviceObject(serviceObjectName).resolve('onInsert');
       return fn();
     });
     it('can register a deleteAll', (done) => {
-      data.serviceObject(serviceObjectName).onDeleteAll(() => {
-        return done();
-      });
+      data.serviceObject(serviceObjectName).onDeleteAll(() => done());
       const fn = data.serviceObject(serviceObjectName).resolve('onDeleteAll');
       return fn();
     });
     it('can register a deleteById', (done) => {
-      data.serviceObject(serviceObjectName).onDeleteById(() => {
-        return done();
-      });
+      data.serviceObject(serviceObjectName).onDeleteById(() => done());
       const fn = data.serviceObject(serviceObjectName).resolve('onDeleteById');
       return fn();
     });
     it('can register a deleteByQuery', (done) => {
-      data.serviceObject(serviceObjectName).onDeleteByQuery(() => {
-        return done();
-      });
+      data.serviceObject(serviceObjectName).onDeleteByQuery(() => done());
       const fn = data.serviceObject(serviceObjectName).resolve('onDeleteByQuery');
       return fn();
     });
     it('can register an update', (done) => {
-      data.serviceObject(serviceObjectName).onUpdate(() => {
-        return done();
-      });
+      data.serviceObject(serviceObjectName).onUpdate(() => done());
       const fn = data.serviceObject(serviceObjectName).resolve('onUpdate');
       return fn();
     });
     it('can register a getAll', (done) => {
-      data.serviceObject(serviceObjectName).onGetAll(() => {
-        return done();
-      });
+      data.serviceObject(serviceObjectName).onGetAll(() => done());
       const fn = data.serviceObject(serviceObjectName).resolve('onGetAll');
       return fn();
     });
     it('can register a getById', (done) => {
-      data.serviceObject(serviceObjectName).onGetById(() => {
-        return done();
-      });
+      data.serviceObject(serviceObjectName).onGetById(() => done());
       const fn = data.serviceObject(serviceObjectName).resolve('onGetById');
       return fn();
     });
     it('can register a getByQuery', (done) => {
-      data.serviceObject(serviceObjectName).onGetByQuery(() => {
-        return done();
-      });
+      data.serviceObject(serviceObjectName).onGetByQuery(() => done());
       const fn = data.serviceObject(serviceObjectName).resolve('onGetByQuery');
       return fn();
     });
     it('can register a getCount', (done) => {
-      data.serviceObject(serviceObjectName).onGetCount(() => {
-        return done();
-      });
+      data.serviceObject(serviceObjectName).onGetCount(() => done());
       const fn = data.serviceObject(serviceObjectName).resolve('onGetCount');
       return fn();
     });
     return it('can register a getCount by query', (done) => {
-      data.serviceObject(serviceObjectName).onGetCount(() => {
-        return done();
-      });
+      data.serviceObject(serviceObjectName).onGetCount(() => done());
       const fn = data.serviceObject(serviceObjectName).resolve('onGetCount');
       return fn();
     });
@@ -165,7 +145,7 @@ describe('dataLink', () => {
       it('will return an error if the handler isn\'t registered', (done) => {
         const task = sampleTask();
         task.method = 'GET';
-        data.serviceObject(serviceObjectName).onGetAll((request, complete) => {});
+        data.serviceObject(serviceObjectName).onGetAll(() => {});
         return data.process(task, {}, (err, result) => {
           result.response.continue.should.eql(false);
           result.response.statusCode.should.eql(501);
@@ -180,7 +160,7 @@ describe('dataLink', () => {
             body: {}
           }
         };
-        return data.process(task, {}, (err, result) => {
+        return data.process(task, {}, (err) => {
           err.response.body.debug.should.eql('ServiceObject name not found');
           return done();
         });
@@ -188,8 +168,8 @@ describe('dataLink', () => {
       it('will return an error if the method isn\'t set', (done) => {
         const task = sampleTask();
         delete task.method;
-        data.serviceObject(serviceObjectName).onInsert((request, complete) => {});
-        return data.process(task, {}, (err, result) => {
+        data.serviceObject(serviceObjectName).onInsert(() => {});
+        return data.process(task, {}, (err) => {
           err.response.body.debug.should.eql('Cannot determine data operation');
           return done();
         });
@@ -197,8 +177,18 @@ describe('dataLink', () => {
     });
     it('can process an insert', (done) => {
       const task = sampleTask();
-      data.serviceObject(serviceObjectName).onInsert((request, complete) => {
+      data.serviceObject(serviceObjectName).onInsert((request) => {
         request.entityId = task.request.entityId;
+        return done();
+      });
+      return data.process(task, {}, () => {});
+    });
+    it('can process an insert and include request, complete, and modules', (done) => {
+      const task = sampleTask();
+      data.serviceObject(serviceObjectName).onInsert((request, complete, modules) => {
+        request.should.be.an.Object();
+        complete.should.be.a.Function();
+        modules.should.be.an.Object();
         return done();
       });
       return data.process(task, {}, () => {});
@@ -206,9 +196,20 @@ describe('dataLink', () => {
     it('can process an update', (done) => {
       let task = sampleTask();
       task.method = 'PUT';
-      data.serviceObject(serviceObjectName).onUpdate((request, complete) => {
+      data.serviceObject(serviceObjectName).onUpdate((request) => {
         task = sampleTask();
         request.entityId = task.request.entityId;
+        return done();
+      });
+      return data.process(task, {}, () => {});
+    });
+    it('can process an update and include request, complete, and modules', (done) => {
+      const task = sampleTask();
+      task.method = 'PUT';
+      data.serviceObject(serviceObjectName).onUpdate((request, complete, modules) => {
+        request.should.be.an.Object();
+        complete.should.be.a.Function();
+        modules.should.be.an.Object();
         return done();
       });
       return data.process(task, {}, () => {});
@@ -220,9 +221,24 @@ describe('dataLink', () => {
       delete task.request.entityId;
       delete task.query;
       delete task.request.query;
-      data.serviceObject(serviceObjectName).onGetAll((request, complete) => {
+      data.serviceObject(serviceObjectName).onGetAll((request) => {
         task = sampleTask();
         request.entityId = task.request.entityId;
+        return done();
+      });
+      return data.process(task, {}, () => {});
+    });
+    it('can process a getAll and include request, complete, and modules', (done) => {
+      const task = sampleTask();
+      task.method = 'GET';
+      delete task.entityId;
+      delete task.request.entityId;
+      delete task.query;
+      delete task.request.query;
+      data.serviceObject(serviceObjectName).onGetAll((request, complete, modules) => {
+        request.should.be.an.Object();
+        complete.should.be.a.Function();
+        modules.should.be.an.Object();
         return done();
       });
       return data.process(task, {}, () => {});
@@ -232,9 +248,22 @@ describe('dataLink', () => {
       task.method = 'GET';
       delete task.query;
       delete task.request.query;
-      data.serviceObject(serviceObjectName).onGetById((request, complete) => {
+      data.serviceObject(serviceObjectName).onGetById((request) => {
         task = sampleTask();
         request.entityId = task.request.entityId;
+        return done();
+      });
+      return data.process(task, {}, () => {});
+    });
+    it('can process a getById and include request, complete, and modules', (done) => {
+      const task = sampleTask();
+      task.method = 'GET';
+      delete task.query;
+      delete task.request.query;
+      data.serviceObject(serviceObjectName).onGetById((request, complete, modules) => {
+        request.should.be.an.Object();
+        complete.should.be.a.Function();
+        modules.should.be.an.Object();
         return done();
       });
       return data.process(task, {}, () => {});
@@ -246,9 +275,24 @@ describe('dataLink', () => {
       delete task.request.entityId;
       task.request.query = {};
       task.query = {};
-      data.serviceObject(serviceObjectName).onGetByQuery((request, complete) => {
+      data.serviceObject(serviceObjectName).onGetByQuery((request) => {
         task = sampleTask();
         request.entityId = task.request.entityId;
+        return done();
+      });
+      return data.process(task, {}, () => {});
+    });
+    it('can process a getByQuery and include request, complete, and modules', (done) => {
+      const task = sampleTask();
+      task.method = 'GET';
+      delete task.entityId;
+      delete task.request.entityId;
+      task.request.query = {};
+      task.query = {};
+      data.serviceObject(serviceObjectName).onGetByQuery((request, complete, modules) => {
+        request.should.be.an.Object();
+        complete.should.be.a.Function();
+        modules.should.be.an.Object();
         return done();
       });
       return data.process(task, {}, () => {});
@@ -262,7 +306,7 @@ describe('dataLink', () => {
       delete task.entityId;
       delete task.request.entityId;
       task.query = query;
-      data.serviceObject(serviceObjectName).onGetByQuery((request, complete) => {
+      data.serviceObject(serviceObjectName).onGetByQuery((request) => {
         task = sampleTask();
         request.query.should.eql(query);
         return done();
@@ -278,7 +322,7 @@ describe('dataLink', () => {
       delete task.entityId;
       delete task.request.entityId;
       task.request.query = query;
-      data.serviceObject(serviceObjectName).onGetByQuery((request, complete) => {
+      data.serviceObject(serviceObjectName).onGetByQuery((request) => {
         task = sampleTask();
         request.query.should.eql(query);
         return done();
@@ -292,9 +336,24 @@ describe('dataLink', () => {
       delete task.request.entityId;
       delete task.query;
       delete task.request.query;
-      data.serviceObject(serviceObjectName).onDeleteAll((request, complete) => {
+      data.serviceObject(serviceObjectName).onDeleteAll((request) => {
         task = sampleTask();
         request.entityId = task.request.entityId;
+        return done();
+      });
+      return data.process(task, {}, () => {});
+    });
+    it('can process a deleteAll and include request, complete, and modules', (done) => {
+      const task = sampleTask();
+      task.method = 'DELETE';
+      delete task.entityId;
+      delete task.request.entityId;
+      delete task.query;
+      delete task.request.query;
+      data.serviceObject(serviceObjectName).onDeleteAll((request, complete, modules) => {
+        request.should.be.an.Object();
+        complete.should.be.a.Function();
+        modules.should.be.an.Object();
         return done();
       });
       return data.process(task, {}, () => {});
@@ -304,9 +363,22 @@ describe('dataLink', () => {
       task.method = 'DELETE';
       delete task.query;
       delete task.request.query;
-      data.serviceObject(serviceObjectName).onDeleteById((request, complete) => {
+      data.serviceObject(serviceObjectName).onDeleteById((request) => {
         task = sampleTask();
         request.entityId = task.request.entityId;
+        return done();
+      });
+      return data.process(task, {}, () => {});
+    });
+    it('can process a deleteById and include request, complete, and modules', (done) => {
+      const task = sampleTask();
+      task.method = 'DELETE';
+      delete task.query;
+      delete task.request.query;
+      data.serviceObject(serviceObjectName).onDeleteById((request, complete, modules) => {
+        request.should.be.an.Object();
+        complete.should.be.a.Function();
+        modules.should.be.an.Object();
         return done();
       });
       return data.process(task, {}, () => {});
@@ -318,9 +390,24 @@ describe('dataLink', () => {
       delete task.request.entityId;
       task.request.query = {};
       task.query = {};
-      data.serviceObject(serviceObjectName).onDeleteByQuery((request, complete) => {
+      data.serviceObject(serviceObjectName).onDeleteByQuery((request) => {
         task = sampleTask();
         request.entityId = task.request.entityId;
+        return done();
+      });
+      return data.process(task, {}, () => {});
+    });
+    it('can process a deleteByQuery and include request, complete, and modules', (done) => {
+      const task = sampleTask();
+      task.method = 'DELETE';
+      delete task.entityId;
+      delete task.request.entityId;
+      task.request.query = {};
+      task.query = {};
+      data.serviceObject(serviceObjectName).onDeleteByQuery((request, complete, modules) => {
+        request.should.be.an.Object();
+        complete.should.be.a.Function();
+        modules.should.be.an.Object();
         return done();
       });
       return data.process(task, {}, () => {});
@@ -333,9 +420,25 @@ describe('dataLink', () => {
       delete task.request.entityId;
       delete task.query;
       delete task.request.query;
-      data.serviceObject(serviceObjectName).onGetCount((request, complete) => {
+      data.serviceObject(serviceObjectName).onGetCount((request) => {
         task = sampleTask();
         request.entityId = task.request.entityId;
+        return done();
+      });
+      return data.process(task, {}, () => {});
+    });
+    it('can process a count all and include request, complete, and modules', (done) => {
+      const task = sampleTask();
+      task.method = 'GET';
+      task.endpoint = '_count';
+      delete task.entityId;
+      delete task.request.entityId;
+      delete task.query;
+      delete task.request.query;
+      data.serviceObject(serviceObjectName).onGetCount((request, complete, modules) => {
+        request.should.be.an.Object();
+        complete.should.be.a.Function();
+        modules.should.be.an.Object();
         return done();
       });
       return data.process(task, {}, () => {});
@@ -348,9 +451,25 @@ describe('dataLink', () => {
       delete task.request.entityId;
       task.request.query = {};
       task.query = {};
-      data.serviceObject(serviceObjectName).onGetCountByQuery((request, complete) => {
+      data.serviceObject(serviceObjectName).onGetCountByQuery((request) => {
         task = sampleTask();
         request.entityId = task.request.entityId;
+        return done();
+      });
+      return data.process(task, {}, () => {});
+    });
+    it('can process a count by query and include request, complete, and modules', (done) => {
+      const task = sampleTask();
+      task.method = 'GET';
+      task.endpoint = '_count';
+      delete task.entityId;
+      delete task.request.entityId;
+      task.request.query = {};
+      task.query = {};
+      data.serviceObject(serviceObjectName).onGetCountByQuery((request, complete, modules) => {
+        request.should.be.an.Object();
+        complete.should.be.a.Function();
+        modules.should.be.an.Object();
         return done();
       });
       return data.process(task, {}, () => {});
@@ -359,9 +478,7 @@ describe('dataLink', () => {
   describe('completion handlers', () => {
     it('should return a successful response', (done) => {
       const task = sampleTask();
-      data.serviceObject(serviceObjectName).onInsert((request, complete) => {
-        return complete().ok().next();
-      });
+      data.serviceObject(serviceObjectName).onInsert((request, complete) => complete().ok().next());
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
@@ -371,11 +488,7 @@ describe('dataLink', () => {
     });
     it('should include a body', (done) => {
       const task = sampleTask();
-      data.serviceObject(serviceObjectName).onInsert((request, complete) => {
-        return complete({
-          foo: 'bar'
-        }).ok().next();
-      });
+      data.serviceObject(serviceObjectName).onInsert((request, complete) => complete({ foo: 'bar' }).ok().next());
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
@@ -387,11 +500,7 @@ describe('dataLink', () => {
     });
     it('should return a 201 created', (done) => {
       const task = sampleTask();
-      data.serviceObject(serviceObjectName).onInsert((request, complete) => {
-        return complete({
-          foo: 'bar'
-        }).created().next();
-      });
+      data.serviceObject(serviceObjectName).onInsert((request, complete) => complete({ foo: 'bar' }).created().next());
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(201);
@@ -403,11 +512,7 @@ describe('dataLink', () => {
     });
     it('should return a 202 accepted', (done) => {
       const task = sampleTask();
-      data.serviceObject(serviceObjectName).onInsert((request, complete) => {
-        return complete({
-          foo: 'bar'
-        }).accepted().next();
-      });
+      data.serviceObject(serviceObjectName).onInsert((request, complete) => complete({ foo: 'bar' }).accepted().next());
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(202);
@@ -419,9 +524,8 @@ describe('dataLink', () => {
     });
     it('should return a 400 bad request', (done) => {
       const task = sampleTask();
-      data.serviceObject(serviceObjectName).onInsert((request, complete) => {
-        return complete('This is a bad request').badRequest().next();
-      });
+      data.serviceObject(serviceObjectName).onInsert((request, complete) => complete('This is a bad request')
+        .badRequest().next());
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(400);
@@ -434,24 +538,22 @@ describe('dataLink', () => {
     });
     it('should return a 401 unauthorized', (done) => {
       const task = sampleTask();
-      data.serviceObject(serviceObjectName).onInsert((request, complete) => {
-        return complete('You are not authorized!').unauthorized().next();
-      });
+      data.serviceObject(serviceObjectName).onInsert((request, complete) => complete('You are not authorized!')
+        .unauthorized().next());
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(401);
         result.response.body = JSON.parse(result.response.body);
         result.response.body.error.should.eql('InvalidCredentials');
-        result.response.body.description.should.eql('Invalid credentials. Please retry your request with correct credentials');
+        result.response.body.description.should.eql(
+          'Invalid credentials. Please retry your request with correct credentials');
         result.response.body.debug.should.eql('You are not authorized!');
         return done();
       });
     });
     it('should return a 403 forbidden', (done) => {
       const task = sampleTask();
-      data.serviceObject(serviceObjectName).onInsert((request, complete) => {
-        return complete('Forbidden!').forbidden().next();
-      });
+      data.serviceObject(serviceObjectName).onInsert((request, complete) => complete('Forbidden!').forbidden().next());
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(403);
@@ -464,24 +566,23 @@ describe('dataLink', () => {
     });
     it('should return a 404 not found', (done) => {
       const task = sampleTask();
-      data.serviceObject(serviceObjectName).onInsert((request, complete) => {
-        return complete('The request is not found!').notFound().next();
-      });
+      data.serviceObject(serviceObjectName).onInsert((request, complete) => complete('The request is not found!')
+        .notFound().next());
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(404);
         result.response.body = JSON.parse(result.response.body);
         result.response.body.error.should.eql('NotFound');
-        result.response.body.description.should.eql('The requested entity or entities were not found in the serviceObject');
+        result.response.body.description.should.eql(
+          'The requested entity or entities were not found in the serviceObject');
         result.response.body.debug.should.eql('The request is not found!');
         return done();
       });
     });
     it('should return a 405 not allowed', (done) => {
       const task = sampleTask();
-      data.serviceObject(serviceObjectName).onInsert((request, complete) => {
-        return complete('The request is not allowed!').notAllowed().next();
-      });
+      data.serviceObject(serviceObjectName).onInsert((request, complete) => complete('The request is not allowed!')
+        .notAllowed().next());
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(405);
@@ -494,9 +595,8 @@ describe('dataLink', () => {
     });
     it('should return a 501 not implemented', (done) => {
       const task = sampleTask();
-      data.serviceObject(serviceObjectName).onInsert((request, complete) => {
-        return complete('This isn\'t implemented').notImplemented().next();
-      });
+      data.serviceObject(serviceObjectName).onInsert((request, complete) => complete('This isn\'t implemented')
+        .notImplemented().next());
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(501);
@@ -509,9 +609,8 @@ describe('dataLink', () => {
     });
     it('should return a 550 runtime error', (done) => {
       const task = sampleTask();
-      data.serviceObject(serviceObjectName).onInsert((request, complete) => {
-        return complete('There was some error in the app!').runtimeError().next();
-      });
+      data.serviceObject(serviceObjectName).onInsert((request, complete) => complete('There was some error in the app!')
+        .runtimeError().next());
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(550);
@@ -524,35 +623,27 @@ describe('dataLink', () => {
     });
     it('should process a next (continuation) handler', (done) => {
       const task = sampleTask();
-      data.serviceObject(serviceObjectName).onInsert((request, complete) => {
-        return complete({
-          foo: 'bar'
-        }).ok().next();
-      });
+      data.serviceObject(serviceObjectName).onInsert((request, complete) => complete({ foo: 'bar' }).ok().next());
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
         result.response.body.should.eql(JSON.stringify({
           foo: 'bar'
         }));
-        result.response.continue === true;
+        result.response.continue.should.eql(true);
         return done();
       });
     });
     it('should process a done (completion) handler', (done) => {
       const task = sampleTask();
-      data.serviceObject(serviceObjectName).onInsert((request, complete) => {
-        return complete({
-          foo: 'bar'
-        }).ok().done();
-      });
+      data.serviceObject(serviceObjectName).onInsert((request, complete) => complete({ foo: 'bar' }).ok().done());
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
         result.response.body.should.eql(JSON.stringify({
           foo: 'bar'
         }));
-        result.response.continue === false;
+        result.response.continue.should.eql(false);
         return done();
       });
     });

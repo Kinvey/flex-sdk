@@ -23,16 +23,21 @@
     "lodash.get": "4.3.0",
     "lodash.has": "4.4.0",
     "lodash.isnil": "4.0.0",
+    "lodash.isempty": "4.4.0",
+    "lodash.assign":"4.2.0",
+    "lodash.foreach":"4.5.0",
     "moment": "2.13.0",
-    "request": "2.72.0"
+    "request": "2.72.0",
+    "sift": "3.2.6"
   },
   "devDependencies": {
     "eslint": "2.11.1",
     "eslint-config-airbnb-base": "3.0.1",
     "eslint-plugin-import": "1.8.1",
     "mocha": "2.5.3",
+    "nock": "8.0.0",
     "proxyquire": "1.7.9",
-    "should": "3.3.2",
+    "should": "11.1.0",
     "sinon": "1.17.4",
     "test-console": "1.0.0",
     "uuid": "2.0.2"
@@ -47,13 +52,13 @@
     "test-moduleGenerator": "mocha test/lib/moduleGenerator.test.js",
     "test-modules": "mocha test/lib/modules/*",
     "test-backendcontext": "mocha test/lib/modules/backendContext.test.js",
+    "test-dataStore": "mocha test/lib/modules/dataStore.test.js",
     "test-email": "mocha test/lib/modules/email.test.js",
     "test-entity": "mocha test/lib/modules/entity.test.js",
     "test-kinveydate": "mocha test/lib/modules/kinveyDate.test.js",
-    "test-logger": "mocha test/lib/modules/logger.test.js",
     "test-push": "mocha test/lib/modules/push.test.js",
+    "test-query": "mocha test/lib/modules/query.test.js",
     "test-requestcontext": "mocha test/lib/modules/requestContext.test.js",
-    "test-tempobjectstore": "mocha test/lib/modules/tempObjectStore.test.js",
-    "test-validation": "mocha test/lib/modules/validation.test.js"
+    "test-tempobjectstore": "mocha test/lib/modules/tempObjectStore.test.js"
   }
 }

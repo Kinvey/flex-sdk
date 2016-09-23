@@ -76,11 +76,11 @@ describe('modules creation', () => {
     should.exist(modules.email);
     should.exist(modules.entity);
     should.exist(modules.kinveyDate);
-    should.exist(modules.logger);
     should.exist(modules.push);
     should.exist(modules.requestContext);
     should.exist(modules.tempObjectStore);
-    should.exist(modules.validation);
+    should.exist(modules.Query);
+    should.exist(modules.dataStore);
     return done();
   });
 });

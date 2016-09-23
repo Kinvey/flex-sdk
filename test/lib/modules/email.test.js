@@ -44,16 +44,12 @@ describe('modules / email', () => {
   });
   it('does not require a callback', (done) => {
     requestStub.post.callsArg(1);
-    (() => {
-      return emailInstance.send('from', 'to', 'subject', 'textBody');
-    }).should.not.throw();
+    (() => emailInstance.send('from', 'to', 'subject', 'textBody')).should.not.throw();
     return done();
   });
   it('should include x-kinvey-wait-for-confirmation = false if no callback is specified', (done) => {
     requestStub.post.callsArg(1);
-    (() => {
-      return emailInstance.send('from', 'to', 'subject', 'textBody');
-    }).should.not.throw();
+    (() => emailInstance.send('from', 'to', 'subject', 'textBody')).should.not.throw();
     requestStub.post.args[0][0].headers['x-kinvey-wait-for-confirmation'].should.eql('false');
     return done();
   });
@@ -69,7 +65,7 @@ describe('modules / email', () => {
   it('should register the proxy task if a callback isn\'t included', (done) => {
     let emittersCalled = 0;
     emitter.once('proxyTaskStarted', () => {
-      return emittersCalled += 1;
+      emittersCalled += 1;
     });
     emitter.once('proxyTaskCompleted', () => {
       emittersCalled += 1;
@@ -81,27 +77,13 @@ describe('modules / email', () => {
     return requestStub.post.args[0][0].headers['x-kinvey-wait-for-confirmation'].should.eql('false');
   });
   it('throws if \'from\', \'to\', \'subject\' and \'textBody\' are not all specified', (done) => {
-    (() => {
-      return emailInstance.send();
-    }).should.throw();
-    (() => {
-      return emailInstance.send('from');
-    }).should.throw();
-    (() => {
-      return emailInstance.send('from', 'to');
-    }).should.throw();
-    (() => {
-      return emailInstance.send('from', 'to', 'subject');
-    }).should.throw();
-    (() => {
-      return emailInstance.send(null, 'to', 'subject', 'textBody');
-    }).should.throw();
-    (() => {
-      return emailInstance.send('from', null, 'subject', 'textBody');
-    }).should.throw();
-    (() => {
-      return emailInstance.send('from', 'to', null, 'textBody');
-    }).should.throw();
+    (() => emailInstance.send()).should.throw();
+    (() => emailInstance.send('from')).should.throw();
+    (() => emailInstance.send('from', 'to')).should.throw();
+    (() => emailInstance.send('from', 'to', 'subject')).should.throw();
+    (() => emailInstance.send(null, 'to', 'subject', 'textBody')).should.throw();
+    (() => emailInstance.send('from', null, 'subject', 'textBody')).should.throw();
+    (() => emailInstance.send('from', 'to', null, 'textBody')).should.throw();
     return done();
   });
   it('can pass a callback instead of replyTo argument', (done) => {
@@ -164,14 +146,14 @@ describe('modules / email', () => {
   });
   it('POSTs to the proxy\'s /email/send URL', (done) => {
     requestStub.post.callsArgWith(1, {});
-    return emailInstance.send('from', 'to', 'subject', 'textBody', (err) => {
+    return emailInstance.send('from', 'to', 'subject', 'textBody', () => {
       requestStub.post.args[0][0].url.should.eql(`${fakeProxyURL}/email/send`);
       return done();
     });
   });
   it('sends a null replyTo parameter if no replyTo argument is specified', (done) => {
     requestStub.post.callsArgWith(1, {});
-    return emailInstance.send('from', 'to', 'subject', 'textBody', (err) => {
+    return emailInstance.send('from', 'to', 'subject', 'textBody', () => {
       const requestBody = requestStub.post.args[0][0].json;
       (requestBody.replyTo === null).should.be.true;
       return done();
@@ -179,7 +161,7 @@ describe('modules / email', () => {
   });
   it('sends a null html parameter if no htmlBody argument is specified', (done) => {
     requestStub.post.callsArgWith(1, {});
-    return emailInstance.send('from', 'to', 'subject', 'textBody', (err) => {
+    return emailInstance.send('from', 'to', 'subject', 'textBody', () => {
       const requestBody = requestStub.post.args[0][0].json;
       (requestBody.html === null).should.be.true;
       return done();
@@ -187,7 +169,7 @@ describe('modules / email', () => {
   });
   it('sends a null cc parameter if no cc argument is specified', (done) => {
     requestStub.post.callsArgWith(1, {});
-    return emailInstance.send('from', 'to', 'subject', 'textBody', 'htmlBody', (err) => {
+    return emailInstance.send('from', 'to', 'subject', 'textBody', 'htmlBody', () => {
       const requestBody = requestStub.post.args[0][0].json;
       (requestBody.cc === null).should.be.true;
       return done();
@@ -195,7 +177,7 @@ describe('modules / email', () => {
   });
   it('sends a null bcc parameter if no bcc argument is specified', (done) => {
     requestStub.post.callsArgWith(1, {});
-    return emailInstance.send('from', 'to', 'subject', 'textBody', 'htmlBody', 'cc', (err) => {
+    return emailInstance.send('from', 'to', 'subject', 'textBody', 'htmlBody', 'cc', () => {
       const requestBody = requestStub.post.args[0][0].json;
       (requestBody.bcc === null).should.be.true;
       return done();
@@ -203,23 +185,25 @@ describe('modules / email', () => {
   });
   it('sends the appropriate arguments to the proxy', (done) => {
     requestStub.post.callsArgWith(1, {});
-    return emailInstance.send('fromTest', 'toTest', 'subjectTest', 'textBodyTest', 'replyToTest', 'htmlBodyTest', 'ccTest', 'bccTest', (err) => {
-      const requestBody = requestStub.post.args[0][0].json;
-      requestBody.from.should.eql('fromTest');
-      requestBody.to.should.eql('toTest');
-      requestBody.subject.should.eql('subjectTest');
-      requestBody.body.should.eql('textBodyTest');
-      requestBody.replyTo.should.eql('replyToTest');
-      requestBody.html.should.eql('htmlBodyTest');
-      requestBody.cc.should.eql('ccTest');
-      requestBody.bcc.should.eql('bccTest');
-      const outgoingRequestHeaders = requestStub.post.args[0][0].headers;
-      outgoingRequestHeaders.should.have.property('x-kinvey-task-id');
-      outgoingRequestHeaders.should.have.property('x-kinvey-container-id');
-      outgoingRequestHeaders['x-kinvey-task-id'].should.equal(taskMetadata.taskId);
-      outgoingRequestHeaders['x-kinvey-container-id'].should.equal(taskMetadata.containerId);
-      return done();
-    });
+    return emailInstance.send(
+      'fromTest', 'toTest', 'subjectTest', 'textBodyTest', 'replyToTest', 'htmlBodyTest', 'ccTest', 'bccTest'
+      , () => {
+        const requestBody = requestStub.post.args[0][0].json;
+        requestBody.from.should.eql('fromTest');
+        requestBody.to.should.eql('toTest');
+        requestBody.subject.should.eql('subjectTest');
+        requestBody.body.should.eql('textBodyTest');
+        requestBody.replyTo.should.eql('replyToTest');
+        requestBody.html.should.eql('htmlBodyTest');
+        requestBody.cc.should.eql('ccTest');
+        requestBody.bcc.should.eql('bccTest');
+        const outgoingRequestHeaders = requestStub.post.args[0][0].headers;
+        outgoingRequestHeaders.should.have.property('x-kinvey-task-id');
+        outgoingRequestHeaders.should.have.property('x-kinvey-container-id');
+        outgoingRequestHeaders['x-kinvey-task-id'].should.equal(taskMetadata.taskId);
+        outgoingRequestHeaders['x-kinvey-container-id'].should.equal(taskMetadata.containerId);
+        return done();
+      });
   });
   return it('returns the response from the mail server if one is returned', (done) => {
     requestStub.post.callsArgWith(1, null, {}, {

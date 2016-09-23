@@ -5,7 +5,7 @@
     "mocha": true
   },
   "rules": {
-    "arrow-body-style": "warn",
+    "arrow-body-style": ["warn", "as-needed"],
     "comma-dangle": 0,
     "global-require": "warn",
     "import/no-unresolved": "off",
@@ -17,10 +17,11 @@
     "no-unused-expressions": "off",
     "no-unused-vars": "warn",
     "no-useless-escape": "off",
-    "max-len": ["warn", 120, 4],
+    "max-len": [ "warn", 120, 4 ],
     "consistent-return": "warn",
     "prefer-template": "warn",
     "radix": "off",
-    "guard-for-in": "warn"
+    "guard-for-in": "warn",
+    "spaced-comment":"off"
   }
 }

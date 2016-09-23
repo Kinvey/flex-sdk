@@ -70,9 +70,9 @@ describe('date string conversion', () => {
       kinveyDate.fromKinveyDateString({}).should.eql('Invalid date');
       return done();
     });
-    it('throws an error if the Mongo ISODate string contains an invalid date', (done) => {
-      kinveyDate.fromKinveyDateString('ISODate("').should.throw();
-      kinveyDate.fromKinveyDateString('ISODate("abc').should.throw();
+    it('returns an error if the Mongo ISODate string contains an invalid date', (done) => {
+      kinveyDate.fromKinveyDateString('ISODate("').should.eql('Invalid date');
+      kinveyDate.fromKinveyDateString('ISODate("abc').should.eql('Invalid date');
       return done();
     });
     it('defaults to returning a Date if no format is specified', (done) => {

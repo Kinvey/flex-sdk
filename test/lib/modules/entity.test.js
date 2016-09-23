@@ -25,58 +25,55 @@ describe('modules / kinvey', () => {
     kinveyInstance = kinveyModule(testEnvironmentId);
     return done();
   });
-  describe('isKinveyEntity function', (done) => {
+  describe('isKinveyEntity function', () => {
     it('returns false when null is passed in', (done) => {
-      kinveyInstance.isKinveyEntity(null).should.be.false;
+      kinveyInstance.isKinveyEntity(null).should.be.false();
       return done();
     });
     it('returns false when undefined is passed in', (done) => {
-      kinveyInstance.isKinveyEntity(void 0).should.be.false;
+      kinveyInstance.isKinveyEntity(void 0).should.be.false();
       return done();
     });
     it('returns false when an empty object is passed in', (done) => {
-      kinveyInstance.isKinveyEntity({}).should.be.false;
+      kinveyInstance.isKinveyEntity({}).should.be.false();
       return done();
     });
     it('returns false when a populated object is passed in', (done) => {
-      kinveyInstance.isKinveyEntity({
-        prop: 1
-      }).should.be.false;
+      kinveyInstance.isKinveyEntity({ prop: 1 }).should.be.false();
       return done();
     });
     it('returns false when a string is passed in', (done) => {
-      kinveyInstance.isKinveyEntity('hello').should.be.false;
+      kinveyInstance.isKinveyEntity('hello').should.be.false();
       return done();
     });
     it('returns false when a number is passed in', (done) => {
-      kinveyInstance.isKinveyEntity(1).should.be.false;
+      kinveyInstance.isKinveyEntity(1).should.be.false();
       return done();
     });
     it('returns false when a function is passed in', (done) => {
-      kinveyInstance.isKinveyEntity(() => {
-        return true;
-      }).should.be.false;
+      kinveyInstance.isKinveyEntity(() => true).should.be.false();
       return done();
     });
     it('returns false when an error is passed in', (done) => {
-      kinveyInstance.isKinveyEntity(new Error('error')).should.be.false;
+      kinveyInstance.isKinveyEntity(new Error('error')).should.be.false();
       return done();
     });
     it('returns true when a kinvey entity is passed in', (done) => {
-      kinveyInstance.isKinveyEntity(kinveyInstance.entity()).should.be.true;
+      kinveyInstance.isKinveyEntity(kinveyInstance.entity()).should.be.true();
       return done();
     });
     return it('returns false if _acl methods are not available', (done) => {
       const entity = kinveyInstance.entity();
       entity._acl = {};
-      kinveyInstance.isKinveyEntity(entity).should.be.false;
+      kinveyInstance.isKinveyEntity(entity).should.be.false();
       return done();
     });
   });
-  return describe('entity creation', (done) => {
+
+  describe('entity creation', () => {
     it('returns an kinveyized JS object of type Object', (done) => {
       const ke = kinveyInstance.entity();
-      kinveyInstance.isKinveyEntity(ke).should.be.true;
+      kinveyInstance.isKinveyEntity(ke).should.be.true();
       return done();
     });
     it('creates a stub kinvey entity when nothing is passed in', (done) => {
@@ -135,19 +132,35 @@ describe('modules / kinvey', () => {
       const testObject = {
         first: 1
       };
-      const aclFunctionSignatures = ['getCreator', 'getReaders', 'addReader', 'removeReader', 'getWriters', 'addWriter', 'removeWriter', 'getReaderGroups', 'addReaderGroup', 'removeReaderGroup', 'getWriterGroups', 'addWriterGroup', 'removeWriterGroup', 'getGloballyReadable', 'getGloballyWritable', 'setGloballyReadable', 'setGloballyWritable'];
+      const aclFunctionSignatures =
+        ['getCreator',
+          'getReaders',
+          'addReader',
+          'removeReader',
+          'getWriters', 'addWriter',
+          'removeWriter',
+          'getReaderGroups',
+          'addReaderGroup',
+          'removeReaderGroup',
+          'getWriterGroups',
+          'addWriterGroup',
+          'removeWriterGroup',
+          'getGloballyReadable',
+          'getGloballyWritable',
+          'setGloballyReadable',
+          'setGloballyWritable'
+        ];
       kinveyInstance.entity(testObject);
       const keys = Object.keys(testObject._acl);
       for (let i = 0, len = aclFunctionSignatures.length; i < len; i++) {
         const aclFunctionSignature = aclFunctionSignatures[i];
-        console.log(aclFunctionSignature);
         (typeof testObject._acl[aclFunctionSignature]).should.eql('function');
         keys.indexOf(aclFunctionSignature).should.eql(-1);
       }
       return done();
     });
-    return describe('ACL', (done) => {
-      describe('getCreator', (done) => {
+    describe('ACL', () => {
+      describe('getCreator', () => {
         it('returns envId for stub entity', (done) => {
           const ke = kinveyInstance.entity();
           ke._acl.getCreator().should.eql(testEnvironmentId);
@@ -163,7 +176,7 @@ describe('modules / kinvey', () => {
           return done();
         });
       });
-      describe('getReaders', (done) => {
+      describe('getReaders', () => {
         it('returns empty array for stub entity with no readers', (done) => {
           const ke = kinveyInstance.entity();
           ke._acl.getReaders().should.eql([]);
@@ -179,7 +192,7 @@ describe('modules / kinvey', () => {
           return done();
         });
       });
-      describe('addReader', (done) => {
+      describe('addReader', () => {
         it('adds a reader for stub entity with no readers', (done) => {
           const ke = kinveyInstance.entity();
           ke._acl.addReader('12345');
@@ -216,7 +229,7 @@ describe('modules / kinvey', () => {
           return done();
         });
       });
-      describe('removeReader', (done) => {
+      describe('removeReader', () => {
         it('removes a reader when a match is found', (done) => {
           const ke = kinveyInstance.entity({
             _acl: {
@@ -257,7 +270,7 @@ describe('modules / kinvey', () => {
           return done();
         });
       });
-      describe('getWriters', (done) => {
+      describe('getWriters', () => {
         it('returns empty for stub entity with no writers', (done) => {
           const ke = kinveyInstance.entity();
           ke._acl.getWriters().should.eql([]);
@@ -273,7 +286,7 @@ describe('modules / kinvey', () => {
           return done();
         });
       });
-      describe('addWriters', (done) => {
+      describe('addWriters', () => {
         it('adds a writers for stub entity with no writers', (done) => {
           const ke = kinveyInstance.entity();
           ke._acl.addWriter('12345');
@@ -309,7 +322,7 @@ describe('modules / kinvey', () => {
             return done();
           });
         });
-        return describe('removeWriter', (done) => {
+        describe('removeWriter', () => {
           it('removes a writer when a match is found', (done) => {
             const ke = kinveyInstance.entity({
               _acl: {
@@ -351,7 +364,7 @@ describe('modules / kinvey', () => {
           });
         });
       });
-      describe('getReaderGroups', (done) => {
+      describe('getReaderGroups', () => {
         it('returns empty array when no group readers', (done) => {
           const ke = kinveyInstance.entity();
           ke._acl.getReaderGroups().should.eql([]);
@@ -369,7 +382,7 @@ describe('modules / kinvey', () => {
           return done();
         });
       });
-      describe('addReaderGroup', (done) => {
+      describe('addReaderGroup', () => {
         it('Adds a reader to an stub entity', (done) => {
           const ke = kinveyInstance.entity();
           ke._acl.addReaderGroup('1');
@@ -412,7 +425,7 @@ describe('modules / kinvey', () => {
           return done();
         });
       });
-      describe('removeReaderGroup', (done) => {
+      describe('removeReaderGroup', () => {
         it('removes a reader group when a match is found', (done) => {
           const ke = kinveyInstance.entity({
             _acl: {
@@ -471,7 +484,7 @@ describe('modules / kinvey', () => {
           return done();
         });
       });
-      describe('getWriterGroups', (done) => {
+      describe('getWriterGroups', () => {
         it('returns empty array when no group writers', (done) => {
           const ke = kinveyInstance.entity();
           ke._acl.getWriterGroups().should.eql([]);
@@ -489,7 +502,7 @@ describe('modules / kinvey', () => {
           return done();
         });
       });
-      describe('addWriterGroup', (done) => {
+      describe('addWriterGroup', () => {
         it('Adds a reader to an stub entity with no existing reader groups', (done) => {
           const ke = kinveyInstance.entity();
           ke._acl.addWriterGroup('1');
@@ -532,7 +545,7 @@ describe('modules / kinvey', () => {
           return done();
         });
       });
-      describe('removeWriterGroup', (done) => {
+      describe('removeWriterGroup', () => {
         it('Returns the acl of the kinvey entity for method chaining', (done) => {
           const ke = kinveyInstance.entity({
             _acl: {
@@ -590,7 +603,7 @@ describe('modules / kinvey', () => {
           ke._acl.getWriterGroups().should.eql([2, 3]);
           return done();
         });
-        return it('returns entity acls for method chaining', (done) => {
+        it('returns entity acls for method chaining', (done) => {
           const ke = kinveyInstance.entity({
             _acl: {
               groups: {
@@ -602,10 +615,10 @@ describe('modules / kinvey', () => {
           return done();
         });
       });
-      describe('get global readability', (done) => {
+      describe('get global readability', () => {
         it('will return null when globally readable is not set', (done) => {
           const ke = kinveyInstance.entity();
-          (ke._acl.getGloballyReadable() === null).should.be.true;
+          (ke._acl.getGloballyReadable() === null).should.be.true();
           return done();
         });
         it('will return true when globally readable is true', (done) => {
@@ -614,7 +627,7 @@ describe('modules / kinvey', () => {
               gr: true
             }
           });
-          ke._acl.getGloballyReadable().should.be.true;
+          ke._acl.getGloballyReadable().should.be.true();
           return done();
         });
         it('will return false when globally readable is false', (done) => {
@@ -623,7 +636,7 @@ describe('modules / kinvey', () => {
               gr: false
             }
           });
-          ke._acl.getGloballyReadable().should.be.false;
+          ke._acl.getGloballyReadable().should.be.false();
           return done();
         });
         return it('will return null when globally readable is undefined', (done) => {
@@ -632,14 +645,14 @@ describe('modules / kinvey', () => {
               gr: void 0
             }
           });
-          (ke._acl.getGloballyReadable() === null).should.be.true;
+          (ke._acl.getGloballyReadable() === null).should.be.true();
           return done();
         });
       });
-      describe('get global writability', (done) => {
+      describe('get global writability', () => {
         it('will return null when not set', (done) => {
           const ke = kinveyInstance.entity();
-          (ke._acl.getGloballyWritable() === null).should.be.true;
+          (ke._acl.getGloballyWritable() === null).should.be.true();
           return done();
         });
         it('will return true when true', (done) => {
@@ -648,7 +661,7 @@ describe('modules / kinvey', () => {
               gw: true
             }
           });
-          ke._acl.getGloballyWritable().should.be.true;
+          ke._acl.getGloballyWritable().should.be.true();
           return done();
         });
         it('will return false when false', (done) => {
@@ -657,7 +670,7 @@ describe('modules / kinvey', () => {
               gw: false
             }
           });
-          ke._acl.getGloballyWritable().should.be.false;
+          ke._acl.getGloballyWritable().should.be.false();
           return done();
         });
         return it('will return null when undefined', (done) => {
@@ -666,45 +679,45 @@ describe('modules / kinvey', () => {
               gw: void 0
             }
           });
-          (ke._acl.getGloballyWritable() === null).should.be.true;
+          (ke._acl.getGloballyWritable() === null).should.be.true();
           return done();
         });
       });
-      describe('set global readability', (done) => {
+      describe('set global readability', () => {
         it('will set to true when passed in', (done) => {
           const ke = kinveyInstance.entity();
           ke._acl.setGloballyReadable(true);
-          ke._acl.getGloballyReadable().should.be.true;
+          ke._acl.getGloballyReadable().should.be.true();
           return done();
         });
         it('will set to false when passed in', (done) => {
           const ke = kinveyInstance.entity();
           ke._acl.setGloballyReadable(false);
-          ke._acl.getGloballyReadable().should.be.false;
+          ke._acl.getGloballyReadable().should.be.false();
           return done();
         });
         return it('will return entity acls for method chaining', (done) => {
           const ke = kinveyInstance.entity();
-          ke._acl.setGloballyReadable(true).getGloballyReadable().should.be.true;
+          ke._acl.setGloballyReadable(true).getGloballyReadable().should.be.true();
           return done();
         });
       });
-      return describe('set global writability', (done) => {
+      return describe('set global writability', () => {
         it('will set to true when passed in', (done) => {
           const ke = kinveyInstance.entity();
           ke._acl.setGloballyWritable(true);
-          ke._acl.getGloballyWritable().should.be.true;
+          ke._acl.getGloballyWritable().should.be.true();
           return done();
         });
         it('will set to false when passed in', (done) => {
           const ke = kinveyInstance.entity();
           ke._acl.setGloballyWritable(false);
-          ke._acl.getGloballyWritable().should.be.false;
+          ke._acl.getGloballyWritable().should.be.false();
           return done();
         });
         return it('will return entity acls for method chaining', (done) => {
           const ke = kinveyInstance.entity();
-          ke._acl.setGloballyWritable(true).getGloballyWritable().should.be.true;
+          ke._acl.setGloballyWritable(true).getGloballyWritable().should.be.true();
           return done();
         });
       });

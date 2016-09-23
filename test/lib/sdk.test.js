@@ -36,7 +36,7 @@ describe('service creation', () => {
 
   it('should set the type to http by default', (done) => {
     const spy = sinon.spy(mockTaskReceiver, 'start');
-    sdk.service((err, service) => {
+    sdk.service(() => {
       spy.args[0][0].type.should.eql('http');
       mockTaskReceiver.start.restore();
       done();
@@ -47,7 +47,7 @@ describe('service creation', () => {
     const spy = sinon.spy(mockTaskReceiver, 'start');
     const host = 'localhost';
     const port = '7777';
-    sdk.service({ host, port }, (err, service) => {
+    sdk.service({ host, port }, () => {
       spy.args[0][0].type.should.eql('http');
       spy.args[0][0].host.should.eql(host);
       spy.args[0][0].port.should.eql(port);
@@ -59,7 +59,7 @@ describe('service creation', () => {
   it('should set the type to tcp if the SDK_RECEIVER environment variable is set', (done) => {
     const spy = sinon.spy(mockTaskReceiver, 'start');
     process.env.SDK_RECEIVER = 'tcp';
-    sdk.service((err, service) => {
+    sdk.service(() => {
       spy.args[0][0].type.should.eql('tcp');
       delete process.env.SDK_RECEIVER;
       mockTaskReceiver.start.restore();
