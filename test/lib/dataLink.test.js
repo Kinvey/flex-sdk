@@ -183,12 +183,33 @@ describe('dataLink', () => {
       });
       return data.process(task, {}, () => {});
     });
+    it('can process an insert and include request, complete, and modules', (done) => {
+      const task = sampleTask();
+      data.serviceObject(serviceObjectName).onInsert((request, complete, modules) => {
+        request.should.be.an.Object();
+        complete.should.be.a.Function();
+        modules.should.be.an.Object();
+        return done();
+      });
+      return data.process(task, {}, () => {});
+    });
     it('can process an update', (done) => {
       let task = sampleTask();
       task.method = 'PUT';
       data.serviceObject(serviceObjectName).onUpdate((request) => {
         task = sampleTask();
         request.entityId = task.request.entityId;
+        return done();
+      });
+      return data.process(task, {}, () => {});
+    });
+    it('can process an update and include request, complete, and modules', (done) => {
+      const task = sampleTask();
+      task.method = 'PUT';
+      data.serviceObject(serviceObjectName).onUpdate((request, complete, modules) => {
+        request.should.be.an.Object();
+        complete.should.be.a.Function();
+        modules.should.be.an.Object();
         return done();
       });
       return data.process(task, {}, () => {});
@@ -207,6 +228,21 @@ describe('dataLink', () => {
       });
       return data.process(task, {}, () => {});
     });
+    it('can process a getAll and include request, complete, and modules', (done) => {
+      const task = sampleTask();
+      task.method = 'GET';
+      delete task.entityId;
+      delete task.request.entityId;
+      delete task.query;
+      delete task.request.query;
+      data.serviceObject(serviceObjectName).onGetAll((request, complete, modules) => {
+        request.should.be.an.Object();
+        complete.should.be.a.Function();
+        modules.should.be.an.Object();
+        return done();
+      });
+      return data.process(task, {}, () => {});
+    });
     it('can process a get by Id', (done) => {
       let task = sampleTask();
       task.method = 'GET';
@@ -215,6 +251,19 @@ describe('dataLink', () => {
       data.serviceObject(serviceObjectName).onGetById((request) => {
         task = sampleTask();
         request.entityId = task.request.entityId;
+        return done();
+      });
+      return data.process(task, {}, () => {});
+    });
+    it('can process a getById and include request, complete, and modules', (done) => {
+      const task = sampleTask();
+      task.method = 'GET';
+      delete task.query;
+      delete task.request.query;
+      data.serviceObject(serviceObjectName).onGetById((request, complete, modules) => {
+        request.should.be.an.Object();
+        complete.should.be.a.Function();
+        modules.should.be.an.Object();
         return done();
       });
       return data.process(task, {}, () => {});
@@ -229,6 +278,21 @@ describe('dataLink', () => {
       data.serviceObject(serviceObjectName).onGetByQuery((request) => {
         task = sampleTask();
         request.entityId = task.request.entityId;
+        return done();
+      });
+      return data.process(task, {}, () => {});
+    });
+    it('can process a getByQuery and include request, complete, and modules', (done) => {
+      const task = sampleTask();
+      task.method = 'GET';
+      delete task.entityId;
+      delete task.request.entityId;
+      task.request.query = {};
+      task.query = {};
+      data.serviceObject(serviceObjectName).onGetByQuery((request, complete, modules) => {
+        request.should.be.an.Object();
+        complete.should.be.a.Function();
+        modules.should.be.an.Object();
         return done();
       });
       return data.process(task, {}, () => {});
@@ -279,6 +343,21 @@ describe('dataLink', () => {
       });
       return data.process(task, {}, () => {});
     });
+    it('can process a deleteAll and include request, complete, and modules', (done) => {
+      const task = sampleTask();
+      task.method = 'DELETE';
+      delete task.entityId;
+      delete task.request.entityId;
+      delete task.query;
+      delete task.request.query;
+      data.serviceObject(serviceObjectName).onDeleteAll((request, complete, modules) => {
+        request.should.be.an.Object();
+        complete.should.be.a.Function();
+        modules.should.be.an.Object();
+        return done();
+      });
+      return data.process(task, {}, () => {});
+    });
     it('can process a delete by Id', (done) => {
       let task = sampleTask();
       task.method = 'DELETE';
@@ -287,6 +366,19 @@ describe('dataLink', () => {
       data.serviceObject(serviceObjectName).onDeleteById((request) => {
         task = sampleTask();
         request.entityId = task.request.entityId;
+        return done();
+      });
+      return data.process(task, {}, () => {});
+    });
+    it('can process a deleteById and include request, complete, and modules', (done) => {
+      const task = sampleTask();
+      task.method = 'DELETE';
+      delete task.query;
+      delete task.request.query;
+      data.serviceObject(serviceObjectName).onDeleteById((request, complete, modules) => {
+        request.should.be.an.Object();
+        complete.should.be.a.Function();
+        modules.should.be.an.Object();
         return done();
       });
       return data.process(task, {}, () => {});
@@ -301,6 +393,21 @@ describe('dataLink', () => {
       data.serviceObject(serviceObjectName).onDeleteByQuery((request) => {
         task = sampleTask();
         request.entityId = task.request.entityId;
+        return done();
+      });
+      return data.process(task, {}, () => {});
+    });
+    it('can process a deleteByQuery and include request, complete, and modules', (done) => {
+      const task = sampleTask();
+      task.method = 'DELETE';
+      delete task.entityId;
+      delete task.request.entityId;
+      task.request.query = {};
+      task.query = {};
+      data.serviceObject(serviceObjectName).onDeleteByQuery((request, complete, modules) => {
+        request.should.be.an.Object();
+        complete.should.be.a.Function();
+        modules.should.be.an.Object();
         return done();
       });
       return data.process(task, {}, () => {});
@@ -320,6 +427,22 @@ describe('dataLink', () => {
       });
       return data.process(task, {}, () => {});
     });
+    it('can process a count all and include request, complete, and modules', (done) => {
+      const task = sampleTask();
+      task.method = 'GET';
+      task.endpoint = '_count';
+      delete task.entityId;
+      delete task.request.entityId;
+      delete task.query;
+      delete task.request.query;
+      data.serviceObject(serviceObjectName).onGetCount((request, complete, modules) => {
+        request.should.be.an.Object();
+        complete.should.be.a.Function();
+        modules.should.be.an.Object();
+        return done();
+      });
+      return data.process(task, {}, () => {});
+    });
     it('can process a count by query', (done) => {
       let task = sampleTask();
       task.method = 'GET';
@@ -331,6 +454,22 @@ describe('dataLink', () => {
       data.serviceObject(serviceObjectName).onGetCountByQuery((request) => {
         task = sampleTask();
         request.entityId = task.request.entityId;
+        return done();
+      });
+      return data.process(task, {}, () => {});
+    });
+    it('can process a count by query and include request, complete, and modules', (done) => {
+      const task = sampleTask();
+      task.method = 'GET';
+      task.endpoint = '_count';
+      delete task.entityId;
+      delete task.request.entityId;
+      task.request.query = {};
+      task.query = {};
+      data.serviceObject(serviceObjectName).onGetCountByQuery((request, complete, modules) => {
+        request.should.be.an.Object();
+        complete.should.be.a.Function();
+        modules.should.be.an.Object();
         return done();
       });
       return data.process(task, {}, () => {});

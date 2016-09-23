@@ -80,6 +80,30 @@ describe('business logic', () => {
       done();
     });
   });
+  describe('logic processing', () => {
+    afterEach((done) => {
+      logic.clearAll();
+      return done();
+    });
+    it('can process a logic task', (done) => {
+      const taskName = quickRandom();
+      const task = sampleTask(taskName);
+      logic.register(taskName, (request) => done());
+      logic.process(task, {}, () => {});
+    });
+
+    it('includes request, completion, and module handlers in a logic task', (done) => {
+      const taskName = quickRandom();
+      const task = sampleTask(taskName);
+      logic.register(taskName, (request, complete, modules) => {
+        request.should.be.an.Object();
+        complete.should.be.a.Function();
+        modules.should.be.an.Object();
+        return done();
+      });
+      logic.process(task, {}, () => {});
+    });
+  });
   describe('completion handlers', () => {
     afterEach((done) => {
       logic.clearAll();
