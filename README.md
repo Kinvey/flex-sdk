@@ -1220,9 +1220,7 @@ The `X-Kinvey-App-Metadata` object contains:
 | `mastersecret` | The master secret |  
 | `baasUrl` | The base URL for the Kinvey instance you are using.  For example, `https://baas.kinvey.com` | 
 
-The `X-Kinvey-Original-Request-Headers` object can contain any number of custom headers, but should contain 
-
-| `apiVersion` | The API version to use (number).  Note this is important for the `dataStore` module. |
+The `X-Kinvey-Original-Request-Headers` object can contain any number of custom headers, but should contain:
 
 | Property             | Description           |
 |:-------------------|:-------------------|
