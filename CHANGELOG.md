@@ -1,5 +1,17 @@
 ## Changelog
 
+### 0.5.0
+* Added `modules`: 
+  * backendContext
+  * dataStore (including access to Service Object backed data)
+  * email
+  * kinveyDate
+  * kinveyEntity
+  * push
+  * query
+  * requestContext
+  * tempObjectStore
+
 ### 0.4.4
 * Updated readme with information on business logic and asynchronous, long-running code
 
