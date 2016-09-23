@@ -1,7 +1,7 @@
 ## Changelog
 
 ### 0.5.0
-* Added `modules`: 
+* Added `modules` accessible to all handler methods via third argument (e.g. onInsert(request, complete, modules: 
   * backendContext
   * dataStore (including access to Service Object backed data)
   * email
