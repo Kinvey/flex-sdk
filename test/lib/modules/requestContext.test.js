@@ -19,6 +19,7 @@ describe('modules / requestContext', () => {
     _id: 'test ID',
     authenticatedUsername: 'test authenticated username',
     authenticatedUserId: '12345',
+    securityContext: 'test security context',
     customRequestProperties: {
       first: 1
     }
@@ -37,6 +38,10 @@ describe('modules / requestContext', () => {
   });
   it('exposes the custom properties through the getCustomRequestProperty method', (done) => {
     requestContext.getCustomRequestProperty('first').should.eql(metadata.customRequestProperties.first);
+    return done();
+  });
+  it('exposes the security context through the getSecurityContext method', (done) => {
+    requestContext.getSecurityContext().should.eql(metadata.securityContext);
     return done();
   });
   it('allows setting the custom properties through the setCustomRequestProperty method', (done) => {

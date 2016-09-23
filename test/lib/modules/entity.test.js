@@ -13,7 +13,7 @@
  */
 
 const should = require('should');
-const kinveyModule = require('../../../lib/service/modules/entity');
+const kinveyModule = require('../../../lib/service/modules/kinveyEntity');
 const testEnvironmentId = 'test environment ID';
 
 describe('modules / kinvey', () => {

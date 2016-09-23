@@ -74,7 +74,7 @@ describe('modules creation', () => {
     const modules = moduleGenerator.generate(sampleTaskInfo);
     should.exist(modules.backendContext);
     should.exist(modules.email);
-    should.exist(modules.entity);
+    should.exist(modules.kinveyEntity);
     should.exist(modules.kinveyDate);
     should.exist(modules.push);
     should.exist(modules.requestContext);

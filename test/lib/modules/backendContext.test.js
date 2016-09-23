@@ -19,10 +19,7 @@ describe('modules / backendContext', () => {
   const metadata = {
     _id: 'test ID',
     appsecret: 'test app secret',
-    mastersecret: 'test master secret',
-    securityContext: 'test security context',
-    authenticatedUsername: 'test authenticated username',
-    authenticatedUserId: '12345'
+    mastersecret: 'test master secret'
   };
   before((done) => {
     backendContext = backendContextModule(metadata);
@@ -38,14 +35,6 @@ describe('modules / backendContext', () => {
   });
   it('exposes the master secret through the getMasterSecret method', (done) => {
     backendContext.getMasterSecret().should.eql(metadata.mastersecret);
-    return done();
-  });
-  it('exposes the security context through the getSecurityContext method', (done) => {
-    backendContext.getSecurityContext().should.eql(metadata.securityContext);
-    return done();
-  });
-  return it('exposes the authenticated username through the getAuthenticatedUsername method', (done) => {
-    backendContext.getAuthenticatedUsername().should.eql(metadata.authenticatedUsername);
     return done();
   });
 });
