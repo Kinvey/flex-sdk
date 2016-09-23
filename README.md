@@ -508,7 +508,6 @@ const myCollection = modules.dataStore().collection('myCollection');
 The `collection` object contains methods for accessing data within the collection.  All methods take a `callback(err, results)` function.  
 
 | Method             | Description                  |
-
 |:-------------------|:------------------------|
 | `find(query, callback)` | Finds the records contained in the `query`.  The `query` is a `Query` object created with `modules.Query`.  If no `Query` object is supplied, the `find` method will return all entities in the collection. |
 | `findById(entityId, callback)` | Finds a single entity by its `_id`.  |
