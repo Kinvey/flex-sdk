@@ -30,7 +30,7 @@ When running locally, you can specify a host and port to listen on by passing an
 ```
 const service = sdk.service({ host: 'somehost', port: 7777 }, (err, service) => {
   // code goes here
-};
+});
 ```
 
 To run your code locally, execute `node .` in the root of your project.  Routes conform to the Kinvey Data Link specification.  
@@ -40,7 +40,7 @@ To run your code locally, execute `node .` in the root of your project.  Routes 
 The DataLink framework can be accessed via the sdk's `dataLink` property.
 
 ```
-const dataLink = sdk.dataLink;
+const dataLink = service.dataLink;
 ```
 
 ### Registering ServiceObjects
@@ -49,7 +49,7 @@ Once you initialize the DataLink framework, you define your entites by defining 
 
 ```
 // To register the 'widgets' ServiceObject:
-const widgets = sdk.dataLink.serviceObject('widgets');
+const widgets = service.dataLink.serviceObject('widgets');
 ```
 
 ### Data Events
