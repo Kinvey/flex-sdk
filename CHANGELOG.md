@@ -1,5 +1,8 @@
 ## Changelog
 
+### 0.5.1
+* Bumped code-task-runner to v0.3.0
+
 ### 0.5.0
 * Added `modules` accessible to all handler methods via third argument (e.g. onInsert(request, complete, modules: 
   * backendContext
