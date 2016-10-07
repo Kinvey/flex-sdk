@@ -100,7 +100,7 @@ The completion handlers object follows a builder pattern for creating the datali
 For example, a sample completion handler is:
 
 ```
-complete(myEntity).ok.next()
+complete(myEntity).ok().next()
 ```
 
 ##### complete
@@ -245,7 +245,7 @@ The completion handlers object follows a builder pattern for creating the busine
 For example, a sample completion handler is:
 
 ```
-complete(myEntity).ok.next()
+complete(myEntity).ok().next()
 ```
 
 The entity is optional, as it will not always be returned.  
