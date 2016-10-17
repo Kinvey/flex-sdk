@@ -1,5 +1,8 @@
 ## Changelog
 
+### 0.5.2
+* Bumped code-task-runner to v0.3.1 (to address a protocol bug)
+
 ### 0.5.1
 * Bumped code-task-runner to v0.3.0
 
