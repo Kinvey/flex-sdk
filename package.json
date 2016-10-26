@@ -3,7 +3,7 @@
   "version": "0.5.2",
   "description": "Backend SDK",
   "engines": {
-    "node": "= 6.2.x"
+    "node": "= 6.x.x"
   },
   "author": "Kinvey <support@kinvey.com>",
   "contributors": [
