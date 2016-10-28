@@ -41,9 +41,9 @@ The FlexData framework can be accessed via the sdk's `data` property.
 const flexData = flex.data;
 ```
 
-### Registering ServiceObjects
+### Registering serviceObjects
 
-Once you initialize the FlexData framework, you define your entites by defining ServiceObjects, and then wire up data access event handlers to those ServiceObjects.  To register a ServiceObject, use the `serviceObject` method of the `data` framework:
+Once you initialize the FlexData framework, you define your entites by defining ServiceObjects, and then wire up data access event handlers to those ServiceObjects.  To register a ServiceObject, use the `serviceObject` method of the `data` object:
 
 ```
 // To register the 'widgets' ServiceObject:
@@ -76,9 +76,9 @@ widgets.onGetAll(callbackFunction);
 
 ### Data Handler Functions
 
-The data events take a handler functions, which takes three arguments:  `request`, `complete`, and `modules`.  `request` represents the request made to Kinvey, and `complete` is a completion handler for completing the data request.  The modules `modules` argument is an object containing several libraries for accessing Kinvey functionality via your service (for more information, see the section on [modules](#modules)).
+The data events take a handler function, which takes three arguments:  `request`, `complete`, and `modules`.  `request` represents the request made to Kinvey, and `complete` is a completion handler for completing the data request.  The `modules` argument is an object containing several libraries for accessing Kinvey functionality via your service (for more information, see the section on [modules](#modules)).
 
-#### request object
+#### request Object
 
 The request object contains the following properties
 
@@ -91,7 +91,7 @@ The request object contains the following properties
 | body | the HTTP body |
 | query | the query object |
 
-#### Completion Handler
+#### completion Handler
 
 The completion handlers object follows a builder pattern for creating the handler's response.  The pattern for the completion handler is `complete(<entity>).<status>.<done|next>`
 
@@ -116,7 +116,7 @@ complete([{"foo":"bar"}, {"abc":"123}]);
 complete("Record 123 was not found");
 ```
 
-##### status functions
+##### Status Functions
 
 Status functions set the valid status codes for a Data Link Connector.  The status function also sets the body to a Kinvey-formatted error, and uses the value passed into the `complete` function as the debug property, if it is present.
 
@@ -145,7 +145,7 @@ complete(myRecord).created();
 complete("The given entity wasn't found").notFound();
 ```
 
-##### End processing
+##### End Processing
 
 Once the status is set, you can end the processing of the handler request with either `done` or `next`.  Most requests should normally end with `next`, which will continue the Kinvey request pipeline.  `done` will return the response that was set in the completion handler, and end request processing without executing any further functions.
 
@@ -210,7 +210,7 @@ const functions = flex.functions;
 
 ### Registering FlexFunction Handlers
 
-In order to register a FlexFunction handler, you define that handler and give it a name by using the `register` method of the `functions` framework:
+In order to register a FlexFunction handler, you define that handler and give it a name by using the `register` method of the `functions` object:
 
 ```
 // To register the 'someEventHandlerName' handler:
@@ -221,9 +221,9 @@ In the console, when you define hooks or endpoints, you will be presented your l
 
 ### Handler Functions
 
-Like the Data handlers, FlexFunctions take a handler functions with three arguments:  `request`, `complete`, and `modules`.  `request` represents the handler request's current state, and `complete` is a completion handler for completing the function.  The modules `modules` argument is an object containing several libraries for accessing Kinvey functionality via your service (for more information, see the section on [modules](#modules)).
+Like the Data handlers, FlexFunctions take a handler functions with three arguments:  `request`, `complete`, and `modules`.  `request` represents the handler request's current state, and `complete` is a completion handler for completing the function.  The `modules` argument is an object containing several libraries for accessing Kinvey functionality via your service (for more information, see the section on [modules](#modules)).
 
-#### request object
+#### request Object
 
 The request object contains the following properties:
 
@@ -236,7 +236,7 @@ The request object contains the following properties:
 | body | the HTTP body |
 | query | the query object |
 
-#### Completion Handler
+#### completion Handler
 
 The completion handlers object follows a builder pattern for creating the FlexFunctions' response.  The pattern for the completion handler is `complete(<entity>).<status>.<done|next>`
 
@@ -269,7 +269,7 @@ complete([{"foo":"bar"}, {"abc":"123}]);
 complete("Record 123 was not found");
 ```
 
-##### status functions
+##### Status Functions
 
 Status functions set the valid status codes for the request.  The status function also sets the body to a Kinvey-formatted error, and uses the value passed into the `complete` function as the debug property, if it is present.
 
@@ -298,7 +298,7 @@ complete(myRecord).created();
 complete("The given entity wasn't found").notFound();
 ```
 
-##### End processing
+##### End Processing
 
 Once the status is set, you can end the processing of the handler request with either `done` or `next`.  Most requests should normally end with `next`, which will continue the Kinvey request pipeline.  `done` will return the response that was set in the handler, and end request processing without executing any further part of the kinvey request pipeline.
 
@@ -341,7 +341,7 @@ sdk.service(function(err, flex) {
 
 You can include both FlexData and FlexFunctions' handlers in the same flex service, but it is recommended to separate the two.
 
-## [Executing a long-running script](#long-running-scripts)
+## [Executing a Long-running Script](#long-running-scripts)
 
 Because the services are persisted, you can execute long running tasks that run in the background.  However, all requests still need to be completed in less than 60 seconds.  
 
