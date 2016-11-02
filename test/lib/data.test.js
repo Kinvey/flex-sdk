@@ -12,13 +12,13 @@
  * the License.
  */
 
-const data = require('../../lib/service/dataLink');
+const data = require('../../lib/service/data');
 const should = require('should');
 const serviceObjectName = 'myServiceObject';
 
 function sampleTask() {
   return {
-    taskType: 'dataLink',
+    taskType: 'data',
     method: 'POST',
     endpoint: null,
     request: {
@@ -35,7 +35,7 @@ function sampleTask() {
   };
 }
 
-describe('dataLink', () => {
+describe('data', () => {
   afterEach((done) => {
     data.clearAll();
     return done();
@@ -615,8 +615,8 @@ describe('dataLink', () => {
         should.not.exist(err);
         result.response.statusCode.should.eql(550);
         result.response.body = JSON.parse(result.response.body);
-        result.response.body.error.should.eql('DataLinkRuntimeError');
-        result.response.body.description.should.eql('The Datalink had a runtime error.  See debug message for details');
+        result.response.body.error.should.eql('FlexRuntimeError');
+        result.response.body.description.should.eql('The Flex Service had a runtime error.  See debug message for details');
         result.response.body.debug.should.eql('There was some error in the app!');
         return done();
       });

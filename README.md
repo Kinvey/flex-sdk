@@ -1,25 +1,23 @@
-# Kinvey Backend SDK (beta)
+# Kinvey Flex SDK (beta)
 
-This is the SDK for Backend code execution for kinvey-hosted Data Link Connectors and Logic tasks. The module provides a framework for building kinvey-backed Data Link Connectors easily.
-
-This module provides an easy way to connect to a Kinvey Business Logic (BL) instance running on docker. It is up to the user to download, configure and start the docker image itself before running code using this module. Two [utility](#Utilities) functions are provided to automate setting up the docker image.
+This is the SDK for code execution of Flex Microservices. The module provides a framework for building kinvey-backed FlexData and FlexFunctions.
 
 ## [Installation](#installation)
 
 To install this project, add it to your `package.json` file and install it via `npm`
 ```
-npm install kinvey-backend-sdk
+npm install kinvey-flex-sdk
 ```
 
 To use this module, require it in your project and
 ```
-const sdk = require('kinvey-backend-sdk');
+const sdk = require('kinvey-flex-sdk');
 ```
 
 You then must initialize the sdk to retrieve a reference to the backend service:
 
 ```
-const service = sdk.service((err, service) => {
+service((err, flex) => {
   // code goes here
 };
 ```
@@ -28,28 +26,28 @@ const service = sdk.service((err, service) => {
 When running locally, you can specify a host and port to listen on by passing an options object with an optional host and port.  If no host/port is specified, localhost:10001 will be used:
 
 ```
-const service = sdk.service({ host: 'somehost', port: 7777 }, (err, service) => {
+sdk.service({ host: 'somehost', port: 7777 }, (err, flex) => {
   // code goes here
 });
 ```
 
 To run your code locally, execute `node .` in the root of your project.  Routes conform to the Kinvey Data Link specification.  
 
-## [DataLink framework](#datalink-framework)
+## [FlexData](#flex-data)
 
-The DataLink framework can be accessed via the sdk's `dataLink` property.
+The FlexData framework can be accessed via the sdk's `data` property.
 
 ```
-const dataLink = service.dataLink;
+const flexData = flex.data;
 ```
 
-### Registering ServiceObjects
+### Registering serviceObjects
 
-Once you initialize the DataLink framework, you define your entites by defining ServiceObjects, and then wire up data access event handlers to those ServiceObjects.  To register a ServiceObject, use the `serviceObject` method of the `dataLink` framework:
+Once you initialize the FlexData framework, you define your entites by defining ServiceObjects, and then wire up data access event handlers to those ServiceObjects.  To register a ServiceObject, use the `serviceObject` method of the `data` object:
 
 ```
 // To register the 'widgets' ServiceObject:
-const widgets = service.dataLink.serviceObject('widgets');
+const widgets = flex.data.serviceObject('widgets');
 ```
 
 ### Data Events
@@ -78,9 +76,9 @@ widgets.onGetAll(callbackFunction);
 
 ### Data Handler Functions
 
-The data events take a handler funciton, which takes three arguments:  `request`, `complete`, and `modules`.  `request` represents the request made to Kinvey, and `complete` is a completion handler for completing the data request.  The modules `modules` argument is an object containing several libraries for accessing Kinvey functionality via your service (for more information, see the section on [modules](#modules)).  
+The data events take a handler function, which takes three arguments:  `request`, `complete`, and `modules`.  `request` represents the request made to Kinvey, and `complete` is a completion handler for completing the data request.  The `modules` argument is an object containing several libraries for accessing Kinvey functionality via your service (for more information, see the section on [modules](#modules)).
 
-#### request object
+#### request Object
 
 The request object contains the following properties
 
@@ -93,9 +91,9 @@ The request object contains the following properties
 | body | the HTTP body |
 | query | the query object |
 
-#### Completion Handler
+#### completion Handler
 
-The completion handlers object follows a builder pattern for creating the datalink's response.  The pattern for the completion handler is `complete(<entity>).<status>.<done|next>`
+The completion handlers object follows a builder pattern for creating the handler's response.  The pattern for the completion handler is `complete(<entity>).<status>.<done|next>`
 
 For example, a sample completion handler is:
 
@@ -118,7 +116,7 @@ complete([{"foo":"bar"}, {"abc":"123}]);
 complete("Record 123 was not found");
 ```
 
-##### status functions
+##### Status Functions
 
 Status functions set the valid status codes for a Data Link Connector.  The status function also sets the body to a Kinvey-formatted error, and uses the value passed into the `complete` function as the debug property, if it is present.
 
@@ -147,9 +145,9 @@ complete(myRecord).created();
 complete("The given entity wasn't found").notFound();
 ```
 
-##### End processing
+##### End Processing
 
-Once the status is set, you can end the processing of the dataLink request with either `done` or `next`.  Most requests should normally end with `next`, which will continue the Kinvey request pipeline with Business Logic.  `done` will return the response that was set in the DataLink, and end request processing without executing any further business logic.
+Once the status is set, you can end the processing of the handler request with either `done` or `next`.  Most requests should normally end with `next`, which will continue the Kinvey request pipeline.  `done` will return the response that was set in the completion handler, and end request processing without executing any further functions.
 
 ```
 // This will continue the request chain
@@ -164,9 +162,9 @@ complete(myEntity).ok().done();
 The following is an example
 
 ```
-const sdk = require('kinvey-backend-sdk');
-const service = sdk.service(function(err, service) {
-  const dataLink = service.dataLink;   // gets the datalink object from the service
+const sdk = require('kinvey-flex-sdk');
+sdk.service(function(err, flex) {
+  const data = flex.data;   // gets the FlexData object from the service
 
   function getRecordById(request, complete, modules) {
     let entityId = request.entityId;
@@ -185,7 +183,7 @@ const service = sdk.service(function(err, service) {
   }
 
   // set the serviceObject
-  const widgets = dataLink.serviceObject('widgets');
+  const widgets = data.serviceObject('widgets');
 
   // wire up the event that we want to process
   widgets.onGetById(getRecordById);
@@ -202,30 +200,30 @@ const service = sdk.service(function(err, service) {
 };
 ```
 
-## [Business Logic framework](#business-logic-framework)
+## [FlexFunctions](#flex-functions)
 
-The Business Logic framework can be accessed via the sdk's `businessLogic` property.
-
-```
-const dataLink = sdk.businessLogic;
-```
-
-### Registering Business Logic Handlers
-
-In order to register a business logic handler, you define that handler and give it a name by using the `register` method of the `businessLogic` framework:
+The FlexFunctions framework is used to execute functions invoked by `hooks` or `endpoints`.  It can be accessed via the sdk's `functions` property.
 
 ```
-// To register the '' handler:
-const widgets = sdk.businessLogic.register('someEventHanlerName', eventHandlerCallbackFunction);
+const functions = flex.functions;
 ```
 
-In the console, when you define business logic, you will be presented your list of event handlers to tie to a collection hook or custom endpoint.
+### Registering FlexFunction Handlers
 
-### Business Logic Handler Functions
+In order to register a FlexFunction handler, you define that handler and give it a name by using the `register` method of the `functions` object:
 
-Like the DataLink handlers, business logic events take a handler funciton, which takes three arguments:  `request`, `complete`, and `modules`.  `request` represents the request made to Kinvey, and `complete` is a completion handler for completing the business logic.  The modules `modules` argument is an object containing several libraries for accessing Kinvey functionality via your service (for more information, see the section on [modules](#modules)).  
+```
+// To register the 'someEventHandlerName' handler:
+const widgets = flex.functions.register('someEventHandlerName', eventHandlerCallbackFunction);
+```
 
-#### request object
+In the console, when you define hooks or endpoints, you will be presented your list of event handlers to tie to a collection hook or endpoint.
+
+### Handler Functions
+
+Like the Data handlers, FlexFunctions take a handler functions with three arguments:  `request`, `complete`, and `modules`.  `request` represents the handler request's current state, and `complete` is a completion handler for completing the function.  The `modules` argument is an object containing several libraries for accessing Kinvey functionality via your service (for more information, see the section on [modules](#modules)).
+
+#### request Object
 
 The request object contains the following properties:
 
@@ -238,9 +236,9 @@ The request object contains the following properties:
 | body | the HTTP body |
 | query | the query object |
 
-#### Completion Handler
+#### completion Handler
 
-The completion handlers object follows a builder pattern for creating the business logic's response.  The pattern for the completion handler is `complete(<entity>).<status>.<done|next>`
+The completion handlers object follows a builder pattern for creating the FlexFunctions' response.  The pattern for the completion handler is `complete(<entity>).<status>.<done|next>`
 
 For example, a sample completion handler is:
 
@@ -271,7 +269,7 @@ complete([{"foo":"bar"}, {"abc":"123}]);
 complete("Record 123 was not found");
 ```
 
-##### status functions
+##### Status Functions
 
 Status functions set the valid status codes for the request.  The status function also sets the body to a Kinvey-formatted error, and uses the value passed into the `complete` function as the debug property, if it is present.
 
@@ -300,9 +298,9 @@ complete(myRecord).created();
 complete("The given entity wasn't found").notFound();
 ```
 
-##### End processing
+##### End Processing
 
-Once the status is set, you can end the processing of the business logic request with either `done` or `next`.  Most requests should normally end with `next`, which will continue the Kinvey request pipeline with Business Logic.  `done` will return the response that was set in the handler, and end request processing without executing any further part of the kinvey request pipeline.
+Once the status is set, you can end the processing of the handler request with either `done` or `next`.  Most requests should normally end with `next`, which will continue the Kinvey request pipeline.  `done` will return the response that was set in the handler, and end request processing without executing any further part of the kinvey request pipeline.
 
 ```
 // This will continue the request chain
@@ -317,14 +315,14 @@ complete(myEntity).ok().done();
 The following is an example
 
 ```
-const sdk = require('kinvey-backend-sdk');
+const sdk = require('kinvey-flex-sdk');
 const request = require('request'); // assumes that the request module was added to package.json
-const service = sdk.service(function(err, service) {
+sdk.service(function(err, flex) {
   
-  const bl = service.businessLogic;   // gets the businessLogic object from the service
+  const flexFunctions = flex.functions;   // gets the FlexFunctions object from the service
 
   function getRedLineSchedule(req, complete, modules) {
-    requset.get('http://developer.mbta.com/Data/Red.json', (err, response, body) => {
+    request.get('http://developer.mbta.com/Data/Red.json', (err, response, body) => {
       // if error, return an error
       if (err) {
         return complete("Could not complete request").runtimeError().done();
@@ -337,13 +335,13 @@ const service = sdk.service(function(err, service) {
    }
 
   // set the handler
-  bl.register('getRedLineData', getRedLineSchedule);
+  flexFunctions.register('getRedLineData', getRedLineSchedule);
 };
 ```
 
-You can include both dataLink and business logic handlers in the same flex service, but it is recommended to separate the two.
+You can include both FlexData and FlexFunctions' handlers in the same flex service, but it is recommended to separate the two.
 
-## [Executing a long-running script](#long-running-scripts)
+## [Executing a Long-running Script](#long-running-scripts)
 
 Because the services are persisted, you can execute long running tasks that run in the background.  However, all requests still need to be completed in less than 60 seconds.  
 
@@ -352,11 +350,11 @@ To accomplish this, you can execute a function asynchronously using one of the `
 For example:  
 
 ```
-const sdk = require('kinvey-backend-sdk');
+const sdk = require('kinvey-flex-sdk');
 const request = require('request'); // assumes that the request module was added to package.json
-const service = sdk.service(function(err, service) {
+sdk.service(function(err, flex) {
   
-  const bl = service.businessLogic;   // gets the businessLogic object from the service
+  const flexFunctions = flex.functions;   // gets the FlexFunctions object from the service
 
     function calcSomeData() {
         // do something
@@ -393,11 +391,11 @@ const service = sdk.service(function(err, service) {
     // Since the calc and post data function may take a long time, execute it asynchronously
     setImmediate(calcAndPostData);  
     
-    // Immediately complete the business logic script.  The response will be returned to the caller, and calcAndPostData will execute in the background.  
+    // Immediately complete the handler function.  The response will be returned to the caller, and calcAndPostData will execute in the background.
     complete().accepted().done();
     
   // set the handler to point to the initiateCalcAndPost header
-  bl.register('getRedLineData', initiateCalcAndPost);
+  flexFunctions.register('getRedLineData', initiateCalcAndPost);
 };
 ```
 
@@ -406,7 +404,7 @@ In the above example, the handler receives a request and executes the `initiateC
 
 ## [Modules](#modules)
 
-Modules are a set of libraries inteded for accessing Kinvey-specific functionality.  The optional `modules` argument is passed as the third argument to all handler functions.  For example:
+Modules are a set of libraries intended for accessing Kinvey-specific functionality.  The optional `modules` argument is passed as the third argument to all handler functions.  For example:
 
 ```
 // data handler
@@ -861,13 +859,13 @@ For example, to send a broadcast with payloads:
 
 ```javascript
 const iOSAps = { alert: "You have a new message", badge: 2, sound: "notification.wav" }
-const iOSExtras = {from: "Kinvey", subject: "Welcome to Business Logic"}
+const iOSExtras = {from: "Kinvey", subject: "Welcome to Flex Services!"}
 const androidPayload = {message: "You have a new Message", from: "Kinvey", subject: "Welcome to BL" }
 const push = modules.push;
 push.broadcastPayload(iOSAps, iOSExtras, androidPayload, callback);
 ```
 
-Push calls are asynchronous in nature.  They can be invoked without a callback, but are not guaranteed to complete before continuing to the next statement.  However, once invoked they will complete the sending of the push messages, even if the business logic is terminated via a completion handler.  
+Push calls are asynchronous in nature.  They can be invoked without a callback, but are not guaranteed to complete before continuing to the next statement.  However, once invoked they will complete the sending of the push messages, even if the handler function is terminated via a completion handler.
 
 *Note:* The email module is currently only available for services running on the Kinvey Microservices Runtime, and is not available externally or for local testing.  
 
@@ -1227,4 +1225,4 @@ The `X-Kinvey-Original-Request-Headers` object can contain any number of custom 
 | `x-kinvey-api-version` | The API version to use (number).  Note this is important for the `dataStore` module. | 
 | `authorization` | The authorization string (either Basic or Kinvey auth) for accessing Kinvey's REST service. | 
 | `x-kinvey-client-app-version` | The Client App Version string |
-| `x-kinvey-custom-request-properties` | A JSON-stringified The custom request properties.  |  
+| `x-kinvey-custom-request-properties` | A JSON-stringified The custom request properties.  |

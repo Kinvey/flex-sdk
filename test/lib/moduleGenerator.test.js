@@ -31,7 +31,7 @@ const sampleTaskInfo = {
   authKey: 'abc123',
   requestId: 'ea85600029b04a18a754d57629cff62d',
   serviceObjectName: 'quick',
-  taskType: 'dataLink',
+  taskType: 'data',
   containerMappingId: 'abc:123',
   method: 'POST',
   endpoint: null,

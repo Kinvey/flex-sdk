@@ -1,7 +1,7 @@
 {
-  "name": "kinvey-backend-sdk",
+  "name": "kinvey-flex-sdk",
   "version": "0.5.2",
-  "description": "Backend SDK",
+  "description": "SDK for creating Kinvey Flex Services",
   "engines": {
     "node": "= 6.x.x"
   },
@@ -12,7 +12,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "Kinvey/backend-sdk"
+    "url": "Kinvey/flex-sdk"
   },
   "license": "Apache-2.0",
   "dependencies": {
@@ -46,9 +46,9 @@
     "pretest": "./node_modules/.bin/eslint lib test",
     "test": "mocha test/lib/modules/* test/lib/*",
     "test-core": "mocha test/lib/*",
-    "test-sdk": "mocha test/lib/sdk.test.js",
-    "test-datalink": "mocha test/lib/dataLink.test.js",
-    "test-businesslogic": "mocha test/lib/businessLogic.test.js",
+    "test-flex": "mocha test/lib/flex.test.js",
+    "test-data": "mocha test/lib/data.test.js",
+    "test-functions": "mocha test/lib/functions.test.js",
     "test-moduleGenerator": "mocha test/lib/moduleGenerator.test.js",
     "test-modules": "mocha test/lib/modules/*",
     "test-backendcontext": "mocha test/lib/modules/backendContext.test.js",

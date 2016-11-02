@@ -21,16 +21,16 @@ const mockTaskReceiver = require('./mocks/mockTaskReceiver.js');
 describe('service creation', () => {
   let sdk = null;
   before((done) => {
-    sdk = proxyquire('../../lib/sdk', { 'kinvey-code-task-runner': mockTaskReceiver });
+    sdk = proxyquire('../../lib/flex', { 'kinvey-code-task-runner': mockTaskReceiver });
     return done();
   });
   it('can create a new service', (done) =>
-    sdk.service((err, service) => {
+    sdk.service((err, flex) => {
       should.not.exist(err);
-      should.exist(service.dataLink);
-      should.exist(service.businessLogic);
-      should.exist(service.moduleGenerator);
-      should.exist(service.logger);
+      should.exist(flex.data);
+      should.exist(flex.functions);
+      should.exist(flex.moduleGenerator);
+      should.exist(flex.logger);
       return done();
     }));
 

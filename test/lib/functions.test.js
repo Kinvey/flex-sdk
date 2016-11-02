@@ -12,7 +12,7 @@
  * the License.
  */
 
-const logic = require('../../lib/service/businesslogic');
+const logic = require('../../lib/service/functions');
 const should = require('should');
 const testTaskName = 'myTaskName';
 
@@ -22,7 +22,7 @@ function quickRandom() {
 
 function sampleTask(name) {
   return {
-    taskType: 'businessLogic',
+    taskType: 'functions',
     taskName: name,
     method: 'POST',
     endpoint: null,
@@ -269,8 +269,8 @@ describe('business logic', () => {
         should.not.exist(err);
         result.response.statusCode.should.eql(550);
         result.response.body = JSON.parse(result.response.body);
-        result.response.body.error.should.eql('DataLinkRuntimeError');
-        result.response.body.description.should.eql('The Datalink had a runtime error.  See debug message for details');
+        result.response.body.error.should.eql('FlexRuntimeError');
+        result.response.body.description.should.eql('The Flex Service had a runtime error.  See debug message for details');
         result.response.body.debug.should.eql('There was some error in the app!');
         return done();
       });
