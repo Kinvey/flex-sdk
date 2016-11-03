@@ -59,7 +59,7 @@ describe('dataStore', () => {
   it('should initialize datastore', () => {
     const store = dataStore(this.appMetadata, this.requestContext);
     store.should.be.a.Function();
-    store.name.should.eql('DataStore');
+    store.name.should.eql('generateDataStore');
   });
 
   describe('datastore object', () => {
