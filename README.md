@@ -67,6 +67,7 @@ FlexFunctions are a RPC function that can contain the following properties in th
 For service discovery
 ```
 POST   /_command/discover
+```
 
 ## [FlexData](#flex-data)
 
