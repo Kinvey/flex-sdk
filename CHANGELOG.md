@@ -1,5 +1,14 @@
 ## Changelog
 
+### 1.0.0-rc.1
+* Renamed package and changed some of the API Names
+  * Rename `kinvey-backend-sdk` to `kinvey-flex-sdk`
+  * Rename `DataLink` to `FlexData`
+  * Rename `BusinessLogic` to `FlexFunctions`
+  * Change readme and examples to refer to the package as `sdk`, the method to generate the service as `service`, and the generated service as `flex`.
+* Allow FlexFunctions to be invoked externally
+* Fix datastore overwriting requestContext
+
 ### 0.5.2
 * Bumped code-task-runner to v0.3.1 (to address a protocol bug)
 
