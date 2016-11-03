@@ -1,11 +1,15 @@
 ## Changelog
 
+### 1.0.0-rc.2
+* Pass requestMetadata (not requestContext) into dataStore
+
 ### 1.0.0-rc.1
 * Renamed package and changed some of the API Names
   * Rename `kinvey-backend-sdk` to `kinvey-flex-sdk`
   * Rename `DataLink` to `FlexData`
   * Rename `BusinessLogic` to `FlexFunctions`
   * Change readme and examples to refer to the package as `sdk`, the method to generate the service as `service`, and the generated service as `flex`.
+* Tested and bumped node.js version to v6.9.1
 * Allow FlexFunctions to be invoked externally
 * Fix datastore overwriting requestContext
 
