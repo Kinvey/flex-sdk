@@ -31,7 +31,42 @@ sdk.service({ host: 'somehost', port: 7777 }, (err, flex) => {
 });
 ```
 
-To run your code locally, execute `node .` in the root of your project.  Routes conform to the Kinvey Data Link specification.  
+To run your code locally, execute `node .` in the root of your project.  Routes are:
+
+For FlexData:
+
+```
+GET     /:serviceObject/                // Get all entities in a Service Object
+GET     /:serviceObject/:id             // Get a single entity by id
+GET     /:serviceObject/?{query}        // Get entities by query
+POST    /:serviceObject/                // Create an entity
+PUT     /:serviceObject/:id             // Update a service object entity
+DELETE  /:serviceObject/                // Delete all service objects
+DELETE  /:serviceObject/:id             // Delete a single entity by id
+DELETE  /:serviceObject/?{query}        // Delete a service object by query
+GET     /:serviceObject/_count          // Get a count of all records in the service object
+GET     /:serviceObject/_count/?{query} // Get the count of a query result
+```
+
+For FlexFunctions:
+
+```
+POST    /_flexFunctions/:handlerName    // Execute the handler function
+```
+
+FlexFunctions are a RPC function that can contain the following properties in the body that represent the original request:
+
+| property     | description |
+| --------- | ----------- |
+| objectName | The name of the object being acted on (collection) if applicable |
+| body | The request body |
+| query | The query string |
+| id | The id of the entity if applicable |
+| method | The original http method |
+
+For service discovery
+```
+POST   /_command/discover
 
 ## [FlexData](#flex-data)
 

@@ -17,7 +17,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "bson": "0.4.23",
-    "kinvey-code-task-runner": "0.3.1",
+    "kinvey-code-task-runner": "1.0.0-rc.1",
     "kinvey-datalink-errors": "0.2.2",
     "lodash.forown": "4.2.0",
     "lodash.get": "4.3.0",
