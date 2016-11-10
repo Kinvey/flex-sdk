@@ -1,9 +1,7 @@
 ## Changelog
 
-### 1.0.0-rc.2
+### 1.0.0
 * Pass requestMetadata (not requestContext) into dataStore
-
-### 1.0.0-rc.1
 * Renamed package and changed some of the API Names
   * Rename `kinvey-backend-sdk` to `kinvey-flex-sdk`
   * Rename `DataLink` to `FlexData`
@@ -35,19 +33,19 @@
 * Updated readme with information on business logic and asynchronous, long-running code
 
 ### 0.4.3
-* BACK-1600: Fixed SDK logger bug which prevented output from reaching service logs and removed unneeded metadata from logger output
+* Fixed SDK logger bug which prevented output from reaching service logs and removed unneeded metadata from logger output
 * Minor style refactoring
 
 ### 0.4.2
-* BACK-1600: Added improved SDK logger with threshold support
+* Added improved SDK logger with threshold support
 
 ### 0.4.1
-* BACK-1670: Added support for business logic handler discovery
+* Added support for business logic handler discovery
 * Modified service discovery response structure
 
 ### 0.4.0
 * Complete rewrite in es6, targeting node 6
-* BACK-1531: make backend sdk work externally
+* Make backend sdk work externally
 
 ### 0.3.4
 * Parse request.query if it is stringified
