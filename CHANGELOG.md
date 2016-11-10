@@ -1,5 +1,8 @@
 ## Changelog
 
+### 1.0.1
+* Fixed bug with service discovery
+
 ### 1.0.0
 * Pass requestMetadata (not requestContext) into dataStore
 * Renamed package and changed some of the API Names
