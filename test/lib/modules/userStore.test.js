@@ -106,7 +106,7 @@ describe('userStore', () => {
       myStore._requestContext.should.containDeep(this.requestContext);
     });
 
-    it('should create a UsetStore object that uses mastersecret', () => {
+    it('should create a UserStore object that uses mastersecret', () => {
       const myStore = this.store({ useMasterSecret: true });
       myStore._useMasterSecret.should.be.true();
       myStore._appMetadata.should.containDeep(this.appMetadata);
