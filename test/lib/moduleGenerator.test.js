@@ -81,6 +81,7 @@ describe('modules creation', () => {
     should.exist(modules.tempObjectStore);
     should.exist(modules.Query);
     should.exist(modules.dataStore);
+    should.exist(modules.userStore);
     return done();
   });
 });

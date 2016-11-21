@@ -454,15 +454,16 @@ You can use any non-Kinvey libraries or modules you want by including them in yo
 
 The following modules are available:
 
-* [backendContext](#backendcontext) Provides methods to access information about the current backend context.
-* [dataStore](#datastore) Fetch, query, and write to Kinvey collections.
-* [email](#email) Send Email notifications
-* [Kinvey Entity](#kinvey-entity) Kinvey entity utilities
-* [kinveyDate](#kinvey-date) Kinvey date utilities
-* [push](#push) Send push notifications to a user's device
-* [Query](#query) Create queries to be used by the dataStore.  
-* [requestContext](#request-context) Provides methods to access information about the current request context.
-* [tempObjectStore](#temp-object-store) Key-value store for persisting temporary data between a pre- and post-hook.
+* [backendContext](#backend-context-module) Provides methods to access information about the current backend context.
+* [dataStore](#data-store-module) Fetch, query, and write to Kinvey collections.
+* [email](#email-module) Send Email notifications
+* [Kinvey Entity](#kinvey-entity-module) Kinvey entity utilities
+* [kinveyDate](#kinvey-date-module) Kinvey date utilities
+* [push](#push-module) Send push notifications to a user's device
+* [Query](#query-module) Create queries to be used by the dataStore.  
+* [requestContext](#request-context-module) Provides methods to access information about the current request context.
+* [tempObjectStore](#temp-object-store-module) Key-value store for persisting temporary data between a pre- and post-hook.
+* [userStore](#user-store-module) Fetch, query, create, update, delete, suspend and restore Kinvey Users
 
 ### [backendContext](#backend-context-module)
 
@@ -1230,7 +1231,72 @@ function handler2(request, response, modules) {
 }
 ```
 
-*Note:* `tempObjectStore` is meant for storing small, temporary amounts of data to be passed between different functions.  Large amounts of data / large objects should not be stored in the `tempObjectStore` for performance reasons.    
+*Note:* `tempObjectStore` is meant for storing small, temporary amounts of data to be passed between different functions.  Large amounts of data / large objects should not be stored in the `tempObjectStore` for performance reasons.  
+
+### [userStore](#user-store-module)
+
+Use the userStore module to interact with Kinvey Users.  The userStore module can be used to create, update, find, remove, suspend, and restore Kinvey users.  
+
+To initialize the userStore:
+
+```
+const store = modules.userStore();
+```
+
+The `userStore` method also takes an optional `options` argument is an optional object containing store options for the current store.  The options are:
+
+| Option             | Description                  |
+|:-------------------|:------------------------| 
+| `useMasterSecret` | Uses the mastersecret credentials to access the userstore if set to `true`.  If not included or set to false, will use the current user credentials. |
+| `skipBl` | If set to true, skips BL processing when accessing the userstore.  If false or not included, it will default to executing any BL associated with the store. |
+
+For example:  
+
+```
+const options = {
+  useBl: true,
+  useMasterSecret: false
+}
+
+const store = modules.userStore(options);
+```
+
+The `userStore` object contains methods for accessing Kinvey users.  All methods take a `callback` function.  
+
+*Note:*  most methods take a callback with `err` and `results` arguments.  `remove`, `suspend`, and `restore` take only an `err` arguemnt.
+
+| Method             | Description                  |
+|:-------------------|:------------------------|
+| `find(query, callback)` | Finds the users contained in the `query`.  The `query` is a `Query` object created with `modules.Query`.  If no `Query` object is supplied, the `find` method will return all users in the system, based on the authenticated user (or `mastersecret` and the `_acls` of the user collection. |
+| `findById(userId, callback)` | Finds a single user by its `_id`.  |
+| `getCurrentUser(callback)` | Gets the current user's user entity.  Note, this method executes in the current user context, regardless of whether the store was set to `mastersecret` or not. |
+| `create(user, callback)` | Creates the provided `user`.  Note that regardless of whether user or `mastersecret` credentials are selected for the store, `create` always uses `appsecret` credentials. |
+| `update(user, callback)` | Updates the provided `user`.  Note that the `user` entity supplied must contain an `_id`. |  |
+| `remove(userId, callback)` | Removes a single user by its `_id`. Note this method deletes the user from the userStore and is non-recoverable. |
+| `suspend(userId, callback)` | Suspends a single user by its `_id`. |
+| `restore(userId, callback)` | Restores a suspended user. |
+| `count(query, callback)` | Gets a count of all users that would be returned by the `query`.  The `query` is a `Query` object created with `modules.Query`.  If no `Query` object is supplied, the `count` method will return a count of the total number of users. | 
+
+For example:
+
+```
+  const store =  userStore({ useMasterSecret: true });
+  store.findById(1234, (err, result) => {
+    if (err) {
+      return complete(err).runtimeError().done();
+    }
+    result.status = 'Approved';
+    store.update(result, (err, savedResult) => {
+      if (err) {
+        return complete(err).runtimeError().done();
+      }
+      complete(savedResult).ok().next();
+    });
+  });
+});
+```
+
+**NOTE** When testing userStore in particular locally, special headers need to be added to your local tests.  These headers will be added automatically by Kinvey in production use.  For information on the required headers, see the section on [testing locally](#testing-locally)  
 
 
 ## [Testing Locally](#testing-locally)
@@ -1240,10 +1306,10 @@ In production use, certain data is sent to the the service by Kinvey for use in 
 
 | Header             | Description           | What requires it |
 |:-------------------|:-------------------|:-------------------|
-| `X-Kinvey-App-Metadata` | A stringified JSON object that contains information about the app context from which this request is being executed.  | `backendContext`, `dataStore` | 
-| `X-Kinvey-Original-Request-Headers` | A stringified JSON object that contains the request headers that belong to the request context of the BL or data request | `requestContext`, `dataStore`, the `request` argument in all handlers (if you want to access request headers) |
-| `X-Kinvey-Username` | The username of the user making the request. | `requestContext`, `dataStore` |
-| `X-Kinvey-User-Id` | The User Id | `requestContext`, `dataStore` |
+| `X-Kinvey-App-Metadata` | A stringified JSON object that contains information about the app context from which this request is being executed.  | `backendContext`, `dataStore`, `userStore` | 
+| `X-Kinvey-Original-Request-Headers` | A stringified JSON object that contains the request headers that belong to the request context of the BL or data request | `requestContext`, `dataStore`, `userStore`, the `request` argument in all handlers (if you want to access request headers) |
+| `X-Kinvey-Username` | The username of the user making the request. | `requestContext`, `dataStore`, `userStore` |
+| `X-Kinvey-User-Id` | The User Id | `requestContext`, `dataStore`, `userStore` |
 
 The `X-Kinvey-App-Metadata` object contains:
 
