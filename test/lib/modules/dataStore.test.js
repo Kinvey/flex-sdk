@@ -596,6 +596,17 @@ describe('dataStore', () => {
         return done();
       });
     });
+
+    it('should return an error if missing entityId', (done) => {
+      const collection = this.store().collection('myCollection');
+      collection.removeById((err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('DataStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('entityId is required');
+        return done();
+      });
+    });
   });
 
   describe('count', () => {
@@ -641,7 +652,7 @@ describe('dataStore', () => {
       });
     });
 
-    it('should find all records and skip bl', (done) => {
+    it('should get a count of all records and skip bl', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('x-kinvey-skip-business-logic', true)
         .matchHeader('content-type', 'application/json')
@@ -657,7 +668,7 @@ describe('dataStore', () => {
       });
     });
 
-    it('should find records with a query object', (done) => {
+    it('should get a count of records with a query object', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
         .matchHeader('x-kinvey-api-version', 3)
@@ -672,17 +683,6 @@ describe('dataStore', () => {
       collection.count(query, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 12 });
-        return done();
-      });
-    });
-
-    it('should return an error if missing entityId', (done) => {
-      const collection = this.store().collection('myCollection');
-      collection.removeById((err, result) => {
-        should.not.exist(result);
-        err.message.should.eql('DataStoreError');
-        err.description.should.eql('Bad Request');
-        err.debug.should.eql('entityId is required');
         return done();
       });
     });
