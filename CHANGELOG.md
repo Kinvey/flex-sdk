@@ -1,5 +1,9 @@
 ## Changelog
 
+### 1.1.0
+* Added `modules.userStore` for creating, updating, finding, deleting, suspending, and restoring user entities.
+* Updated code-task-receiver to fix functions not being able to be tested locally
+
 ### 1.0.1
 * Fixed bug with service discovery
 
