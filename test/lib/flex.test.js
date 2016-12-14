@@ -33,6 +33,7 @@ describe('service creation', () => {
       should.exist(flex.moduleGenerator);
       should.exist(flex.logger);
       should.exist(flex.version);
+      should.exist(flex.auth);
       flex.version.should.eql(flexPackageJson.version);
       return done();
     }));

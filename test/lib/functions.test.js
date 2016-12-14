@@ -12,7 +12,7 @@
  * the License.
  */
 
-const logic = require('../../lib/service/functions');
+const functions = require('../../lib/service/functions');
 const should = require('should');
 const testTaskName = 'myTaskName';
 
@@ -53,65 +53,72 @@ function sampleBadTask() {
   };
 }
 
-describe('business logic', () => {
-  describe('logic registration', () => {
+describe('FlexFunctions', () => {
+  describe('function registration', () => {
     afterEach((done) => {
-      logic.clearAll();
+      functions.clearAll();
       return done();
     });
-    it('can register a logic task', (done) => {
-      logic.register(testTaskName, () => done());
-      const fn = logic.resolve(testTaskName);
+    it('can register a functions task', (done) => {
+      functions.register(testTaskName, () => done());
+      const fn = functions.resolve(testTaskName);
       return fn();
     });
   });
   describe('discovery', () => {
     afterEach((done) => {
-      logic.clearAll();
+      functions.clearAll();
       return done();
     });
-    it('returns an array of all registered business logic handlers', (done) => {
+    it('returns an array of all registered function handlers', (done) => {
       const testHandlerName = 'testObj';
-      logic.register(testHandlerName, () => {});
-      const discoveredHandlers = logic.getHandlers();
+      functions.register(testHandlerName, () => {});
+      const discoveredHandlers = functions.getHandlers();
       should.exist(discoveredHandlers[0]);
       discoveredHandlers.length.should.eql(1);
       discoveredHandlers[0].should.eql(testHandlerName);
       done();
     });
+
+    it('returns an empty array if no function handlers have been registered', (done) => {
+      const discoveredHandlers = functions.getHandlers();
+      Array.isArray(discoveredHandlers).should.be.True();
+      discoveredHandlers.length.should.eql(0);
+      done();
+    });
   });
-  describe('logic processing', () => {
+  describe('functions processing', () => {
     afterEach((done) => {
-      logic.clearAll();
+      functions.clearAll();
       return done();
     });
-    it('can process a logic task', (done) => {
+    it('can process a functions task', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      logic.register(taskName, (request) => done());
-      logic.process(task, {}, () => {});
+      functions.register(taskName, (request) => done());
+      functions.process(task, {}, () => {});
     });
 
-    it('includes request, completion, and module handlers in a logic task', (done) => {
+    it('includes request, completion, and module handlers in a functions task', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      logic.register(taskName, (request, complete, modules) => {
+      functions.register(taskName, (request, complete, modules) => {
         request.should.be.an.Object();
         complete.should.be.a.Function();
         modules.should.be.an.Object();
         return done();
       });
-      logic.process(task, {}, () => {});
+      functions.process(task, {}, () => {});
     });
   });
   describe('completion handlers', () => {
     afterEach((done) => {
-      logic.clearAll();
+      functions.clearAll();
       return done();
     });
     it("should return a 'BadRequest' response with a null task name", (done) => {
       const task = sampleTask(null);
-      return logic.process(task, null, (err) => {
+      return functions.process(task, null, (err) => {
         err.response.statusCode.should.eql(400);
         err.response.body.debug.should.eql('No task name to execute');
         return done();
@@ -119,7 +126,7 @@ describe('business logic', () => {
     });
     it("should return a 'BadRequest' response with a non-JSON task", (done) => {
       const task = sampleBadTask(null);
-      return logic.process(task, null, (err) => {
+      return functions.process(task, null, (err) => {
         err.response.statusCode.should.eql(400);
         err.response.body.debug.should.eql('Request body is not JSON');
         return done();
@@ -128,8 +135,8 @@ describe('business logic', () => {
     it('should return a successful response', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      logic.register(taskName, (request, complete) => complete().ok().next());
-      return logic.process(task, null, (err, result) => {
+      functions.register(taskName, (request, complete) => complete().ok().next());
+      return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
         result.response.body.should.eql('{}');
@@ -139,8 +146,8 @@ describe('business logic', () => {
     it('should include a body', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      logic.register(taskName, (request, complete) => complete({ foo: 'bar' }).ok().next());
-      return logic.process(task, null, (err, result) => {
+      functions.register(taskName, (request, complete) => complete({ foo: 'bar' }).ok().next());
+      return functions.process(task, null, (err, result) => {
         result.response.statusCode.should.eql(200);
         result.response.body.should.eql(JSON.stringify({
           foo: 'bar'
@@ -151,8 +158,8 @@ describe('business logic', () => {
     it('should return a 201 created', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      logic.register(taskName, (request, complete) => complete({ foo: 'bar' }).created().next());
-      return logic.process(task, null, (err, result) => {
+      functions.register(taskName, (request, complete) => complete({ foo: 'bar' }).created().next());
+      return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(201);
         result.response.body.should.eql(JSON.stringify({
@@ -164,8 +171,8 @@ describe('business logic', () => {
     it('should return a 202 accepted', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      logic.register(taskName, (request, complete) => complete({ foo: 'bar' }).accepted().next());
-      return logic.process(task, null, (err, result) => {
+      functions.register(taskName, (request, complete) => complete({ foo: 'bar' }).accepted().next());
+      return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(202);
         result.response.body.should.eql(JSON.stringify({
@@ -177,8 +184,8 @@ describe('business logic', () => {
     it('should return a 400 bad request', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      logic.register(taskName, (request, complete) => complete('This is a bad request').badRequest().next());
-      return logic.process(task, null, (err, result) => {
+      functions.register(taskName, (request, complete) => complete('This is a bad request').badRequest().next());
+      return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(400);
         result.response.body = JSON.parse(result.response.body);
@@ -191,8 +198,8 @@ describe('business logic', () => {
     it('should return a 401 unauthorized', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      logic.register(taskName, (request, complete) => complete('You are not authorized!').unauthorized().next());
-      return logic.process(task, null, (err, result) => {
+      functions.register(taskName, (request, complete) => complete('You are not authorized!').unauthorized().next());
+      return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(401);
         result.response.body = JSON.parse(result.response.body);
@@ -206,8 +213,8 @@ describe('business logic', () => {
     it('should return a 403 forbidden', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      logic.register(taskName, (request, complete) => complete('Forbidden!').forbidden().next());
-      return logic.process(task, null, (err, result) => {
+      functions.register(taskName, (request, complete) => complete('Forbidden!').forbidden().next());
+      return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(403);
         result.response.body = JSON.parse(result.response.body);
@@ -220,8 +227,8 @@ describe('business logic', () => {
     it('should return a 404 not found', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      logic.register(taskName, (request, complete) => complete('The request is not found!').notFound().next());
-      return logic.process(task, null, (err, result) => {
+      functions.register(taskName, (request, complete) => complete('The request is not found!').notFound().next());
+      return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(404);
         result.response.body = JSON.parse(result.response.body);
@@ -235,8 +242,8 @@ describe('business logic', () => {
     it('should return a 405 not allowed', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      logic.register(taskName, (request, complete) => complete('The request is not allowed!').notAllowed().next());
-      return logic.process(task, null, (err, result) => {
+      functions.register(taskName, (request, complete) => complete('The request is not allowed!').notAllowed().next());
+      return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(405);
         result.response.body = JSON.parse(result.response.body);
@@ -249,8 +256,8 @@ describe('business logic', () => {
     it('should return a 501 not implemented', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      logic.register(taskName, (request, complete) => complete('This isn\'t implemented').notImplemented().next());
-      return logic.process(task, null, (err, result) => {
+      functions.register(taskName, (request, complete) => complete('This isn\'t implemented').notImplemented().next());
+      return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(501);
         result.response.body = JSON.parse(result.response.body);
@@ -263,9 +270,9 @@ describe('business logic', () => {
     it('should return a 550 runtime error', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      logic.register(taskName, (request, complete) => complete('There was some error in the app!')
+      functions.register(taskName, (request, complete) => complete('There was some error in the app!')
         .runtimeError().next());
-      return logic.process(task, null, (err, result) => {
+      return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(550);
         result.response.body = JSON.parse(result.response.body);
@@ -278,8 +285,8 @@ describe('business logic', () => {
     it('should process a next (continuation) handler', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      logic.register(taskName, (request, complete) => complete({ foo: 'bar' }).ok().next());
-      return logic.process(task, null, (err, result) => {
+      functions.register(taskName, (request, complete) => complete({ foo: 'bar' }).ok().next());
+      return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
         result.response.body.should.eql(JSON.stringify({
@@ -292,8 +299,8 @@ describe('business logic', () => {
     it('should process a done (completion) handler', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      logic.register(taskName, (request, complete) => complete({ foo: 'bar' }).ok().done());
-      return logic.process(task, null, (err, result) => {
+      functions.register(taskName, (request, complete) => complete({ foo: 'bar' }).ok().done());
+      return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
         result.response.body.should.eql(JSON.stringify({
