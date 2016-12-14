@@ -82,7 +82,7 @@ describe('FlexFunctions', () => {
 
     it('returns an empty array if no function handlers have been registered', (done) => {
       const discoveredHandlers = functions.getHandlers();
-      Array.isArray(discoveredHandlers).should.be.True();
+      Array.isArray(discoveredHandlers).should.eql(true);
       discoveredHandlers.length.should.eql(0);
       done();
     });
@@ -95,7 +95,7 @@ describe('FlexFunctions', () => {
     it('can process a functions task', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      functions.register(taskName, (request) => done());
+      functions.register(taskName, () => done());
       functions.process(task, {}, () => {});
     });
 

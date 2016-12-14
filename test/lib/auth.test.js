@@ -22,14 +22,14 @@ function quickRandom() {
 function sampleTask(taskName) {
   return {
     taskType: 'auth',
-    taskName: taskName,
+    taskName,
     method: 'POST',
     endpoint: null,
     request: {
       body: {
         username: 'foo',
         password: 'bar',
-        options: {foobar: 'barfoo'}
+        options: { foobar: 'barfoo' }
       }
     },
     response: {
@@ -83,7 +83,7 @@ describe('FlexAuth', () => {
 
     it('returns an empty array if no auth handlers have been registered', (done) => {
       const discoveredHandlers = auth.getHandlers();
-      Array.isArray(discoveredHandlers).should.be.True();
+      Array.isArray(discoveredHandlers).should.eql(true);
       discoveredHandlers.length.should.eql(0);
       done();
     });
@@ -96,7 +96,7 @@ describe('FlexAuth', () => {
     it('can process an auth task', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      auth.register(task.taskName, (request) => done());
+      auth.register(task.taskName, () => done());
       auth.process(task, {}, () => {});
     });
 
@@ -126,7 +126,6 @@ describe('FlexAuth', () => {
       });
       auth.process(task, {}, () => {});
     });
-
   });
   describe('completion handlers', () => {
     afterEach((done) => {
@@ -174,7 +173,10 @@ describe('FlexAuth', () => {
     it('should allow for custom properties', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      auth.register(taskName, (request, complete) => complete({ foo: 'bar' }).addAttribute('attr', 'value').ok().next());
+      auth.register(taskName, (request, complete) => complete({ foo: 'bar' })
+        .addAttribute('attr', 'value')
+        .ok()
+        .next());
       return auth.process(task, null, (err, result) => {
         result.response.statusCode.should.eql(200);
         result.response.body.should.eql('{"token":{"foo":"bar"},"attr":"value","authenticated":true}');
