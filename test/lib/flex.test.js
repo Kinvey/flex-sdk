@@ -12,6 +12,7 @@
  * the License.
  */
 
+const flexPackageJson = require('../../package.json');
 const should = require('should');
 const proxyquire = require('proxyquire');
 const sinon = require('sinon');
@@ -31,6 +32,8 @@ describe('service creation', () => {
       should.exist(flex.functions);
       should.exist(flex.moduleGenerator);
       should.exist(flex.logger);
+      should.exist(flex.version);
+      flex.version.should.eql(flexPackageJson.version);
       return done();
     }));
 
