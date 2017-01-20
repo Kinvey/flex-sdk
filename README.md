@@ -527,7 +527,7 @@ For example:
 
 ```
 const options = {
-  useBl: true,
+  skipBl: true,
   useMasterSecret: false
 }
 
@@ -1254,7 +1254,7 @@ For example:
 
 ```
 const options = {
-  useBl: true,
+  skipBl: true,
   useMasterSecret: false
 }
 
