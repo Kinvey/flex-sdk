@@ -3,6 +3,7 @@
 ### 1.2.0
 * Append flex SDK version to task response
 * Upgrade code-task-receiver to v1.2.1 to fix null tasks sent via the TCP stream from crashing
+* Fixed doc issue
 
 ### 1.1.0
 * Added `modules.userStore` for creating, updating, finding, deleting, suspending, and restoring user entities.
