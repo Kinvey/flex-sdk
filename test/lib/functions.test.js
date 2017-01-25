@@ -26,16 +26,83 @@ function sampleTask(name) {
     taskName: name,
     method: 'POST',
     endpoint: null,
+    hookType: 'pre',
     request: {
       method: 'POST',
-      headers: {},
+      headers: { },
       entityId: '12345',
-      serviceObjectName: null
+      objectName: null
     },
     response: {
       status: 0,
       headers: {},
       body: {}
+    }
+  };
+}
+
+function samplePostTask(name) {
+  return {
+    taskType: 'functions',
+    taskName: name,
+    method: 'POST',
+    endpoint: null,
+    hookType: 'post',
+    request: {
+      method: 'POST',
+      headers: { requestHeader: 'foo' },
+      entityId: '12345',
+      objectName: null,
+      body: { foo: 'bar' }
+    },
+    response: {
+      status: 0,
+      headers: { responseHeader: 'bar' },
+      body: [{ id: quickRandom() }, { id: quickRandom() }, { id: quickRandom() }]
+    }
+  };
+}
+
+function samplePreTask(name) {
+  return {
+    taskType: 'functions',
+    taskName: name,
+    method: 'POST',
+    endpoint: null,
+    hookType: 'pre',
+    request: {
+      method: 'POST',
+      headers: { requestHeader: 'foo' },
+      entityId: '12345',
+      objectName: null,
+      body: { foo: 'bar' }
+    },
+    response: {
+      status: 0,
+      headers: { responseHeader: 'bar' },
+      body: [{ id: quickRandom() }, { id: quickRandom() }, { id: quickRandom() }]
+    }
+  };
+}
+
+function sampleCustomEndpoint(name) {
+  return {
+    taskType: 'functions',
+    taskName: name,
+    method: 'POST',
+    endpoint: null,
+    hookType: 'customEndpoint',
+    request: {
+      method: 'POST',
+      headers: { requestHeader: 'foo' },
+      entityId: '12345',
+      objectName: null,
+      body: { foo: 'bar' }
+    },
+    response: {
+      status: 0,
+      headers: { responseHeader: 'bar' },
+      body: [{ id: quickRandom() }, { id: quickRandom() }, { id: quickRandom() }]
     }
   };
 }
@@ -99,11 +166,11 @@ describe('FlexFunctions', () => {
       functions.process(task, {}, () => {});
     });
 
-    it('includes request, completion, and module handlers in a functions task', (done) => {
+    it('includes context, completion, and module handlers in a functions task', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      functions.register(taskName, (request, complete, modules) => {
-        request.should.be.an.Object();
+      functions.register(taskName, (context, complete, modules) => {
+        context.should.be.an.Object();
         complete.should.be.a.Function();
         modules.should.be.an.Object();
         return done();
@@ -135,7 +202,7 @@ describe('FlexFunctions', () => {
     it('should return a successful response', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      functions.register(taskName, (request, complete) => complete().ok().next());
+      functions.register(taskName, (context, complete) => complete().ok().next());
       return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
@@ -146,7 +213,7 @@ describe('FlexFunctions', () => {
     it('should include a body', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      functions.register(taskName, (request, complete) => complete({ foo: 'bar' }).ok().next());
+      functions.register(taskName, (context, complete) => complete({ foo: 'bar' }).ok().next());
       return functions.process(task, null, (err, result) => {
         result.response.statusCode.should.eql(200);
         result.response.body.should.eql(JSON.stringify({
@@ -155,10 +222,55 @@ describe('FlexFunctions', () => {
         return done();
       });
     });
+    it('should include the response body and headers when task is a post task', (done) => {
+      const taskName = quickRandom();
+      const task = samplePostTask(taskName);
+      functions.register(taskName, (context, complete) => {
+        context.body.should.eql(task.response.body);
+        context.body.should.not.eql(task.request.body);
+        context.headers.should.eql(task.response.headers);
+        context.headers.should.not.eql(task.request.headers);
+        return complete(task.response.body).ok().next();
+      });
+      return functions.process(task, null, (err, result) => {
+        return done();
+      });
+    });
+
+    it('should include the request body and headers when task is a pre task', (done) => {
+      const taskName = quickRandom();
+      const task = samplePreTask(taskName);
+      functions.register(taskName, (context, complete) => {
+        context.body.should.eql(task.request.body);
+        context.body.should.not.eql(task.response.body);
+        context.headers.should.eql(task.request.headers);
+        context.headers.should.not.eql(task.response.headers);
+        return complete(task.response.body).ok().next();
+      });
+      return functions.process(task, null, (err, result) => {
+        return done();
+      });
+    });
+
+    it('should include the request body and headers when task is a custom endpoint task', (done) => {
+      const taskName = quickRandom();
+      const task = sampleCustomEndpoint(taskName);
+      functions.register(taskName, (context, complete) => {
+        context.body.should.eql(task.request.body);
+        context.body.should.not.eql(task.response.body);
+        context.headers.should.eql(task.request.headers);
+        context.headers.should.not.eql(task.response.headers);
+        return complete(task.response.body).ok().next();
+      });
+      return functions.process(task, null, (err, result) => {
+        return done();
+      });
+    });
+
     it('should return a 201 created', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      functions.register(taskName, (request, complete) => complete({ foo: 'bar' }).created().next());
+      functions.register(taskName, (context, complete) => complete({ foo: 'bar' }).created().next());
       return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(201);
@@ -171,7 +283,7 @@ describe('FlexFunctions', () => {
     it('should return a 202 accepted', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      functions.register(taskName, (request, complete) => complete({ foo: 'bar' }).accepted().next());
+      functions.register(taskName, (context, complete) => complete({ foo: 'bar' }).accepted().next());
       return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(202);
@@ -184,7 +296,7 @@ describe('FlexFunctions', () => {
     it('should return a 400 bad request', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      functions.register(taskName, (request, complete) => complete('This is a bad request').badRequest().next());
+      functions.register(taskName, (context, complete) => complete('This is a bad request').badRequest().next());
       return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(400);
@@ -198,7 +310,7 @@ describe('FlexFunctions', () => {
     it('should return a 401 unauthorized', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      functions.register(taskName, (request, complete) => complete('You are not authorized!').unauthorized().next());
+      functions.register(taskName, (context, complete) => complete('You are not authorized!').unauthorized().next());
       return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(401);
@@ -213,7 +325,7 @@ describe('FlexFunctions', () => {
     it('should return a 403 forbidden', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      functions.register(taskName, (request, complete) => complete('Forbidden!').forbidden().next());
+      functions.register(taskName, (context, complete) => complete('Forbidden!').forbidden().next());
       return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(403);
@@ -227,7 +339,7 @@ describe('FlexFunctions', () => {
     it('should return a 404 not found', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      functions.register(taskName, (request, complete) => complete('The request is not found!').notFound().next());
+      functions.register(taskName, (context, complete) => complete('The request is not found!').notFound().next());
       return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(404);
@@ -242,7 +354,7 @@ describe('FlexFunctions', () => {
     it('should return a 405 not allowed', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      functions.register(taskName, (request, complete) => complete('The request is not allowed!').notAllowed().next());
+      functions.register(taskName, (context, complete) => complete('The request is not allowed!').notAllowed().next());
       return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(405);
@@ -256,7 +368,7 @@ describe('FlexFunctions', () => {
     it('should return a 501 not implemented', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      functions.register(taskName, (request, complete) => complete('This isn\'t implemented').notImplemented().next());
+      functions.register(taskName, (context, complete) => complete('This isn\'t implemented').notImplemented().next());
       return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(501);
@@ -270,7 +382,7 @@ describe('FlexFunctions', () => {
     it('should return a 550 runtime error', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      functions.register(taskName, (request, complete) => complete('There was some error in the app!')
+      functions.register(taskName, (context, complete) => complete('There was some error in the app!')
         .runtimeError().next());
       return functions.process(task, null, (err, result) => {
         should.not.exist(err);
@@ -285,7 +397,7 @@ describe('FlexFunctions', () => {
     it('should process a next (continuation) handler', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      functions.register(taskName, (request, complete) => complete({ foo: 'bar' }).ok().next());
+      functions.register(taskName, (context, complete) => complete({ foo: 'bar' }).ok().next());
       return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
@@ -299,7 +411,7 @@ describe('FlexFunctions', () => {
     it('should process a done (completion) handler', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      functions.register(taskName, (request, complete) => complete({ foo: 'bar' }).ok().done());
+      functions.register(taskName, (context, complete) => complete({ foo: 'bar' }).ok().done());
       return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);

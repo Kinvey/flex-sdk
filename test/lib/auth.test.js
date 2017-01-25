@@ -100,11 +100,11 @@ describe('FlexAuth', () => {
       auth.process(task, {}, () => {});
     });
 
-    it('includes request, completion, and module handlers in a logic task', (done) => {
+    it('includes context, completion, and module handlers in a logic task', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      auth.register(taskName, (request, complete, modules) => {
-        request.should.be.an.Object();
+      auth.register(taskName, (context, complete, modules) => {
+        context.should.be.an.Object();
         complete.should.be.a.Function();
         modules.should.be.an.Object();
         return done();
@@ -112,16 +112,16 @@ describe('FlexAuth', () => {
       auth.process(task, {}, () => {});
     });
 
-    it('passes username, password, and options to the request object', (done) => {
+    it('passes username, password, and options to the context object', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      auth.register(taskName, (request, complete, modules) => {
-        request.should.be.an.Object();
+      auth.register(taskName, (context, complete, modules) => {
+        context.should.be.an.Object();
         complete.should.be.a.Function();
         modules.should.be.an.Object();
-        request.body.username.should.eql('foo');
-        request.body.password.should.eql('bar');
-        request.body.options.foobar.should.eql('barfoo');
+        context.body.username.should.eql('foo');
+        context.body.password.should.eql('bar');
+        context.body.options.foobar.should.eql('barfoo');
         return done();
       });
       auth.process(task, {}, () => {});
@@ -152,7 +152,7 @@ describe('FlexAuth', () => {
     it('should return a successful response', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      auth.register(taskName, (request, complete) => complete().ok().done());
+      auth.register(taskName, (context, complete) => complete().ok().done());
       return auth.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
@@ -163,7 +163,7 @@ describe('FlexAuth', () => {
     it('should include a body with a minimum of token and authenticated properties', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      auth.register(taskName, (request, complete) => complete({ foo: 'bar' }).ok().next());
+      auth.register(taskName, (context, complete) => complete({ foo: 'bar' }).ok().next());
       return auth.process(task, null, (err, result) => {
         result.response.statusCode.should.eql(200);
         result.response.body.should.eql('{"token":{"foo":"bar"},"authenticated":true}');
@@ -173,7 +173,7 @@ describe('FlexAuth', () => {
     it('should allow for custom properties', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      auth.register(taskName, (request, complete) => complete({ foo: 'bar' })
+      auth.register(taskName, (context, complete) => complete({ foo: 'bar' })
         .addAttribute('attr', 'value')
         .ok()
         .next());
@@ -187,7 +187,7 @@ describe('FlexAuth', () => {
     it('should return a 401 server_error', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      auth.register(taskName, (request, complete) => complete('This is a bad request').serverError().next());
+      auth.register(taskName, (context, complete) => complete('This is a bad request').serverError().next());
       return auth.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(401);
@@ -200,7 +200,7 @@ describe('FlexAuth', () => {
     it('should return a 401 access denied', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      auth.register(taskName, (request, complete) => complete('You are not authorized!').accessDenied().next());
+      auth.register(taskName, (context, complete) => complete('You are not authorized!').accessDenied().next());
       return auth.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(401);
@@ -213,7 +213,7 @@ describe('FlexAuth', () => {
     it('should return a 401 temporarily unavailable', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      auth.register(taskName, (request, complete) => complete('The auth server is temporarily unavailable!').temporarilyUnavailable().next());
+      auth.register(taskName, (context, complete) => complete('The auth server is temporarily unavailable!').temporarilyUnavailable().next());
       return auth.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(401);
@@ -227,7 +227,7 @@ describe('FlexAuth', () => {
     it('should process a next (continuation) handler', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      auth.register(taskName, (request, complete) => complete({ foo: 'bar' }).ok().next());
+      auth.register(taskName, (context, complete) => complete({ foo: 'bar' }).ok().next());
       return auth.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
@@ -239,7 +239,7 @@ describe('FlexAuth', () => {
     it('should process a done (completion) handler', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      auth.register(taskName, (request, complete) => complete({ foo: 'bar' }).ok().done());
+      auth.register(taskName, (context, complete) => complete({ foo: 'bar' }).ok().done());
       return auth.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
