@@ -35,7 +35,7 @@ function sampleTask() {
   };
 }
 
-describe('data', () => {
+describe('FlexData', () => {
   afterEach((done) => {
     data.clearAll();
     return done();
