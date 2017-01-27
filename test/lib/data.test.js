@@ -177,16 +177,16 @@ describe('FlexData', () => {
     });
     it('can process an insert', (done) => {
       const task = sampleTask();
-      data.serviceObject(serviceObjectName).onInsert((request) => {
-        request.entityId = task.request.entityId;
+      data.serviceObject(serviceObjectName).onInsert((context) => {
+        context.entityId = task.request.entityId;
         return done();
       });
       return data.process(task, {}, () => {});
     });
     it('can process an insert and include request, complete, and modules', (done) => {
       const task = sampleTask();
-      data.serviceObject(serviceObjectName).onInsert((request, complete, modules) => {
-        request.should.be.an.Object();
+      data.serviceObject(serviceObjectName).onInsert((context, complete, modules) => {
+        context.should.be.an.Object();
         complete.should.be.a.Function();
         modules.should.be.an.Object();
         return done();
@@ -194,20 +194,19 @@ describe('FlexData', () => {
       return data.process(task, {}, () => {});
     });
     it('can process an update', (done) => {
-      let task = sampleTask();
+      const task = sampleTask();
       task.method = 'PUT';
-      data.serviceObject(serviceObjectName).onUpdate((request) => {
-        task = sampleTask();
-        request.entityId = task.request.entityId;
+      data.serviceObject(serviceObjectName).onUpdate((context) => {
+        context.entityId.should.eql(task.request.entityId);
         return done();
       });
       return data.process(task, {}, () => {});
     });
-    it('can process an update and include request, complete, and modules', (done) => {
+    it('can process an update and include context, complete, and modules', (done) => {
       const task = sampleTask();
       task.method = 'PUT';
-      data.serviceObject(serviceObjectName).onUpdate((request, complete, modules) => {
-        request.should.be.an.Object();
+      data.serviceObject(serviceObjectName).onUpdate((context, complete, modules) => {
+        context.should.be.an.Object();
         complete.should.be.a.Function();
         modules.should.be.an.Object();
         return done();
@@ -215,28 +214,28 @@ describe('FlexData', () => {
       return data.process(task, {}, () => {});
     });
     it('can process a get all', (done) => {
-      let task = sampleTask();
-      task.method = 'GET';
-      delete task.entityId;
-      delete task.request.entityId;
-      delete task.query;
-      delete task.request.query;
-      data.serviceObject(serviceObjectName).onGetAll((request) => {
-        task = sampleTask();
-        request.entityId = task.request.entityId;
-        return done();
-      });
-      return data.process(task, {}, () => {});
-    });
-    it('can process a getAll and include request, complete, and modules', (done) => {
       const task = sampleTask();
       task.method = 'GET';
       delete task.entityId;
       delete task.request.entityId;
       delete task.query;
       delete task.request.query;
-      data.serviceObject(serviceObjectName).onGetAll((request, complete, modules) => {
-        request.should.be.an.Object();
+      data.serviceObject(serviceObjectName).onGetAll((context) => {
+        should.not.exist(context.entityId);
+        should.not.exist(context.query);
+        return done();
+      });
+      return data.process(task, {}, () => {});
+    });
+    it('can process a getAll and include context, complete, and modules', (done) => {
+      const task = sampleTask();
+      task.method = 'GET';
+      delete task.entityId;
+      delete task.request.entityId;
+      delete task.query;
+      delete task.request.query;
+      data.serviceObject(serviceObjectName).onGetAll((context, complete, modules) => {
+        context.should.be.an.Object();
         complete.should.be.a.Function();
         modules.should.be.an.Object();
         return done();
@@ -244,24 +243,23 @@ describe('FlexData', () => {
       return data.process(task, {}, () => {});
     });
     it('can process a get by Id', (done) => {
-      let task = sampleTask();
-      task.method = 'GET';
-      delete task.query;
-      delete task.request.query;
-      data.serviceObject(serviceObjectName).onGetById((request) => {
-        task = sampleTask();
-        request.entityId = task.request.entityId;
-        return done();
-      });
-      return data.process(task, {}, () => {});
-    });
-    it('can process a getById and include request, complete, and modules', (done) => {
       const task = sampleTask();
       task.method = 'GET';
       delete task.query;
       delete task.request.query;
-      data.serviceObject(serviceObjectName).onGetById((request, complete, modules) => {
-        request.should.be.an.Object();
+      data.serviceObject(serviceObjectName).onGetById((context) => {
+        context.entityId.should.eql(task.request.entityId);
+        return done();
+      });
+      return data.process(task, {}, () => {});
+    });
+    it('can process a getById and include context, complete, and modules', (done) => {
+      const task = sampleTask();
+      task.method = 'GET';
+      delete task.query;
+      delete task.request.query;
+      data.serviceObject(serviceObjectName).onGetById((context, complete, modules) => {
+        context.should.be.an.Object();
         complete.should.be.a.Function();
         modules.should.be.an.Object();
         return done();
@@ -269,28 +267,28 @@ describe('FlexData', () => {
       return data.process(task, {}, () => {});
     });
     it('can process a get by query', (done) => {
-      let task = sampleTask();
-      task.method = 'GET';
-      delete task.entityId;
-      delete task.request.entityId;
-      task.request.query = {};
-      task.query = {};
-      data.serviceObject(serviceObjectName).onGetByQuery((request) => {
-        task = sampleTask();
-        request.entityId = task.request.entityId;
-        return done();
-      });
-      return data.process(task, {}, () => {});
-    });
-    it('can process a getByQuery and include request, complete, and modules', (done) => {
       const task = sampleTask();
       task.method = 'GET';
       delete task.entityId;
       delete task.request.entityId;
       task.request.query = {};
       task.query = {};
-      data.serviceObject(serviceObjectName).onGetByQuery((request, complete, modules) => {
-        request.should.be.an.Object();
+      data.serviceObject(serviceObjectName).onGetByQuery((context) => {
+        should.not.exist(context.entityId);
+        context.query.should.eql(task.request.query);
+        return done();
+      });
+      return data.process(task, {}, () => {});
+    });
+    it('can process a getByQuery and include context, complete, and modules', (done) => {
+      const task = sampleTask();
+      task.method = 'GET';
+      delete task.entityId;
+      delete task.request.entityId;
+      task.request.query = {};
+      task.query = {};
+      data.serviceObject(serviceObjectName).onGetByQuery((context, complete, modules) => {
+        context.should.be.an.Object();
         complete.should.be.a.Function();
         modules.should.be.an.Object();
         return done();
@@ -301,57 +299,55 @@ describe('FlexData', () => {
       const query = {
         foo: 'bar'
       };
-      let task = sampleTask();
+      const task = sampleTask();
       task.method = 'GET';
       delete task.entityId;
       delete task.request.entityId;
       task.query = query;
-      data.serviceObject(serviceObjectName).onGetByQuery((request) => {
-        task = sampleTask();
-        request.query.should.eql(query);
+      data.serviceObject(serviceObjectName).onGetByQuery((context) => {
+        context.query.should.eql(query);
         return done();
       });
       return data.process(task, {}, () => {});
     });
-    it('can process a get by query with a query just in the request', (done) => {
+    it('can process a get by query with a query just in the context', (done) => {
       const query = {
         foo: 'bar'
       };
-      let task = sampleTask();
+      const task = sampleTask();
       task.method = 'GET';
       delete task.entityId;
       delete task.request.entityId;
       task.request.query = query;
-      data.serviceObject(serviceObjectName).onGetByQuery((request) => {
-        task = sampleTask();
-        request.query.should.eql(query);
+      data.serviceObject(serviceObjectName).onGetByQuery((context) => {
+        context.query.should.eql(query);
         return done();
       });
       return data.process(task, {}, () => {});
     });
     it('can process a delete all', (done) => {
-      let task = sampleTask();
-      task.method = 'DELETE';
-      delete task.entityId;
-      delete task.request.entityId;
-      delete task.query;
-      delete task.request.query;
-      data.serviceObject(serviceObjectName).onDeleteAll((request) => {
-        task = sampleTask();
-        request.entityId = task.request.entityId;
-        return done();
-      });
-      return data.process(task, {}, () => {});
-    });
-    it('can process a deleteAll and include request, complete, and modules', (done) => {
       const task = sampleTask();
       task.method = 'DELETE';
       delete task.entityId;
       delete task.request.entityId;
       delete task.query;
       delete task.request.query;
-      data.serviceObject(serviceObjectName).onDeleteAll((request, complete, modules) => {
-        request.should.be.an.Object();
+      data.serviceObject(serviceObjectName).onDeleteAll((context) => {
+        should.not.exist(context.entityId);
+        should.not.exist(context.query);
+        return done();
+      });
+      return data.process(task, {}, () => {});
+    });
+    it('can process a deleteAll and include context, complete, and modules', (done) => {
+      const task = sampleTask();
+      task.method = 'DELETE';
+      delete task.entityId;
+      delete task.request.entityId;
+      delete task.query;
+      delete task.request.query;
+      data.serviceObject(serviceObjectName).onDeleteAll((context, complete, modules) => {
+        context.should.be.an.Object();
         complete.should.be.a.Function();
         modules.should.be.an.Object();
         return done();
@@ -359,24 +355,23 @@ describe('FlexData', () => {
       return data.process(task, {}, () => {});
     });
     it('can process a delete by Id', (done) => {
-      let task = sampleTask();
-      task.method = 'DELETE';
-      delete task.query;
-      delete task.request.query;
-      data.serviceObject(serviceObjectName).onDeleteById((request) => {
-        task = sampleTask();
-        request.entityId = task.request.entityId;
-        return done();
-      });
-      return data.process(task, {}, () => {});
-    });
-    it('can process a deleteById and include request, complete, and modules', (done) => {
       const task = sampleTask();
       task.method = 'DELETE';
       delete task.query;
       delete task.request.query;
-      data.serviceObject(serviceObjectName).onDeleteById((request, complete, modules) => {
-        request.should.be.an.Object();
+      data.serviceObject(serviceObjectName).onDeleteById((context) => {
+        context.entityId.should.eql(task.request.entityId);
+        return done();
+      });
+      return data.process(task, {}, () => {});
+    });
+    it('can process a deleteById and include context, complete, and modules', (done) => {
+      const task = sampleTask();
+      task.method = 'DELETE';
+      delete task.query;
+      delete task.request.query;
+      data.serviceObject(serviceObjectName).onDeleteById((context, complete, modules) => {
+        context.should.be.an.Object();
         complete.should.be.a.Function();
         modules.should.be.an.Object();
         return done();
@@ -384,15 +379,15 @@ describe('FlexData', () => {
       return data.process(task, {}, () => {});
     });
     it('can process a delete by query', (done) => {
-      let task = sampleTask();
+      const task = sampleTask();
       task.method = 'DELETE';
       delete task.entityId;
       delete task.request.entityId;
       task.request.query = {};
       task.query = {};
-      data.serviceObject(serviceObjectName).onDeleteByQuery((request) => {
-        task = sampleTask();
-        request.entityId = task.request.entityId;
+      data.serviceObject(serviceObjectName).onDeleteByQuery((context) => {
+        should.not.exist(context.entityId);
+        context.query.should.eql(task.request.query);
         return done();
       });
       return data.process(task, {}, () => {});
@@ -404,8 +399,8 @@ describe('FlexData', () => {
       delete task.request.entityId;
       task.request.query = {};
       task.query = {};
-      data.serviceObject(serviceObjectName).onDeleteByQuery((request, complete, modules) => {
-        request.should.be.an.Object();
+      data.serviceObject(serviceObjectName).onDeleteByQuery((context, complete, modules) => {
+        context.should.be.an.Object();
         complete.should.be.a.Function();
         modules.should.be.an.Object();
         return done();
@@ -413,21 +408,6 @@ describe('FlexData', () => {
       return data.process(task, {}, () => {});
     });
     it('can process a count all', (done) => {
-      let task = sampleTask();
-      task.method = 'GET';
-      task.endpoint = '_count';
-      delete task.entityId;
-      delete task.request.entityId;
-      delete task.query;
-      delete task.request.query;
-      data.serviceObject(serviceObjectName).onGetCount((request) => {
-        task = sampleTask();
-        request.entityId = task.request.entityId;
-        return done();
-      });
-      return data.process(task, {}, () => {});
-    });
-    it('can process a count all and include request, complete, and modules', (done) => {
       const task = sampleTask();
       task.method = 'GET';
       task.endpoint = '_count';
@@ -435,8 +415,23 @@ describe('FlexData', () => {
       delete task.request.entityId;
       delete task.query;
       delete task.request.query;
-      data.serviceObject(serviceObjectName).onGetCount((request, complete, modules) => {
-        request.should.be.an.Object();
+      data.serviceObject(serviceObjectName).onGetCount((context) => {
+        should.not.exist(context.entityId);
+        should.not.exist(context.query);
+        return done();
+      });
+      return data.process(task, {}, () => {});
+    });
+    it('can process a count all and include context, complete, and modules', (done) => {
+      const task = sampleTask();
+      task.method = 'GET';
+      task.endpoint = '_count';
+      delete task.entityId;
+      delete task.request.entityId;
+      delete task.query;
+      delete task.request.query;
+      data.serviceObject(serviceObjectName).onGetCount((context, complete, modules) => {
+        context.should.be.an.Object();
         complete.should.be.a.Function();
         modules.should.be.an.Object();
         return done();
@@ -444,16 +439,16 @@ describe('FlexData', () => {
       return data.process(task, {}, () => {});
     });
     it('can process a count by query', (done) => {
-      let task = sampleTask();
+      const task = sampleTask();
       task.method = 'GET';
       task.endpoint = '_count';
       delete task.entityId;
       delete task.request.entityId;
       task.request.query = {};
       task.query = {};
-      data.serviceObject(serviceObjectName).onGetCountByQuery((request) => {
-        task = sampleTask();
-        request.entityId = task.request.entityId;
+      data.serviceObject(serviceObjectName).onGetCountByQuery((context) => {
+        should.not.exist(context.entityId);
+        context.query.should.eql(task.request.query);
         return done();
       });
       return data.process(task, {}, () => {});
@@ -466,8 +461,8 @@ describe('FlexData', () => {
       delete task.request.entityId;
       task.request.query = {};
       task.query = {};
-      data.serviceObject(serviceObjectName).onGetCountByQuery((request, complete, modules) => {
-        request.should.be.an.Object();
+      data.serviceObject(serviceObjectName).onGetCountByQuery((context, complete, modules) => {
+        context.should.be.an.Object();
         complete.should.be.a.Function();
         modules.should.be.an.Object();
         return done();
@@ -478,7 +473,7 @@ describe('FlexData', () => {
   describe('completion handlers', () => {
     it('should return a successful response', (done) => {
       const task = sampleTask();
-      data.serviceObject(serviceObjectName).onInsert((request, complete) => complete().ok().next());
+      data.serviceObject(serviceObjectName).onInsert((context, complete) => complete().ok().next());
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
@@ -488,7 +483,7 @@ describe('FlexData', () => {
     });
     it('should include a body', (done) => {
       const task = sampleTask();
-      data.serviceObject(serviceObjectName).onInsert((request, complete) => complete({ foo: 'bar' }).ok().next());
+      data.serviceObject(serviceObjectName).onInsert((context, complete) => complete({ foo: 'bar' }).ok().next());
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
@@ -500,7 +495,7 @@ describe('FlexData', () => {
     });
     it('should return a 201 created', (done) => {
       const task = sampleTask();
-      data.serviceObject(serviceObjectName).onInsert((request, complete) => complete({ foo: 'bar' }).created().next());
+      data.serviceObject(serviceObjectName).onInsert((context, complete) => complete({ foo: 'bar' }).created().next());
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(201);
@@ -512,7 +507,7 @@ describe('FlexData', () => {
     });
     it('should return a 202 accepted', (done) => {
       const task = sampleTask();
-      data.serviceObject(serviceObjectName).onInsert((request, complete) => complete({ foo: 'bar' }).accepted().next());
+      data.serviceObject(serviceObjectName).onInsert((context, complete) => complete({ foo: 'bar' }).accepted().next());
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(202);
@@ -524,7 +519,7 @@ describe('FlexData', () => {
     });
     it('should return a 400 bad request', (done) => {
       const task = sampleTask();
-      data.serviceObject(serviceObjectName).onInsert((request, complete) => complete('This is a bad request')
+      data.serviceObject(serviceObjectName).onInsert((context, complete) => complete('This is a bad request')
         .badRequest().next());
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
@@ -538,7 +533,7 @@ describe('FlexData', () => {
     });
     it('should return a 401 unauthorized', (done) => {
       const task = sampleTask();
-      data.serviceObject(serviceObjectName).onInsert((request, complete) => complete('You are not authorized!')
+      data.serviceObject(serviceObjectName).onInsert((context, complete) => complete('You are not authorized!')
         .unauthorized().next());
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
@@ -553,7 +548,7 @@ describe('FlexData', () => {
     });
     it('should return a 403 forbidden', (done) => {
       const task = sampleTask();
-      data.serviceObject(serviceObjectName).onInsert((request, complete) => complete('Forbidden!').forbidden().next());
+      data.serviceObject(serviceObjectName).onInsert((context, complete) => complete('Forbidden!').forbidden().next());
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(403);
@@ -566,7 +561,7 @@ describe('FlexData', () => {
     });
     it('should return a 404 not found', (done) => {
       const task = sampleTask();
-      data.serviceObject(serviceObjectName).onInsert((request, complete) => complete('The request is not found!')
+      data.serviceObject(serviceObjectName).onInsert((context, complete) => complete('The request is not found!')
         .notFound().next());
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
@@ -581,7 +576,7 @@ describe('FlexData', () => {
     });
     it('should return a 405 not allowed', (done) => {
       const task = sampleTask();
-      data.serviceObject(serviceObjectName).onInsert((request, complete) => complete('The request is not allowed!')
+      data.serviceObject(serviceObjectName).onInsert((context, complete) => complete('The request is not allowed!')
         .notAllowed().next());
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
@@ -595,7 +590,7 @@ describe('FlexData', () => {
     });
     it('should return a 501 not implemented', (done) => {
       const task = sampleTask();
-      data.serviceObject(serviceObjectName).onInsert((request, complete) => complete('This isn\'t implemented')
+      data.serviceObject(serviceObjectName).onInsert((context, complete) => complete('This isn\'t implemented')
         .notImplemented().next());
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
@@ -609,7 +604,7 @@ describe('FlexData', () => {
     });
     it('should return a 550 runtime error', (done) => {
       const task = sampleTask();
-      data.serviceObject(serviceObjectName).onInsert((request, complete) => complete('There was some error in the app!')
+      data.serviceObject(serviceObjectName).onInsert((context, complete) => complete('There was some error in the app!')
         .runtimeError().next());
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
@@ -623,7 +618,7 @@ describe('FlexData', () => {
     });
     it('should process a next (continuation) handler', (done) => {
       const task = sampleTask();
-      data.serviceObject(serviceObjectName).onInsert((request, complete) => complete({ foo: 'bar' }).ok().next());
+      data.serviceObject(serviceObjectName).onInsert((context, complete) => complete({ foo: 'bar' }).ok().next());
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
@@ -636,7 +631,7 @@ describe('FlexData', () => {
     });
     it('should process a done (completion) handler', (done) => {
       const task = sampleTask();
-      data.serviceObject(serviceObjectName).onInsert((request, complete) => complete({ foo: 'bar' }).ok().done());
+      data.serviceObject(serviceObjectName).onInsert((context, complete) => complete({ foo: 'bar' }).ok().done());
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
