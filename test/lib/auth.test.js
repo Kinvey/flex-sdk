@@ -179,7 +179,7 @@ describe('FlexAuth', () => {
         .next());
       return auth.process(task, null, (err, result) => {
         result.response.statusCode.should.eql(200);
-        result.response.body.should.eql('{"token":{"foo":"bar"},"attr":"value","authenticated":true}');
+        result.response.body.should.eql('{"token":{"foo":"bar"},"authenticated":true,"attr":"value"}');
         return done();
       });
     });

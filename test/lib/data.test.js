@@ -175,6 +175,19 @@ describe('FlexData', () => {
         });
       });
     });
+    it('can explicitly set a body', (done) => {
+      const task = sampleTask();
+      data.serviceObject(serviceObjectName).onInsert((context, complete) => complete()
+        .setBody({ foo: 'bar' })
+        .ok()
+        .done());
+      return data.process(task, {}, (err, result) => {
+        console.log(result);
+        should.not.exist(err);
+        result.response.body.should.eql(JSON.stringify({ foo: 'bar' }));
+        done();
+      });
+    });
     it('can process an insert', (done) => {
       const task = sampleTask();
       data.serviceObject(serviceObjectName).onInsert((context) => {
