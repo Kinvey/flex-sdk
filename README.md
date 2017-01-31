@@ -61,8 +61,9 @@ FlexFunctions are a RPC function that can contain the following properties in th
 | objectName | The name of the object being acted on (collection) if applicable |
 | body | The request body |
 | query | The query string |
-| id | The id of the entity if applicable |
+| entityId | The id of the entity if applicable |
 | method | The original http method |
+| hookType | The type of event hook.  Valid values are `pre` for a pre-data hook, `post` for a post-data hook, and `customEndpoint` for an endpoint hook.  Defaults to `customEndpoint` |
 
 For service discovery
 ```
@@ -112,11 +113,11 @@ widgets.onGetAll(callbackFunction);
 
 ### Data Handler Functions
 
-The data events take a handler function, which takes three arguments:  `request`, `complete`, and `modules`.  `request` represents the request made to Kinvey, and `complete` is a completion handler for completing the data request.  The `modules` argument is an object containing several libraries for accessing Kinvey functionality via your service (for more information, see the section on [modules](#modules)).
+The data events take a handler function, which takes three arguments:  `context`, `complete`, and `modules`.  `context` represents the current context of the request made to Kinvey, and `complete` is a completion handler for completing the data request.  The `modules` argument is an object containing several libraries for accessing Kinvey functionality via your service (for more information, see the section on [modules](#modules)).
 
-#### request Object
+#### context Object
 
-The request object contains the following properties
+The `context` object contains the following properties
 
 | property | description |
 | --------- | ----------- |
@@ -129,7 +130,7 @@ The request object contains the following properties
 
 #### completion Handler
 
-The completion handlers object follows a builder pattern for creating the handler's response.  The pattern for the completion handler is `complete(<entity>).<status>.<done|next>`
+The completion handlers object follows a builder pattern for creating the handler's response.  The pattern for the completion handler is `complete()[.setBody(<entity>)].<status>.<done|next>`
 
 For example, a sample completion handler is:
 
@@ -139,22 +140,40 @@ complete(myEntity).ok().next()
 
 ##### complete
 
-The `complete` handler takes either an entity, an array of entities, or an error description.  The result of the `complete` handler is an object of status functions.
+The `complete` handler initiates the complete process.  It prodives a set of methods for altering the context of the request, and a series of status functions.  For the data step, the only relevant context-altering method is `setBody`, which takes either an entity, an array of entities, an error description or Error Object.  
+
+Note that a body must be explicitly set using `setBody`. The entity must be a JSON object or a JSON array for successful responses.  For example:
 
 ```
 // Sets the response to include an entity.
-complete({"foo", "bar"});
+complete().setBody({"foo", "bar"});
 
 // Sets the response to include an array of entities
-complete([{"foo":"bar"}, {"abc":"123}]);
+complete().setBody([{"foo":"bar"}, {"abc":"123}]);
+```
 
-// Sets the response to an error string, to be used with error status codes
-complete("Record 123 was not found");
+The `setBody` method is not required.  If you want to return an empty object, simply call `complete()`. If you need to pass an empty array, you *must* call setBody with the empty Array.
+
+```
+// empty body
+complete();
+
+//empty array
+complete().setBody([]);
+```
+For errors, you can either pass a string as the error message, or a JavaScript `Error` object.
+
+```
+// Sets the response to an error string, to be used with error status functions
+complete().setBody("Record 123 was not found");
+
+// Sets the response to an error object, to be used with error status functions
+complete().setBody(new Error("Record 123 was not found");
 ```
 
 ##### Status Functions
 
-Status functions set the valid status codes for a Data Link Connector.  The status function also sets the body to a Kinvey-formatted error, and uses the value passed into the `complete` function as the debug property, if it is present.
+Status functions set the valid status codes for a Flex Data operation.  The status function also sets the body to a Kinvey-formatted error, and uses the value passed into the `setData` function as the debug property, if it is present.
 
 The available status functions are:
 
@@ -175,10 +194,10 @@ For example:
 
 ```
 // Return that the record has been created
-complete(myRecord).created();
+complete().setBody(myRecord).created();
 
 // Entity wasn't found
-complete("The given entity wasn't found").notFound();
+complete().setBody("The given entity wasn't found").notFound();
 ```
 
 ##### End Processing
@@ -187,10 +206,10 @@ Once the status is set, you can end the processing of the handler request with e
 
 ```
 // This will continue the request chain
-complete(myEntity).ok().next();
+complete().setBody(myEntity).ok().next();
 
 // This will end the request chain with no further processing
-complete(myEntity).ok().done();
+complete().ok().done();
 ```
 
 ### Example
@@ -214,7 +233,7 @@ sdk.service(function(err, flex) {
       return complete("The entity could not be found").notFound().next();
     } else  {
       // return the entity
-      return complete(entity).ok().next();
+      return complete().setBody(entity).ok().next();
     }
   }
 
@@ -235,6 +254,8 @@ sdk.service(function(err, flex) {
   widgets.onDeleteById(notImplementedHandler);
 };
 ```
+
+Note:  In previous versions of the Flex-SDK, entities were passed in the `complete` method.  This functionality is deprecated, and will be removed in a  future version of the SDK.  
 
 ## [FlexFunctions](#flex-functions)
 
@@ -257,11 +278,11 @@ In the console, when you define hooks or endpoints, you will be presented your l
 
 ### Handler Functions
 
-Like the Data handlers, FlexFunctions take a handler functions with three arguments:  `request`, `complete`, and `modules`.  `request` represents the handler request's current state, and `complete` is a completion handler for completing the function.  The `modules` argument is an object containing several libraries for accessing Kinvey functionality via your service (for more information, see the section on [modules](#modules)).
+Like the Data handlers, FlexFunctions take a handler functions with three arguments:  `context`, `complete`, and `modules`.  `context` represents the current context state of the Kinvey request, and `complete` is a completion handler for completing the function.  The `modules` argument is an object containing several libraries for accessing Kinvey functionality via your service (for more information, see the section on [modules](#modules)).
 
-#### request Object
+#### context Object
 
-The request object contains the following properties:
+The `context` object contains the following properties:
 
 | property | description |
 | --------- | ----------- |
@@ -269,45 +290,62 @@ The request object contains the following properties:
 | headers   | the HTTP request headers |
 | entityId  | the entityId included in the request, if specified |
 | collectionName | the name of the collection |
-| body | the HTTP body |
+| body | the data entity, entities, or error message associated with the request |
 | query | the query object |
 
-#### completion Handler
+The `context` object will contain the appropriate state for the stage of the Kinvey request pipeline that the request is currently in.  For example, for events that are executed before a data request (pre-hooks), the context will contain the request body and query. 
 
-The completion handlers object follows a builder pattern for creating the FlexFunctions' response.  The pattern for the completion handler is `complete(<entity>).<status>.<done|next>`
+The completion handlers object follows a builder pattern for creating the handler's response.  The pattern for the completion handler is `complete().[setBody(<entity>).setQuery(<query>)].<status>.<done|next>`
 
 For example, a sample completion handler is:
 
 ```
-complete(myEntity).ok().next()
+complete().setBody(myEntity).setQuery(myQuery).ok().next()
 ```
-
-The entity is optional, as it will not always be returned.  
-
-You can also alter the request object by making changes to the query, body, or headers objects.  If the request body is modified, it will be persisted back for subsequent steps in the request pipeline.   
 
 ##### complete
 
-The `complete` handler takes either an entity, an array of entities, or an error description.  The result of the `complete` handler is an object of status functions.
+The `complete` handler initiates the complete process.  It prodives a set of methods for altering the context of the request, and a series of status functions.  For the data step, the only relevant context-altering method is `setBody`, which takes either an entity, an array of entities, an error description or Error Object. 
+
+The context-altering methods are: 
+| method | description | 
+| ------- | -------|
+| setBody | Sets the data entity or entities to be passed to the next step of the pipeline or as the final result.  Also used to pass error messages/objects.  
+| setQuery | Replaces the query object with an altered query object.  This is only useful in pre-hook functions. |
+
+
+Note that a body must be explicitly set using `setBody`. The entity must be a JSON object or a JSON array for successful responses.  For example:
 
 ```
-
-// No entity as part of the response
-complete();
-
-// Sets the response to include an entity.
-complete({"foo", "bar"});
+// Sets the context to include an entity and altered query.
+complete().setBody({"foo", "bar"}).setQuery({query: {foo: 'bar'});
 
 // Sets the response to include an array of entities
-complete([{"foo":"bar"}, {"abc":"123}]);
+complete().setBody([{"foo":"bar"}, {"abc":"123}]);
+```
 
-// Sets the response to an error string, to be used with error status codes
-complete("Record 123 was not found");
+The `setBody` method is not required.  If you want to return an empty object, simply call `complete()`. If you need to pass an empty array, you *must* call setBody with the empty Array.
+
+```
+// empty body
+complete();
+
+//empty array
+complete().setBody([]);
+```
+For errors, you can either pass a string as the error message, or a JavaScript `Error` object.
+
+```
+// Sets the response to an error string, to be used with error status functions
+complete().setBody("Record 123 was not found");
+
+// Sets the response to an error object, to be used with error status functions
+complete().setBody(new Error("Record 123 was not found");
 ```
 
 ##### Status Functions
 
-Status functions set the valid status codes for the request.  The status function also sets the body to a Kinvey-formatted error, and uses the value passed into the `complete` function as the debug property, if it is present.
+Status functions set the valid status codes for a Flex Function operation.  The status function also sets the body to a Kinvey-formatted error, and uses the value passed into the `setData` function as the debug property, if it is present.
 
 The available status functions are:
 
@@ -328,24 +366,24 @@ For example:
 
 ```
 // Return that the record has been created
-complete(myRecord).created();
+complete().setBody(myRecord).created();
 
 // Entity wasn't found
-complete("The given entity wasn't found").notFound();
+complete().setBody("The given entity wasn't found").notFound();
 ```
 
 ##### End Processing
 
-Once the status is set, you can end the processing of the handler request with either `done` or `next`.  Most requests should normally end with `next`, which will continue the Kinvey request pipeline.  `done` will return the response that was set in the handler, and end request processing without executing any further part of the kinvey request pipeline.
+Once the status is set, you can end the processing of the handler request with either `done` or `next`.  Most requests should normally end with `next`, which will continue the Kinvey request pipeline.  `done` will return the response that was set in the completion handler, and end request processing without executing any further functions.
 
 ```
 // This will continue the request chain
-complete(myEntity).ok().next();
+complete().setBody(myEntity).ok().next();
 
 // This will end the request chain with no further processing
-complete(myEntity).ok().done();
+complete().ok().done();
 ```
-
+ 
 ### Example
 
 The following is an example
@@ -357,15 +395,15 @@ sdk.service(function(err, flex) {
   
   const flexFunctions = flex.functions;   // gets the FlexFunctions object from the service
 
-  function getRedLineSchedule(req, complete, modules) {
+  function getRedLineSchedule(context, complete, modules) {
     request.get('http://developer.mbta.com/Data/Red.json', (err, response, body) => {
       // if error, return an error
       if (err) {
-        return complete("Could not complete request").runtimeError().done();
+        return complete().setBody("Could not complete request").runtimeError().done();
       }
       
       //otherwise, return the results
-      return complete(body).ok().done();
+      return complete().setBody(body).ok().done();
     });
     
    }
@@ -376,6 +414,8 @@ sdk.service(function(err, flex) {
 ```
 
 You can include both FlexData and FlexFunctions' handlers in the same flex service, but it is recommended to separate the two.
+
+Note:  In previous versions of the Flex-SDK, entities were passed in the `complete` method.  This functionality is deprecated, and will be removed in a  future version of the SDK.
 
 ## [Executing a Long-running Script](#long-running-scripts)
 
@@ -423,7 +463,7 @@ sdk.service(function(err, flex) {
     
   }
    
-  function initiateCalcAndPost(req, complete, modules) {
+  function initiateCalcAndPost(context, complete, modules) {
     // Since the calc and post data function may take a long time, execute it asynchronously
     setImmediate(calcAndPostData);  
     
@@ -444,7 +484,7 @@ Modules are a set of libraries intended for accessing Kinvey-specific functional
 
 ```
 // data handler
-function onGetById(request, complete, modules) {
+function onGetById(context, complete, modules) {
   const appKey = modules.backendContext.getAppKey();
   // etc...
 }
