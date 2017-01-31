@@ -65,6 +65,20 @@ FlexFunctions are a RPC function that can contain the following properties in th
 | method | The original http method |
 | hookType | The type of event hook.  Valid values are `pre` for a pre-data hook, `post` for a post-data hook, and `customEndpoint` for an endpoint hook.  Defaults to `customEndpoint` |
 
+For FlexAuth:
+
+```
+POST    /_auth/:handlerName    // Execute the handler function
+```
+
+FlexAuth functions are a RPC function that can contain the following properties in the body that represent the original request:
+
+| property     | description |
+| --------- | ----------- |
+| username | The name of the user logging in |
+| body | The request body, containing `username`, `password`, and optional `options` arguments |
+| method | The original http method |
+
 For service discovery
 ```
 POST   /_command/discover
@@ -173,7 +187,7 @@ complete().setBody(new Error("Record 123 was not found");
 
 ##### Status Functions
 
-Status functions set the valid status codes for a Flex Data operation.  The status function also sets the body to a Kinvey-formatted error, and uses the value passed into the `setData` function as the debug property, if it is present.
+Status functions set the valid status codes for a Flex Data operation.  The status function also sets the body to a Kinvey-formatted error, and uses the value passed into the status function or the `setData` function as the debug property, if it is present.
 
 The available status functions are:
 
@@ -305,7 +319,7 @@ complete().setBody(myEntity).setQuery(myQuery).ok().next()
 
 ##### complete
 
-The `complete` handler initiates the complete process.  It prodives a set of methods for altering the context of the request, and a series of status functions.  For the data step, the only relevant context-altering method is `setBody`, which takes either an entity, an array of entities, an error description or Error Object. 
+The `complete` handler initiates the complete process.  It prodives a set of methods for altering the context of the request, and a series of status functions.  
 
 The context-altering methods are: 
 | method | description | 
@@ -345,7 +359,7 @@ complete().setBody(new Error("Record 123 was not found");
 
 ##### Status Functions
 
-Status functions set the valid status codes for a Flex Function operation.  The status function also sets the body to a Kinvey-formatted error, and uses the value passed into the `setData` function as the debug property, if it is present.
+Status functions set the valid status codes for a Flex Function operation.  The status function also sets the body to a Kinvey-formatted error, and uses the value passed into function or into the `setBody` function as the debug property, if it is present.
 
 The available status functions are:
 
@@ -416,6 +430,146 @@ sdk.service(function(err, flex) {
 You can include both FlexData and FlexFunctions' handlers in the same flex service, but it is recommended to separate the two.
 
 Note:  In previous versions of the Flex-SDK, entities were passed in the `complete` method.  This functionality is deprecated, and will be removed in a  future version of the SDK.
+
+## [FlexAuth](#flex-auth)
+
+The FlexAuth framework is used to execute custom auth handlers for logging in via Mobile Identity Connect.  It can be accessed via the sdk's `auth` property.
+
+```
+const auth = flex.auth;
+```
+
+### Registering FlexAuth Handlers
+
+In order to register a FlexFunction handler, you define that handler and give it a name by using the `register` method of the `auth` object:
+
+```
+// To register the 'someEventHandlerName' handler:
+const mySSO = flex.auth.register('mySSO', eventHandlerCallbackFunction);
+```
+
+In the console, when you define a flex auth service, you will be presented your list of auth event handlers.
+
+### Handler Functions
+
+Like the Data and Function handlers, FlexAuth takes a handler function with three arguments:  `context`, `complete`, and `modules`.  `context` represents the current context state of the Kinvey request, and `complete` is a completion handler for completing the function.  The `modules` argument is an object containing several libraries for accessing Kinvey functionality via your service (for more information, see the section on [modules](#modules)).
+
+#### context Object
+
+The `context` object contains the following properties:
+
+| property | description |
+| --------- | ----------- |
+| method    | the HTTP method (GET, POST, PUT, DELETE) |
+| headers   | the HTTP request headers |
+| collectionName | the name of the collection |
+| body | the body of the request |
+
+The `body` can contain up to three arguments:
+
+| property | description |
+| --------- | ----------- |
+| username    | the username of the user logging in|
+| password   | The password of the user logging in |
+| coptions | Optional request options. |
+
+The completion handlers object follows a builder pattern for creating the handler's response.  The pattern for the completion handler is `complete().[setToken(<token>).addAttribut(key, value).removeAttribute(key, value)].<status>.<done|next>`
+
+For example, a sample completion handler is:
+
+```
+complete().setToken(myToken).addAttribute('userEmail', myEmail).ok().next()
+```
+
+##### complete
+
+The `complete` handler initiates the complete process.  It prodives a set of methods for altering the context of the request, and a series of status functions.  For the auth step, the only relevant context-altering method is `setBody`, which takes either an entity, an array of entities, an error description or Error Object. 
+
+The context-altering methods are: 
+
+| method | description | 
+| ------- | -------|
+| setToken(token) | Sets the authentication token to be used for this user. |  
+| addAttribute(key, value) | Adds custom attributes to your auth response |
+| removeAttribtue(key) | Removes a previously added attribute |
+
+Note that a token must be explicitly set using `setToken`. The entity must be a JSON object or a Base64 encoded string.  For example:
+
+```
+// Sets the context to include an entity and altered query.
+complete().setToken({"myAuthToken", "ffds9afdsafdsaf89ds0fds90f8ds-="}).addAttribute('email', 'test123@test.com');
+```
+
+For errors, you can either pass a string as the error message, or a JavaScript `Error` object.
+
+```
+// Sets the response to an error string, to be used with error status functions
+complete().setToken("Record 123 was not found");
+
+// Sets the response to an error object, to be used with error status functions
+complete().setToken(new Error("Record 123 was not found");
+```
+
+##### Status Functions
+
+Status functions set the valid status codes for a Flex Auth operation.  The status function also sets the body to an OAuth-formatted error, and uses the value passed into the status function as the debug property, if it is present.
+
+The available status functions are:
+
+| Function | Status Code | Description |
+| --------- | ----------- |------------|
+| ok | 200 | Used for a normal success response |
+| serverError | 401 | Used for any type of server error |
+| accessDenied | 401 | Used when the authenticating user has been denied access |
+| temporarilyUnavailable | 401 | Used when the underlying auth source is temporarily unavailable|
+
+For example:
+
+```
+// Return that the user has been authenticated
+complete().setToken(myToken).ok();
+
+// Access was denied
+complete().notFound("The given username/password combo was invalid");
+```
+
+##### End Processing
+
+Once the status is set, you can end the processing of the handler request with either `done` or `next`.  Most requests should normally end with `next`, which will continue the Kinvey request pipeline.  `done` will return the response that was set in the completion handler, and end request processing without executing any further functions.
+
+```
+// This will continue the request chain
+complete().setToken(myToken).ok().next();
+
+// This will end the request chain with no further processing
+complete().ok().done();
+```
+ 
+### Example
+
+The following is an example
+
+```
+const sdk = require('kinvey-flex-sdk');
+const request = require('request'); // assumes that the request module was added to package.json
+sdk.service(function(err, flex) {
+  
+  const flexAuth = flex.auth;   // gets the FlexAuth object from the service
+
+  function authenticate(context, complete, modules) {
+    // authenticate the user here
+    if (err) {
+      return complete().accessDenied(err).next();
+    }
+    return complete().setToken(token).ok().next();
+  }
+
+  // set the handler
+  flexFunctions.register('myAuth', authenticate);
+};
+```
+
+You can include FlexData, FlexAUth and FlexFunctions' handlers in the same flex service, but it is recommended to separate them.
 
 ## [Executing a Long-running Script](#long-running-scripts)
 
@@ -520,14 +674,14 @@ One common use case for these functions is for calling requests against the curr
 ```javascript
 const request = require('request');
 
-function myHandler(request, complete, modules){
+function myHandler(context, complete, modules){
   
-  const context = modules.backendContext;
+  const backendContext = modules.backendContext;
 
-  const appKey = context.getAppKey();
-  const masterSecret = context.getMasterSecret();
+  const appKey = backendContext.getAppKey();
+  const masterSecret = backendContext.getMasterSecret();
   
-  const uri = 'https://' + request.headers.host + '/appdata/'+ appKey +'/myCollection/';
+  const uri = 'https://' + context.headers.host + '/appdata/'+ appKey +'/myCollection/';
   const authString = "Basic " + utils.base64.encode(appKey + ":" + masterSecret);
   const requestOptions = {
     uri:uri, 
@@ -538,9 +692,9 @@ function myHandler(request, complete, modules){
   
   var auth = request.get(requestOptions, (error, res, body) => {
     if (error){
-      complete(error).runtimeError.done();
+      complete.setBody(error).runtimeError.done();
     } else {
-      complete(body).ok().next();
+      complete.setBody(body).ok().next();
     }
   });
 }
@@ -561,7 +715,7 @@ The `dataStore` method also takes an optional `options` argument is an optional 
 | Option             | Description                  |
 |:-------------------|:------------------------| 
 | `useMasterSecret` | Uses the mastersecret credentials to access the datastore if set to `true`.  If not included or set to false, will use the current user credentials. |
-| `skipBl` | If set to true, skips BL processing when accessing the datastore.  If false or not included, it will default to executing any BL associated with the store. |
+| `skipBl` | If set to true, skips BL processing when accessing the datastore.  If false or not included, it will default to executing any BL associated with the store. **NOTE** skipBL *must* be used in conjunection with `useMasterSecret` as user requests that skip BL are not allowed.|
 
 For example:  
 
@@ -603,9 +757,9 @@ For example:
     result.status = 'Approved';
     products.save(result, (err, savedResult) => {
       if (err) {
-        return complete(err).runtimeError().done();
+        return complete().setBody(err).runtimeError().done();
       }
-      complete(savedResult).ok().next();
+      complete().setBody(savedResult).ok().next();
     });
   });
 });
@@ -630,7 +784,7 @@ For example, to send a text email:
 			   request.body.friendEmail,
 			   'Join my octagon in my-app!',
 			   "You've been invited to join " + request.body.name + "'s octagon in my-app!", function(err, result) {
-			   complete.ok().next();
+			   complete().ok().next();
 			   });
 ```
 	
@@ -666,8 +820,8 @@ The `kinveyEntity` module provides the following  methods:
 For example, to create a Kinvey Entity with only Kinvey metadata:
 
 ```javascript
-function someHandler(request, complete, modules) {
-  complete(modules.kinveyEntity.entity()).ok().done();
+function someHandler(context, complete, modules) {
+  complete().setBody((modules.kinveyEntity.entity()).ok().done();
 }
 ```
 
@@ -689,9 +843,9 @@ The response would contain an entity containing no additional attributes, except
 To use your own `_id`, you can simply pass that ID as a `String` into the method:
 
 ```javascript
-function handler(request, complete, modules){
+function handler(context, complete, modules){
   var myID = "000-22-2343";
-  complete()modules.kinvey.entity(myID)).ok().done();
+  complete().setBody(modules.kinvey.entity(myID)).ok().done();
 }
 ```  
 
@@ -711,7 +865,7 @@ function handler(request, complete, modules){
 You can add Kinvey metatada to your own JavaScript object by passing that object into the function.  
 
 ```javascript
-function handler(request, complete, modules){
+function handler(context, complete, modules){
   function employee() {
     this.firstName = "John";
     this.lastName = "Doe";
@@ -720,7 +874,7 @@ function handler(request, complete, modules){
     this.doh = "1/12/2012";
   }
     
-  complete(modules.kinvey.entity(new employee())).ok().done();
+  complete().setBody((modules.kinvey.entity(new employee())).ok().done();
 }
 ```
 
@@ -747,14 +901,14 @@ This example results in the Kinvey metadata being added to your employee object.
 Note that you can add properties directly to a Kinvey Entity and pass it directly into a `dataStore method that takes an entity as an argument:
 
 ```javascript
-function handler(request, complete, modules) {
+function handler(context, complete, modules) {
 	const entity = modules.kinveyEntity.entity();
 	entity.name = "Sachin";
 	modules.dataStore().collection('People').save(entity, (err, result) => 
 	  if (err) {
 	    // handle error
 	  } else {
-	    complete(result).ok().next(); 
+	    complete().setBody(result).ok().next(); 
 	  }
 	});
 }
@@ -801,9 +955,9 @@ modules.kinveyEntity.entity(someObject)._acl.addReader(readUserId).addWriter(wri
 The example below uses `kinveyEntity.entity()._acl` along with the [Request Context](#requestcontext-module) module to grant write access on the requested entity to the user making the request:
 
 ```javascript
-function handler(request, complete, modules) {
+function handler(context, complete, modules) {
 	const currentUser = modules.requestContext.getAuthenticatedUserId();
-    const serviceObjectName = request.collectionName;
+    const serviceObjectName = context.objectName;
 	const entityId = request.entityId;
 	
 	const collection = modules.dataStore().collection(collectionName);
@@ -816,11 +970,11 @@ function handler(request, complete, modules) {
 	  	  const entity = modules.kinveyEntity.entity(doc)._acl.addWriter(currentUser);
 	  	  //Note we directly pass the Kinvey Entity to the save method. 
 	  	  collection.save(entity, (err, result) => {
-	  	    complete(result).ok().next();
+	  	    complete().setBody(result).ok().next();
 	  	  });
 	  	} else {
                   // entity not found
-                  complete(new Error "Entity not found").runtimeError().done();
+                  complete().setBody(new Error "Entity not found").runtimeError().done();
                 }
 	});
 }
@@ -879,9 +1033,9 @@ For example, to send a broadcast message:
 
 ```javascript
 	var push = modules.push;
-	if (request.body.sendMessageToAll){
-		push.broadcastMessage(request.body.message, (err, result) => {
- 		  complete.ok().next();
+	if (context.body.sendMessageToAll){
+		push.broadcastMessage(context.body.message, (err, result) => {
+ 		  complete().ok().next();
  		});
 	}
 ```
@@ -902,7 +1056,7 @@ For example:
 	
 	dataStore.collection('user').find(query, (err, userColl) => {
 	  if (err) {
-		complete(err).runtimeError().done();
+		complete().setBody(err).runtimeError().done();
 	  } else {
 		userColl.forEach((user) => {
 		  push.sendMessage(user, `People who are named ${user.firstName} are awesome!", (err, result) => {
@@ -1073,8 +1227,8 @@ For example, a query to retrieve all restaurants close (10 mile radius) to a use
 
 ```
 // Get users current position
-function handler(request, complete, modules) {
-  const coord = [request.body.longitude, request.body.latitude];
+function handler(context, complete, modules) {
+  const coord = [context.body.longitude, context.body.latitude];
 
   // Query for restaurants close by.
   var query = new modules.Query();
@@ -1083,9 +1237,9 @@ function handler(request, complete, modules) {
   var dataStore = modules.dataStore().collection('restaurants');
   var stream = dataStore.find(query, (err, result) => {  
   	if (err) {
-  	  return complete(err).runtimeError().done():
+  	  return complete().setBody(err).runtimeError().done():
   	}
-  	complete(result).ok().next();
+  	complete().setBody(result).ok().next();
   });
 });
 ```
@@ -1116,7 +1270,7 @@ The Custom Request Properties object will be available throughout the entire Kin
 ```
 //Assume {officeLocation: 'Paris'} was provided as the Custom Request Properties object
 
-function handlerForPrefetch(request, complete, modules){
+function handlerForPrefetch(context, complete, modules){
  
   const requestContext = modules.requestContext;
   const officeLocation = requestContext.getCustomRequestProperty('officeLocation');
@@ -1146,7 +1300,7 @@ We could implement a post-fetch hook that looks for the `didPreprocess` flag on 
 ```
 //Assume {officeLocation: 'Paris', didPreprocess: true} was provided as the Custom Request Properties object
 
-function handlerForPostFetch(request, complete, modules){
+function handlerForPostFetch(context, complete, modules){
  
   const requestContext = modules.requestContext;
   const officeLocation = requestContext.getCustomRequestProperty('officeLocation');
@@ -1161,7 +1315,7 @@ function handlerForPostFetch(request, complete, modules){
   }
  
   //Finish the execution
-  complete().ok().done();
+  complete().ok().next();
   
 }
 ```
@@ -1189,12 +1343,12 @@ Assuming a client app version string of "1.1.5":
 
 ```
 
-function handler(request, complete, modules){
-  const context = modules.requestContext;
+function handler(context, complete, modules){
+  const requestContext = modules.requestContext;
   
-  const majorVersion = context.clientAppVersion.majorVersion(); //majorVersion will be 1
-  const minorVersion = context.clientAppVersion.minorVersion(); //minorVersion will be 1
-  const patchVersion = context.clientAppVersion.patchVersion(); //patchVersion will be 5
+  const majorVersion = requestContext.clientAppVersion.majorVersion(); //majorVersion will be 1
+  const minorVersion = requestContext.clientAppVersion.minorVersion(); //minorVersion will be 1
+  const patchVersion = requestContext.clientAppVersion.patchVersion(); //patchVersion will be 5
   
   if (majorVersion < 2) {								//will be true
   	//Perform some version 1 compatible logic
@@ -1216,12 +1370,12 @@ Assuming a client app version string of "1.0.1-beta":
 
 ```
 
-function handler(request, response, modules){
-  const context = modules.backendContext;
+function handler(context, response, modules){
+  const requestContext = modules.requestContext;
   
-  const versionString = context.clientAppVersion.stringValue(); //versionString will be "1.0.1-beta"
-  const majorVersion = context.clientAppVersion.majorVersion();   //majorVersion will be 1
-  const patchVersion = context.clientAppVersion.patchVersion();   //patchVersion will be NaN
+  const versionString = requestContext.clientAppVersion.stringValue(); //versionString will be "1.0.1-beta"
+  const majorVersion = requestContext.clientAppVersion.majorVersion();   //majorVersion will be 1
+  const patchVersion = requestContext.clientAppVersion.patchVersion();   //patchVersion will be NaN
   
   if (majorVersion < 2) { 						//Will be true
   	//Perform some version 1 compatible logic
@@ -1255,19 +1409,19 @@ A key-value store for persisting temporary data between a pre- and post-hook. `t
 For example, to store an item in a handler:
 
 ```javascript
-function handler1(request, complete, modules) {
+function handler1(context, complete, modules) {
   var tempObjectStore = modules.tempObjectStore;
-  tempObjectStore.set('token', request.body.token);
+  tempObjectStore.set('token', context.body.token);
   complete().ok().next();
 }
 ```
 
 Then, to retrieve it:  
 ```
-function handler2(request, response, modules) {
+function handler2(context, response, modules) {
   var tempObjectStore = modules.tempObjectStore;
   var token = tempObjectStore.get('token');
-  complete({ message: `Object for token ${token} was saved successfully.` }).ok().done();
+  complete().setBody({ message: `Object for token ${token} was saved successfully.` }).ok().done();
 }
 ```
 
@@ -1288,14 +1442,14 @@ The `userStore` method also takes an optional `options` argument is an optional 
 | Option             | Description                  |
 |:-------------------|:------------------------| 
 | `useMasterSecret` | Uses the mastersecret credentials to access the userstore if set to `true`.  If not included or set to false, will use the current user credentials. |
-| `skipBl` | If set to true, skips BL processing when accessing the userstore.  If false or not included, it will default to executing any BL associated with the store. |
+| `skipBl` | If set to true, skips BL processing when accessing the userstore.  If false or not included, it will default to executing any BL associated with the store. **NOTE** skipBL *must* be used in conjunection with `useMasterSecret` as user requests that skip BL are not allowed. |
 
 For example:  
 
 ```
 const options = {
   skipBl: true,
-  useMasterSecret: false
+  useMasterSecret: true
 }
 
 const store = modules.userStore(options);
@@ -1323,14 +1477,14 @@ For example:
   const store =  userStore({ useMasterSecret: true });
   store.findById(1234, (err, result) => {
     if (err) {
-      return complete(err).runtimeError().done();
+      return complete().setBody(err).runtimeError().done();
     }
     result.status = 'Approved';
     store.update(result, (err, savedResult) => {
       if (err) {
         return complete(err).runtimeError().done();
       }
-      complete(savedResult).ok().next();
+      complete().setBody(savedResult).ok().next();
     });
   });
 });
