@@ -1,5 +1,12 @@
 ## Changelog
 
+### 2.0.0
+* Add Auth support to flex under flex.auth
+* Change request to context
+* Fix completion handlers to properly handle pre/post step context
+* Added `setBody` and `setQuery` to data/function completion hanlder
+* DEPRECATED:  Passing the entity directly in the `complete()` method.  Will be removed in future version.
+
 ### 1.2.0
 * Append flex SDK version to task response
 * Upgrade code-task-receiver to v1.2.1 to fix null tasks sent via the TCP stream from crashing
