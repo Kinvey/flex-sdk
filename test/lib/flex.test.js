@@ -70,4 +70,127 @@ describe('service creation', () => {
       done();
     });
   });
+
+  it('should process a data task', (done) => {
+    sdk.service((err, sdk) => {
+      const task = {
+        appMetadata: {
+          _id: '12345',
+          appsecret: 'appsecret',
+          mastersecret: 'mastersecret',
+          pushService: void 0,
+          restrictions: {
+            level: 'starter'
+          },
+          API_version: 3,
+          name: 'DevApp',
+          platform: null
+        },
+        taskType: 'data',
+        method: 'GET',
+        request: {
+          method: 'GET',
+          headers: {},
+          body: {},
+          serviceObjectName: 'foo'
+        },
+        response: {}
+      };
+
+      sdk.data.serviceObject('foo').onGetAll(() => {
+        done();
+      });
+
+      mockTaskReceiver.taskReceived()(task, (err, result) => {
+      });
+    });
+  });
+
+  it('should process a function task', (done) => {
+    sdk.service((err, sdk) => {
+      const task = {
+        appMetadata: {
+          _id: '12345',
+          appsecret: 'appsecret',
+          mastersecret: 'mastersecret',
+          pushService: void 0,
+          restrictions: {
+            level: 'starter'
+          },
+          API_version: 3,
+          name: 'DevApp',
+          platform: null
+        },
+        taskType: 'functions',
+        taskName: 'foo',
+        hookType: 'customEndpoint',
+        method: 'GET',
+        request: {
+          method: 'GET',
+          headers: {},
+          body: {}
+        },
+        response: {}
+      };
+
+      sdk.functions.register('foo', () => done());
+
+      mockTaskReceiver.taskReceived()(task, (err, result) => {
+      });
+    });
+  });
+
+  it('should process an auth function task', (done) => {
+    sdk.service((err, sdk) => {
+      const task = {
+        appMetadata: {
+          _id: '12345',
+          appsecret: 'appsecret',
+          mastersecret: 'mastersecret',
+          pushService: void 0,
+          restrictions: {
+            level: 'starter'
+          },
+          API_version: 3,
+          name: 'DevApp',
+          platform: null
+        },
+        taskType: 'auth',
+        taskName: 'foo',
+        method: 'GET',
+        request: {
+          method: 'GET',
+          headers: {},
+          body: {
+            username: 'foo',
+            password: 'bar',
+            options: {}
+          }
+        },
+        response: {}
+      };
+
+      sdk.auth.register('foo', () => done());
+
+      mockTaskReceiver.taskReceived()(task, (err, result) => {
+      });
+    });
+  });
+
+  it('should process a discovery task', (done) => {
+    sdk.service(() => {
+      const task = {
+        taskType: 'serviceDiscovery'
+      };
+
+      mockTaskReceiver.taskReceived()(task, (err, result) => {
+        should.not.exist(err);
+        should.exist(result.discoveryObjects);
+        result.discoveryObjects.dataLink.should.be.an.Object();
+        result.discoveryObjects.businessLogic.should.be.an.Object();
+        result.discoveryObjects.auth.should.be.an.Object();
+        done();
+      });
+    });
+  });
 });

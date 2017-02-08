@@ -206,7 +206,7 @@ describe('FlexFunctions', () => {
       return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
-        result.response.body.should.eql('{}');
+        result.response.body.should.eql({});
         return done();
       });
     });
@@ -216,9 +216,9 @@ describe('FlexFunctions', () => {
       functions.register(taskName, (context, complete) => complete({ foo: 'bar' }).ok().done());
       return functions.process(task, null, (err, result) => {
         result.response.statusCode.should.eql(200);
-        result.response.body.should.eql(JSON.stringify({
+        result.response.body.should.eql({
           foo: 'bar'
-        }));
+        });
         return done();
       });
     });
@@ -231,9 +231,9 @@ describe('FlexFunctions', () => {
         .done());
       return functions.process(task, null, (err, result) => {
         result.response.statusCode.should.eql(200);
-        result.response.body.should.eql(JSON.stringify({
+        result.response.body.should.eql({
           foo: 'bar'
-        }));
+        });
         return done();
       });
     });
@@ -246,9 +246,9 @@ describe('FlexFunctions', () => {
         .next());
       return functions.process(task, null, (err, result) => {
         result.response.statusCode.should.eql(200);
-        result.request.query.should.eql(JSON.stringify({
+        result.request.query.should.eql({
           foo: 'bar'
-        }));
+        });
         return done();
       });
     });
@@ -304,9 +304,9 @@ describe('FlexFunctions', () => {
       return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
-        result.response.body.should.eql(JSON.stringify({
+        result.response.body.should.eql({
           foo: 'bar'
-        }));
+        });
         return done();
       });
     });
@@ -318,9 +318,9 @@ describe('FlexFunctions', () => {
       return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
-        result.response.body.should.eql(JSON.stringify({
+        result.response.body.should.eql({
           foo: 'bar'
-        }));
+        });
         return done();
       });
     });
@@ -371,9 +371,9 @@ describe('FlexFunctions', () => {
       return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
-        result.response.body.should.eql(JSON.stringify({
+        result.response.body.should.eql({
           foo: 'bar'
-        }));
+        });
         result.response.body.should.not.eql(result.request.body);
         return done();
       });
@@ -386,9 +386,9 @@ describe('FlexFunctions', () => {
       return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
-        result.request.body.should.eql(JSON.stringify({
+        result.request.body.should.eql({
           foo: 'bar'
-        }));
+        });
         result.request.body.should.not.eql(result.response.body);
         return done();
       });
@@ -413,9 +413,9 @@ describe('FlexFunctions', () => {
       return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
-        result.request.body.should.eql(JSON.stringify({
+        result.request.body.should.eql({
           foo: 'bar'
-        }));
+        });
         result.request.body.should.not.eql(result.response.body);
         return done();
       });
@@ -443,9 +443,9 @@ describe('FlexFunctions', () => {
       return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
-        result.response.body.should.eql(JSON.stringify({
+        result.response.body.should.eql({
           foo: 'bar'
-        }));
+        });
         result.response.body.should.not.eql(result.request.body);
         return done();
       });
@@ -458,9 +458,9 @@ describe('FlexFunctions', () => {
       return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
-        result.response.body.should.eql(JSON.stringify({
+        result.response.body.should.eql({
           foo: 'bar'
-        }));
+        });
         result.response.body.should.not.eql(result.request.body);
         return done();
       });
@@ -498,9 +498,9 @@ describe('FlexFunctions', () => {
       return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(201);
-        result.response.body.should.eql(JSON.stringify({
+        result.response.body.should.eql({
           foo: 'bar'
-        }));
+        });
         return done();
       });
     });
@@ -511,9 +511,9 @@ describe('FlexFunctions', () => {
       return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(202);
-        result.response.body.should.eql(JSON.stringify({
+        result.response.body.should.eql({
           foo: 'bar'
-        }));
+        });
         return done();
       });
     });
@@ -524,7 +524,6 @@ describe('FlexFunctions', () => {
       return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(400);
-        result.response.body = JSON.parse(result.response.body);
 
         result.response.body.error.should.eql('BadRequest');
         result.response.body.description.should.eql('Unable to understand request');
@@ -539,7 +538,6 @@ describe('FlexFunctions', () => {
       return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(401);
-        result.response.body = JSON.parse(result.response.body);
         result.response.body.error.should.eql('InvalidCredentials');
         result.response.body.description.should.eql(
           'Invalid credentials. Please retry your request with correct credentials');
@@ -554,7 +552,6 @@ describe('FlexFunctions', () => {
       return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(403);
-        result.response.body = JSON.parse(result.response.body);
         result.response.body.error.should.eql('Forbidden');
         result.response.body.description.should.eql('The request is forbidden');
         result.response.body.debug.should.eql('Forbidden!');
@@ -568,7 +565,6 @@ describe('FlexFunctions', () => {
       return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(404);
-        result.response.body = JSON.parse(result.response.body);
         result.response.body.error.should.eql('NotFound');
         result.response.body.description.should.eql(
           'The requested entity or entities were not found in the serviceObject');
@@ -583,7 +579,6 @@ describe('FlexFunctions', () => {
       return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(405);
-        result.response.body = JSON.parse(result.response.body);
         result.response.body.error.should.eql('NotAllowed');
         result.response.body.description.should.eql('The request is not allowed');
         result.response.body.debug.should.eql('The request is not allowed!');
@@ -597,7 +592,6 @@ describe('FlexFunctions', () => {
       return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(501);
-        result.response.body = JSON.parse(result.response.body);
         result.response.body.error.should.eql('NotImplemented');
         result.response.body.description.should.eql('The request invoked a method that is not implemented');
         result.response.body.debug.should.eql('This isn\'t implemented');
@@ -612,7 +606,6 @@ describe('FlexFunctions', () => {
       return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(550);
-        result.response.body = JSON.parse(result.response.body);
         result.response.body.error.should.eql('FlexRuntimeError');
         result.response.body.description.should.eql('The Flex Service had a runtime error.  See debug message for details');
         result.response.body.debug.should.eql('There was some error in the app!');
@@ -626,9 +619,9 @@ describe('FlexFunctions', () => {
       return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
-        result.response.body.should.eql(JSON.stringify({
+        result.response.body.should.eql({
           foo: 'bar'
-        }));
+        });
         result.response.continue = true;
         return done();
       });
@@ -640,9 +633,9 @@ describe('FlexFunctions', () => {
       return functions.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
-        result.response.body.should.eql(JSON.stringify({
+        result.response.body.should.eql({
           foo: 'bar'
-        }));
+        });
         result.response.continue = false;
         return done();
       });

@@ -12,6 +12,13 @@
  * the License.
  */
 
+let taskReceived = null;
+
 exports.start = (options, taskReceivedCallback, receiverStartedCallback) => {
+  taskReceived = taskReceivedCallback;
   receiverStartedCallback();
+};
+
+exports.taskReceived = function () {
+  return taskReceived;
 };

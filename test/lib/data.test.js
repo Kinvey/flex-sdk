@@ -149,8 +149,9 @@ describe('FlexData', () => {
         return data.process(task, {}, (err, result) => {
           result.response.continue.should.eql(false);
           result.response.statusCode.should.eql(501);
-          result.response.body.should.eql('{\"error\":\"NotImplemented\",\"description\":\"The' +
-            ' request invoked a method that is not implemented\",\"debug\":\"These methods are not implemented\"}');
+          result.response.body.error.should.eql('NotImplemented');
+          result.response.body.description.should.eql('The request invoked a method that is not implemented');
+          result.response.body.debug.should.eql('These methods are not implemented');
           return done();
         });
       });
@@ -182,9 +183,8 @@ describe('FlexData', () => {
         .ok()
         .done());
       return data.process(task, {}, (err, result) => {
-        console.log(result);
         should.not.exist(err);
-        result.response.body.should.eql(JSON.stringify({ foo: 'bar' }));
+        result.response.body.should.eql({ foo: 'bar' });
         done();
       });
     });
@@ -490,7 +490,7 @@ describe('FlexData', () => {
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
-        result.response.body.should.eql('{}');
+        result.response.body.should.eql({});
         return done();
       });
     });
@@ -500,9 +500,9 @@ describe('FlexData', () => {
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
-        result.response.body.should.eql(JSON.stringify({
+        result.response.body.should.eql({
           foo: 'bar'
-        }));
+        });
         return done();
       });
     });
@@ -512,9 +512,9 @@ describe('FlexData', () => {
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(201);
-        result.response.body.should.eql(JSON.stringify({
+        result.response.body.should.eql({
           foo: 'bar'
-        }));
+        });
         return done();
       });
     });
@@ -524,9 +524,9 @@ describe('FlexData', () => {
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(202);
-        result.response.body.should.eql(JSON.stringify({
+        result.response.body.should.eql({
           foo: 'bar'
-        }));
+        });
         return done();
       });
     });
@@ -537,7 +537,6 @@ describe('FlexData', () => {
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(400);
-        result.response.body = JSON.parse(result.response.body);
         result.response.body.error.should.eql('BadRequest');
         result.response.body.description.should.eql('Unable to understand request');
         result.response.body.debug.should.eql('This is a bad request');
@@ -551,7 +550,6 @@ describe('FlexData', () => {
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(401);
-        result.response.body = JSON.parse(result.response.body);
         result.response.body.error.should.eql('InvalidCredentials');
         result.response.body.description.should.eql(
           'Invalid credentials. Please retry your request with correct credentials');
@@ -565,7 +563,6 @@ describe('FlexData', () => {
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(403);
-        result.response.body = JSON.parse(result.response.body);
         result.response.body.error.should.eql('Forbidden');
         result.response.body.description.should.eql('The request is forbidden');
         result.response.body.debug.should.eql('Forbidden!');
@@ -579,7 +576,6 @@ describe('FlexData', () => {
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(404);
-        result.response.body = JSON.parse(result.response.body);
         result.response.body.error.should.eql('NotFound');
         result.response.body.description.should.eql(
           'The requested entity or entities were not found in the serviceObject');
@@ -594,7 +590,6 @@ describe('FlexData', () => {
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(405);
-        result.response.body = JSON.parse(result.response.body);
         result.response.body.error.should.eql('NotAllowed');
         result.response.body.description.should.eql('The request is not allowed');
         result.response.body.debug.should.eql('The request is not allowed!');
@@ -608,7 +603,6 @@ describe('FlexData', () => {
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(501);
-        result.response.body = JSON.parse(result.response.body);
         result.response.body.error.should.eql('NotImplemented');
         result.response.body.description.should.eql('The request invoked a method that is not implemented');
         result.response.body.debug.should.eql('This isn\'t implemented');
@@ -622,7 +616,6 @@ describe('FlexData', () => {
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(550);
-        result.response.body = JSON.parse(result.response.body);
         result.response.body.error.should.eql('FlexRuntimeError');
         result.response.body.description.should.eql('The Flex Service had a runtime error.  See debug message for details');
         result.response.body.debug.should.eql('There was some error in the app!');
@@ -635,9 +628,9 @@ describe('FlexData', () => {
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
-        result.response.body.should.eql(JSON.stringify({
+        result.response.body.should.eql({
           foo: 'bar'
-        }));
+        });
         result.response.continue.should.eql(true);
         return done();
       });
@@ -648,9 +641,9 @@ describe('FlexData', () => {
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
-        result.response.body.should.eql(JSON.stringify({
+        result.response.body.should.eql({
           foo: 'bar'
-        }));
+        });
         result.response.continue.should.eql(false);
         return done();
       });
