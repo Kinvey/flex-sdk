@@ -156,7 +156,7 @@ describe('FlexAuth', () => {
       return auth.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
-        result.response.body.should.eql('{"token":{},"authenticated":true}');
+        result.response.body.should.eql({ token: {}, authenticated: true });
         return done();
       });
     });
@@ -166,7 +166,7 @@ describe('FlexAuth', () => {
       auth.register(taskName, (context, complete) => complete({ foo: 'bar' }).ok().next());
       return auth.process(task, null, (err, result) => {
         result.response.statusCode.should.eql(200);
-        result.response.body.should.eql('{"token":{"foo":"bar"},"authenticated":true}');
+        result.response.body.should.eql({ token: { foo: 'bar' }, authenticated: true });
         return done();
       });
     });
@@ -179,7 +179,7 @@ describe('FlexAuth', () => {
         .next());
       return auth.process(task, null, (err, result) => {
         result.response.statusCode.should.eql(200);
-        result.response.body.should.eql('{"token":{"foo":"bar"},"authenticated":true,"attr":"value"}');
+        result.response.body.should.eql({ token: { foo: 'bar' }, authenticated: true, attr: 'value' });
         return done();
       });
     });
@@ -191,7 +191,6 @@ describe('FlexAuth', () => {
       return auth.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(401);
-        result.response.body = JSON.parse(result.response.body);
         result.response.body.error.should.eql('server_error');
         result.response.body.error_description.should.eql('This is a bad request');
         return done();
@@ -204,7 +203,6 @@ describe('FlexAuth', () => {
       return auth.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(401);
-        result.response.body = JSON.parse(result.response.body);
         result.response.body.error.should.eql('access_denied');
         result.response.body.error_description.should.eql('You are not authorized!');
         return done();
@@ -217,7 +215,6 @@ describe('FlexAuth', () => {
       return auth.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(401);
-        result.response.body = JSON.parse(result.response.body);
         result.response.body.error.should.eql('temporarily_unavailable');
         result.response.body.error_description.should.eql('The auth server is temporarily unavailable!');
         return done();
@@ -231,7 +228,7 @@ describe('FlexAuth', () => {
       return auth.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
-        result.response.body.should.eql('{"token":{"foo":"bar"},"authenticated":true}');
+        result.response.body.should.eql({ token: { foo: 'bar' }, authenticated: true });
         result.response.continue = true;
         return done();
       });
@@ -243,7 +240,7 @@ describe('FlexAuth', () => {
       return auth.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
-        result.response.body.should.eql('{"token":{"foo":"bar"},"authenticated":true}');
+        result.response.body.should.eql({ token: { foo: 'bar' }, authenticated: true });
         result.response.continue = false;
         return done();
       });
