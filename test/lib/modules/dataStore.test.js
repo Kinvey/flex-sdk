@@ -27,6 +27,7 @@ const apiVersion = 3;
 const authorization = 'Kinvey adfjkldsafjdsalkfjds90fd8sfd=';
 const clientAppVersion = {};
 const customRequestProperties = {};
+const uuid = require('uuid');
 
 function _generateAppMetadata() {
   return {
@@ -50,21 +51,33 @@ function _generateRequestContext() {
   };
 }
 
+function _generateTaskMetadata() {
+  return {
+    taskType: 'data',
+    objectName: 'someObject',
+    hookType: undefined,
+    target: undefined,
+    taskId: uuid.v4(),
+    containerId: uuid.v4()
+  };
+}
+
 describe('dataStore', () => {
   beforeEach(() => {
     this.appMetadata = _generateAppMetadata();
     this.requestContext = _generateRequestContext();
+    this.taskMetadata = _generateTaskMetadata();
   });
 
   it('should initialize datastore', () => {
-    const store = dataStore(this.appMetadata, this.requestContext);
+    const store = dataStore(this.appMetadata, this.requestContext, this.taskMetadata);
     store.should.be.a.Function();
     store.name.should.eql('generateDataStore');
   });
 
   describe('datastore object', () => {
     beforeEach(() => {
-      this.store = dataStore(this.appMetadata, this.requestContext);
+      this.store = dataStore(this.appMetadata, this.requestContext, this.taskMetadata);
     });
 
     afterEach(() => {
@@ -76,47 +89,75 @@ describe('dataStore', () => {
       should.exist(myStore.collection);
       myStore.collection.should.be.a.Function();
       myStore.collection.name.should.eql('collection');
-      myStore._useMasterSecret.should.be.false();
-      myStore._skipBl.should.be.false();
+      myStore._useMasterSecret.should.be.true();
+      myStore._skipBl.should.be.true();
+      myStore._useUserContext.should.be.false();
+      myStore._useBl.should.be.false();
       myStore._appMetadata.should.containDeep(this.appMetadata);
       myStore._requestContext.should.containDeep(this.requestContext);
     });
 
+    // DEPRECATED
     it('should create a datastore object that uses mastersecret', () => {
       const myStore = this.store({ useMasterSecret: true });
       should.exist(myStore.collection);
       myStore.collection.should.be.a.Function();
       myStore.collection.name.should.eql('collection');
+      myStore._useUserContext.should.be.false();
       myStore._useMasterSecret.should.be.true();
       myStore._appMetadata.should.containDeep(this.appMetadata);
       myStore._requestContext.should.containDeep(this.requestContext);
     });
 
+    it('should create a datastore object that uses userContext', () => {
+      const myStore = this.store({ useUserContext: true });
+      should.exist(myStore.collection);
+      myStore.collection.should.be.a.Function();
+      myStore.collection.name.should.eql('collection');
+      myStore._useUserContext.should.be.true();
+      myStore._useMasterSecret.should.be.false();
+      myStore._appMetadata.should.containDeep(this.appMetadata);
+      myStore._requestContext.should.containDeep(this.requestContext);
+    });
+
+    // DEPRECATED
     it('should create a datastore object that skips BL', () => {
       const myStore = this.store({ skipBl: true });
       should.exist(myStore.collection);
       myStore.collection.should.be.a.Function();
       myStore.collection.name.should.eql('collection');
       myStore._skipBl.should.be.true();
+      myStore._useBl.should.be.false();
+      myStore._appMetadata.should.containDeep(this.appMetadata);
+      myStore._requestContext.should.containDeep(this.requestContext);
+    });
+
+    it('should create a datastore object that uses BL', () => {
+      const myStore = this.store({ useBl: true });
+      should.exist(myStore.collection);
+      myStore.collection.should.be.a.Function();
+      myStore.collection.name.should.eql('collection');
+      myStore._skipBl.should.be.false();
+      myStore._useBl.should.be.true();
       myStore._appMetadata.should.containDeep(this.appMetadata);
       myStore._requestContext.should.containDeep(this.requestContext);
     });
 
     it('should be able to create two datastore objects with different settings', () => {
       const myStore = this.store();
-      const myStore2 = this.store({ useMasterSecret: true });
+      const myStore2 = this.store({ useUserContext: true });
 
       should.exist(myStore.collection);
       myStore.collection.should.be.a.Function();
       myStore.collection.name.should.eql('collection');
-      myStore._useMasterSecret.should.be.false();
+      myStore._useUserContext.should.be.false();
       myStore._appMetadata.should.containDeep(this.appMetadata);
       myStore._requestContext.should.containDeep(this.requestContext);
 
       should.exist(myStore2.collection);
       myStore2.collection.should.be.a.Function();
       myStore2.collection.name.should.eql('collection');
-      myStore2._useMasterSecret.should.be.true();
+      myStore2._useUserContext.should.be.true();
       myStore2._appMetadata.should.containDeep(this.appMetadata);
       myStore2._requestContext.should.containDeep(this.requestContext);
     });
@@ -171,10 +212,12 @@ describe('dataStore', () => {
       myCollection.find.name.should.eql('find');
       myCollection.removeById.name.should.eql('removeById');
       myCollection.remove.name.should.eql('remove');
-      myCollection._useMasterSecret.should.be.false();
+      myCollection._useMasterSecret.should.be.true();
+      myCollection._useUserContext.should.be.false();
       myCollection._appMetadata.should.containDeep(this.appMetadata);
       myCollection._requestContext.should.containDeep(this.requestContext);
-      myCollection._skipBl.should.be.false();
+      myCollection._skipBl.should.be.true();
+      myCollection._useBl.should.be.false();
     });
 
     it('should allow creation of multiple collection objects', () => {
@@ -187,7 +230,7 @@ describe('dataStore', () => {
 
   describe('find', () => {
     beforeEach(() => {
-      this.store = dataStore(this.appMetadata, this.requestContext);
+      this.store = dataStore(this.appMetadata, this.requestContext, this.taskMetadata);
     });
 
     afterEach(() => {
@@ -197,8 +240,13 @@ describe('dataStore', () => {
     it('should find all records', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', 3)
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
         .get(`/appdata/${environmentId}/myCollection/`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
         .reply(200, [{ _id: 123, someData: 'abc' }, { _id: 456, someData: 'xyz' }]);
 
       const collection = this.store().collection('myCollection');
@@ -209,18 +257,16 @@ describe('dataStore', () => {
       });
     });
 
-    it('should find all records using mastersecret', (done) => {
+    it('should find all records using userContext', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', 3)
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .matchHeader('authorization', authorization)
         .get(`/appdata/${environmentId}/myCollection/`)
-        .basicAuth({
-          user: environmentId,
-          pass: mastersecret
-        })
         .reply(200, [{ _id: 123, someData: 'abc' }, { _id: 456, someData: 'xyz' }]);
 
-      const collection = this.store({ useMasterSecret: true }).collection('myCollection');
+      const collection = this.store({ useUserContext: true }).collection('myCollection');
       collection.find((err, result) => {
         should.not.exist(err);
         result.should.containDeep([{ _id: 123, someData: 'abc' }, { _id: 456, someData: 'xyz' }]);
@@ -228,15 +274,74 @@ describe('dataStore', () => {
       });
     });
 
-    it('should find all records and skip bl', (done) => {
-      nock('https://baas.kinvey.com')
-        .matchHeader('x-kinvey-skip-business-logic', true)
+    it('should find all records and use bl', (done) => {
+      nock('https://baas.kinvey.com', { badheaders: ['x-kinvey-skip-business-logic'] })
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', 3)
+        .matchHeader('x-kinvey-api-version', '3')
         .get(`/appdata/${environmentId}/myCollection/`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
         .reply(200, [{ _id: 123, someData: 'abc' }, { _id: 456, someData: 'xyz' }]);
 
-      const collection = this.store({ skipBl: true }).collection('myCollection');
+      const collection = this.store({ useBl: true }).collection('myCollection');
+      collection.find((err, result) => {
+        should.not.exist(err);
+        result.should.containDeep([{ _id: 123, someData: 'abc' }, { _id: 456, someData: 'xyz' }]);
+        return done();
+      });
+    });
+
+    it('should prevent recursive requests to the same object that use bl', (done) => {
+      const collection = this.store({ useBl: true }).collection(this.taskMetadata.objectName);
+      collection.find((err, result) => {
+        should.not.exist(result);
+        should.exist(err);
+        err.message.should.eql('DataStoreError');
+        err.description.should.eql('Not Allowed');
+        err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
+        return done();
+      });
+    });
+
+    it('should prevent recursive requests to the same object that use user context', (done) => {
+      const collection = this.store({ useUserContext: true }).collection(this.taskMetadata.objectName);
+      collection.find((err, result) => {
+        should.not.exist(result);
+        should.exist(err);
+        err.message.should.eql('DataStoreError');
+        err.description.should.eql('Not Allowed');
+        err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
+        return done();
+      });
+    });
+
+    it('should prevent recursive requests to the same object that use user context and bl', (done) => {
+      const collection = this.store({ useUserContext: true, useBl: true }).collection(this.taskMetadata.objectName);
+      collection.find((err, result) => {
+        should.not.exist(result);
+        should.exist(err);
+        err.message.should.eql('DataStoreError');
+        err.description.should.eql('Not Allowed');
+        err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
+        return done();
+      });
+    });
+
+    it('should allow recursive requests to the same object that use mastersecret and skip bl', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .get(`/appdata/${environmentId}/${this.taskMetadata.objectName}/`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, [{ _id: 123, someData: 'abc' }, { _id: 456, someData: 'xyz' }]);
+
+      const collection = this.store().collection(this.taskMetadata.objectName);
       collection.find((err, result) => {
         should.not.exist(err);
         result.should.containDeep([{ _id: 123, someData: 'abc' }, { _id: 456, someData: 'xyz' }]);
@@ -247,8 +352,13 @@ describe('dataStore', () => {
     it('should find records with a query object', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', 3)
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
         .get(`/appdata/${environmentId}/myCollection/`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
         .query({ query: '{"foo":"bar"}' })
         .reply(200, [{ _id: 123, someData: 'abc' }, { _id: 456, someData: 'xyz' }]);
 
@@ -266,7 +376,7 @@ describe('dataStore', () => {
 
   describe('findById', () => {
     beforeEach(() => {
-      this.store = dataStore(this.appMetadata, this.requestContext);
+      this.store = dataStore(this.appMetadata, this.requestContext, this.taskMetadata);
     });
 
     afterEach(() => {
@@ -276,8 +386,13 @@ describe('dataStore', () => {
     it('should find a single entity', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', 3)
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
         .get(`/appdata/${environmentId}/myCollection/1234`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
         .reply(200, { _id: 1234, someData: 'abc' });
 
       const collection = this.store().collection('myCollection');
@@ -288,18 +403,16 @@ describe('dataStore', () => {
       });
     });
 
-    it('should find a single entity records using mastersecret', (done) => {
+    it('should find a single entity records using user context', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', 3)
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .matchHeader('authorization', authorization)
         .get(`/appdata/${environmentId}/myCollection/1234`)
-        .basicAuth({
-          user: environmentId,
-          pass: mastersecret
-        })
         .reply(200, { _id: 1234, someData: 'abc' });
 
-      const collection = this.store({ useMasterSecret: true }).collection('myCollection');
+      const collection = this.store({ useUserContext: true }).collection('myCollection');
       collection.findById(1234, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
@@ -307,16 +420,75 @@ describe('dataStore', () => {
       });
     });
 
-    it('should find a single entity and skip bl', (done) => {
-      nock('https://baas.kinvey.com')
-        .matchHeader('x-kinvey-skip-business-logic', true)
+    it('should find a single entity and use bl', (done) => {
+      nock('https://baas.kinvey.com', { badheaders: ['x-kinvey-skip-business-logic'] })
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', 3)
+        .matchHeader('x-kinvey-api-version', '3')
         .get(`/appdata/${environmentId}/myCollection/1234`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
         .reply(200, { _id: 1234, someData: 'abc' });
 
-      const collection = this.store({ skipBl: true }).collection('myCollection');
+      const collection = this.store({ useBl: true }).collection('myCollection');
       collection.findById('1234', (err, result) => {
+        should.not.exist(err);
+        result.should.containDeep({ _id: 1234, someData: 'abc' });
+        return done();
+      });
+    });
+
+    it('should prevent recursive requests to the same object that use bl', (done) => {
+      const collection = this.store({ useBl: true }).collection(this.taskMetadata.objectName);
+      collection.findById(1234, (err, result) => {
+        should.not.exist(result);
+        should.exist(err);
+        err.message.should.eql('DataStoreError');
+        err.description.should.eql('Not Allowed');
+        err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
+        return done();
+      });
+    });
+
+    it('should prevent recursive requests to the same object that use user context', (done) => {
+      const collection = this.store({ useUserContext: true }).collection(this.taskMetadata.objectName);
+      collection.findById(1234, (err, result) => {
+        should.not.exist(result);
+        should.exist(err);
+        err.message.should.eql('DataStoreError');
+        err.description.should.eql('Not Allowed');
+        err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
+        return done();
+      });
+    });
+
+    it('should prevent recursive requests to the same object that use user context and bl', (done) => {
+      const collection = this.store({ useUserContext: true, useBl: true }).collection(this.taskMetadata.objectName);
+      collection.findById(1234, (err, result) => {
+        should.not.exist(result);
+        should.exist(err);
+        err.message.should.eql('DataStoreError');
+        err.description.should.eql('Not Allowed');
+        err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
+        return done();
+      });
+    });
+
+    it('should allow recursive requests to the same object that use mastersecret and skip bl', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .get(`/appdata/${environmentId}/${this.taskMetadata.objectName}/1234`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { _id: 1234, someData: 'abc' });
+
+      const collection = this.store().collection(this.taskMetadata.objectName);
+      collection.findById(1234, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
         return done();
@@ -336,7 +508,7 @@ describe('dataStore', () => {
   });
   describe('save', () => {
     beforeEach(() => {
-      this.store = dataStore(this.appMetadata, this.requestContext);
+      this.store = dataStore(this.appMetadata, this.requestContext, this.taskMetadata);
     });
 
     afterEach(() => {
@@ -346,9 +518,14 @@ describe('dataStore', () => {
     it('should save a new entity', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', 3)
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
         .post(`/appdata/${environmentId}/myCollection/`, {
           someData: 'abc'
+        })
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
         })
         .reply(200, { _id: 1234, someData: 'abc' });
 
@@ -360,10 +537,29 @@ describe('dataStore', () => {
       });
     });
 
-    it('should save a new entity using mastersecret', (done) => {
+    it('should save a new entity using user context', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', 3)
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .matchHeader('authorization', authorization)
+        .post(`/appdata/${environmentId}/myCollection/`, {
+          someData: 'abc'
+        })
+        .reply(200, { _id: 1234, someData: 'abc' });
+
+      const collection = this.store({ useUserContext: true }).collection('myCollection');
+      collection.save({ someData: 'abc' }, (err, result) => {
+        should.not.exist(err);
+        result.should.containDeep({ _id: 1234, someData: 'abc' });
+        return done();
+      });
+    });
+
+    it('should save a new entity and use bl', (done) => {
+      nock('https://baas.kinvey.com', { badheaders: ['x-kinvey-skip-business-logic'] })
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
         .post(`/appdata/${environmentId}/myCollection/`, {
           someData: 'abc'
         })
@@ -373,7 +569,7 @@ describe('dataStore', () => {
         })
         .reply(200, { _id: 1234, someData: 'abc' });
 
-      const collection = this.store({ useMasterSecret: true }).collection('myCollection');
+      const collection = this.store({ useBl: true }).collection('myCollection');
       collection.save({ someData: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
@@ -381,17 +577,57 @@ describe('dataStore', () => {
       });
     });
 
-    it('should save a new entity and skip bl', (done) => {
+    it('should prevent recursive requests to the same object that use bl', (done) => {
+      const collection = this.store({ useBl: true }).collection(this.taskMetadata.objectName);
+      collection.save({ someData: 'abc' }, (err, result) => {
+        should.not.exist(result);
+        should.exist(err);
+        err.message.should.eql('DataStoreError');
+        err.description.should.eql('Not Allowed');
+        err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
+        return done();
+      });
+    });
+
+    it('should prevent recursive requests to the same object that use user context', (done) => {
+      const collection = this.store({ useUserContext: true }).collection(this.taskMetadata.objectName);
+      collection.save({ someData: 'abc' }, (err, result) => {
+        should.not.exist(result);
+        should.exist(err);
+        err.message.should.eql('DataStoreError');
+        err.description.should.eql('Not Allowed');
+        err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
+        return done();
+      });
+    });
+
+    it('should prevent recursive requests to the same object that use user context and bl', (done) => {
+      const collection = this.store({ useUserContext: true, useBl: true }).collection(this.taskMetadata.objectName);
+      collection.save({ someData: 'abc' }, (err, result) => {
+        should.not.exist(result);
+        should.exist(err);
+        err.message.should.eql('DataStoreError');
+        err.description.should.eql('Not Allowed');
+        err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
+        return done();
+      });
+    });
+
+    it('should allow recursive requests to the same object that use mastersecret and skip bl', (done) => {
       nock('https://baas.kinvey.com')
-        .matchHeader('x-kinvey-skip-business-logic', true)
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', 3)
-        .post(`/appdata/${environmentId}/myCollection/`, {
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .post(`/appdata/${environmentId}/${this.taskMetadata.objectName}/`, {
           someData: 'abc'
+        })
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
         })
         .reply(200, { _id: 1234, someData: 'abc' });
 
-      const collection = this.store({ skipBl: true }).collection('myCollection');
+      const collection = this.store().collection(this.taskMetadata.objectName);
       collection.save({ someData: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
@@ -402,10 +638,15 @@ describe('dataStore', () => {
     it('should save an existing entity', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', 3)
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
         .put(`/appdata/${environmentId}/myCollection/1234`, {
           _id: 1234,
           someData: 'abc'
+        })
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
         })
         .reply(200, { _id: 1234, someData: 'abc' });
 
@@ -417,10 +658,30 @@ describe('dataStore', () => {
       });
     });
 
-    it('should save an existing entity using mastersecret', (done) => {
+    it('should save an existing entity using user context', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', 3)
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .matchHeader('authorization', authorization)
+        .put(`/appdata/${environmentId}/myCollection/1234`, {
+          _id: 1234,
+          someData: 'abc'
+        })
+        .reply(200, { _id: 1234, someData: 'abc' });
+
+      const collection = this.store({ useUserContext: true }).collection('myCollection');
+      collection.save({ _id: 1234, someData: 'abc' }, (err, result) => {
+        should.not.exist(err);
+        result.should.containDeep({ _id: 1234, someData: 'abc' });
+        return done();
+      });
+    });
+
+    it('should save an existing entity and use bl', (done) => {
+      nock('https://baas.kinvey.com', { badheaders: ['x-kinvey-skip-business-logic'] })
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
         .put(`/appdata/${environmentId}/myCollection/1234`, {
           _id: 1234,
           someData: 'abc'
@@ -431,7 +692,7 @@ describe('dataStore', () => {
         })
         .reply(200, { _id: 1234, someData: 'abc' });
 
-      const collection = this.store({ useMasterSecret: true }).collection('myCollection');
+      const collection = this.store({ useBl: true }).collection('myCollection');
       collection.save({ _id: 1234, someData: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
@@ -439,18 +700,58 @@ describe('dataStore', () => {
       });
     });
 
-    it('should save an existing entity and skip bl', (done) => {
+    it('should prevent recursive requests to the same object that use bl', (done) => {
+      const collection = this.store({ useBl: true }).collection(this.taskMetadata.objectName);
+      collection.save({ _id: 1234, someData: 'abc' }, (err, result) => {
+        should.not.exist(result);
+        should.exist(err);
+        err.message.should.eql('DataStoreError');
+        err.description.should.eql('Not Allowed');
+        err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
+        return done();
+      });
+    });
+
+    it('should prevent recursive requests to the same object that use user context', (done) => {
+      const collection = this.store({ useUserContext: true }).collection(this.taskMetadata.objectName);
+      collection.save({ _id: 1234, someData: 'abc' }, (err, result) => {
+        should.not.exist(result);
+        should.exist(err);
+        err.message.should.eql('DataStoreError');
+        err.description.should.eql('Not Allowed');
+        err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
+        return done();
+      });
+    });
+
+    it('should prevent recursive requests to the same object that use user context and bl', (done) => {
+      const collection = this.store({ useUserContext: true, useBl: true }).collection(this.taskMetadata.objectName);
+      collection.save({ _id: 1234, someData: 'abc' }, (err, result) => {
+        should.not.exist(result);
+        should.exist(err);
+        err.message.should.eql('DataStoreError');
+        err.description.should.eql('Not Allowed');
+        err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
+        return done();
+      });
+    });
+
+    it('should allow recursive requests to the same object that use mastersecret and skip bl', (done) => {
       nock('https://baas.kinvey.com')
-        .matchHeader('x-kinvey-skip-business-logic', true)
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', 3)
-        .put(`/appdata/${environmentId}/myCollection/1234`, {
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .put(`/appdata/${environmentId}/${this.taskMetadata.objectName}/1234`, {
           _id: 1234,
           someData: 'abc'
         })
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
         .reply(200, { _id: 1234, someData: 'abc' });
 
-      const collection = this.store({ skipBl: true }).collection('myCollection');
+      const collection = this.store().collection(this.taskMetadata.objectName);
       collection.save({ _id: 1234, someData: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
@@ -461,7 +762,7 @@ describe('dataStore', () => {
 
   describe('remove', () => {
     beforeEach(() => {
-      this.store = dataStore(this.appMetadata, this.requestContext);
+      this.store = dataStore(this.appMetadata, this.requestContext, this.taskMetadata);
     });
 
     afterEach(() => {
@@ -471,8 +772,13 @@ describe('dataStore', () => {
     it('should remove all records', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', 3)
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
         .delete(`/appdata/${environmentId}/myCollection/`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
         .reply(200, { count: 30 });
 
       const collection = this.store().collection('myCollection');
@@ -483,18 +789,16 @@ describe('dataStore', () => {
       });
     });
 
-    it('should remove all records using mastersecret', (done) => {
+    it('should remove all records using user context', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', 3)
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .matchHeader('authorization', authorization)
         .delete(`/appdata/${environmentId}/myCollection/`)
-        .basicAuth({
-          user: environmentId,
-          pass: mastersecret
-        })
         .reply(200, { count: 30 });
 
-      const collection = this.store({ useMasterSecret: true }).collection('myCollection');
+      const collection = this.store({ useUserContext: true }).collection('myCollection');
       collection.remove((err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 30 });
@@ -503,14 +807,73 @@ describe('dataStore', () => {
     });
 
     it('should remove all records and skip bl', (done) => {
-      nock('https://baas.kinvey.com')
-        .matchHeader('x-kinvey-skip-business-logic', true)
+      nock('https://baas.kinvey.com', { badheaders: ['x-kinvey-skip-business-logic'] })
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', 3)
+        .matchHeader('x-kinvey-api-version', '3')
         .delete(`/appdata/${environmentId}/myCollection/`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
         .reply(200, { count: 30 });
 
-      const collection = this.store({ skipBl: true }).collection('myCollection');
+      const collection = this.store({ useBl: true }).collection('myCollection');
+      collection.remove((err, result) => {
+        should.not.exist(err);
+        result.should.containDeep({ count: 30 });
+        return done();
+      });
+    });
+
+    it('should prevent recursive requests to the same object that use bl', (done) => {
+      const collection = this.store({ useBl: true }).collection(this.taskMetadata.objectName);
+      collection.remove((err, result) => {
+        should.not.exist(result);
+        should.exist(err);
+        err.message.should.eql('DataStoreError');
+        err.description.should.eql('Not Allowed');
+        err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
+        return done();
+      });
+    });
+
+    it('should prevent recursive requests to the same object that use user context', (done) => {
+      const collection = this.store({ useUserContext: true }).collection(this.taskMetadata.objectName);
+      collection.remove((err, result) => {
+        should.not.exist(result);
+        should.exist(err);
+        err.message.should.eql('DataStoreError');
+        err.description.should.eql('Not Allowed');
+        err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
+        return done();
+      });
+    });
+
+    it('should prevent recursive requests to the same object that use user context and bl', (done) => {
+      const collection = this.store({ useUserContext: true, useBl: true }).collection(this.taskMetadata.objectName);
+      collection.remove((err, result) => {
+        should.not.exist(result);
+        should.exist(err);
+        err.message.should.eql('DataStoreError');
+        err.description.should.eql('Not Allowed');
+        err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
+        return done();
+      });
+    });
+
+    it('should allow recursive requests to the same object that use mastersecret and skip bl', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .delete(`/appdata/${environmentId}/${this.taskMetadata.objectName}/`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { count: 30 });
+
+      const collection = this.store().collection(this.taskMetadata.objectName);
       collection.remove((err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 30 });
@@ -521,8 +884,13 @@ describe('dataStore', () => {
     it('should remove records with a query object', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', 3)
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
         .delete(`/appdata/${environmentId}/myCollection/`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
         .query({ query: '{"foo":"bar"}' })
         .reply(200, { count: 12 });
 
@@ -540,7 +908,7 @@ describe('dataStore', () => {
 
   describe('removeById', () => {
     beforeEach(() => {
-      this.store = dataStore(this.appMetadata, this.requestContext);
+      this.store = dataStore(this.appMetadata, this.requestContext, this.taskMetadata);
     });
 
     afterEach(() => {
@@ -550,8 +918,13 @@ describe('dataStore', () => {
     it('should remove a single entity', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', 3)
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
         .delete(`/appdata/${environmentId}/myCollection/1234`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
         .reply(200, { count: 1 });
 
       const collection = this.store().collection('myCollection');
@@ -562,18 +935,16 @@ describe('dataStore', () => {
       });
     });
 
-    it('should remove a single entity records using mastersecret', (done) => {
+    it('should remove a single entity records using user context', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', 3)
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .matchHeader('authorization', authorization)
         .delete(`/appdata/${environmentId}/myCollection/1234`)
-        .basicAuth({
-          user: environmentId,
-          pass: mastersecret
-        })
         .reply(200, { count: 1 });
 
-      const collection = this.store({ useMasterSecret: true }).collection('myCollection');
+      const collection = this.store({ useUserContext: true }).collection('myCollection');
       collection.removeById(1234, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 1 });
@@ -581,16 +952,75 @@ describe('dataStore', () => {
       });
     });
 
-    it('should remove a single entity and skip bl', (done) => {
-      nock('https://baas.kinvey.com')
-        .matchHeader('x-kinvey-skip-business-logic', true)
+    it('should remove a single entity and use bl', (done) => {
+      nock('https://baas.kinvey.com', { badheaders: ['x-kinvey-skip-business-logic'] })
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', 3)
+        .matchHeader('x-kinvey-api-version', '3')
         .delete(`/appdata/${environmentId}/myCollection/1234`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
         .reply(200, { count: 1 });
 
-      const collection = this.store({ skipBl: true }).collection('myCollection');
+      const collection = this.store({ useBl: true }).collection('myCollection');
       collection.removeById('1234', (err, result) => {
+        should.not.exist(err);
+        result.should.containDeep({ count: 1 });
+        return done();
+      });
+    });
+
+    it('should prevent recursive requests to the same object that use bl', (done) => {
+      const collection = this.store({ useBl: true }).collection(this.taskMetadata.objectName);
+      collection.removeById(1234, (err, result) => {
+        should.not.exist(result);
+        should.exist(err);
+        err.message.should.eql('DataStoreError');
+        err.description.should.eql('Not Allowed');
+        err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
+        return done();
+      });
+    });
+
+    it('should prevent recursive requests to the same object that use user context', (done) => {
+      const collection = this.store({ useUserContext: true }).collection(this.taskMetadata.objectName);
+      collection.removeById(1234, (err, result) => {
+        should.not.exist(result);
+        should.exist(err);
+        err.message.should.eql('DataStoreError');
+        err.description.should.eql('Not Allowed');
+        err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
+        return done();
+      });
+    });
+
+    it('should prevent recursive requests to the same object that use user context and bl', (done) => {
+      const collection = this.store({ useUserContext: true, useBl: true }).collection(this.taskMetadata.objectName);
+      collection.removeById(1234, (err, result) => {
+        should.not.exist(result);
+        should.exist(err);
+        err.message.should.eql('DataStoreError');
+        err.description.should.eql('Not Allowed');
+        err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
+        return done();
+      });
+    });
+
+    it('should allow recursive requests to the same object that use mastersecret and skip bl', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .delete(`/appdata/${environmentId}/${this.taskMetadata.objectName}/1234`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { count: 1 });
+
+      const collection = this.store().collection(this.taskMetadata.objectName);
+      collection.removeById(1234, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 1 });
         return done();
@@ -611,7 +1041,7 @@ describe('dataStore', () => {
 
   describe('count', () => {
     beforeEach(() => {
-      this.store = dataStore(this.appMetadata, this.requestContext);
+      this.store = dataStore(this.appMetadata, this.requestContext, this.taskMetadata);
     });
 
     afterEach(() => {
@@ -620,9 +1050,14 @@ describe('dataStore', () => {
 
     it('should get a count of all records', (done) => {
       nock('https://baas.kinvey.com')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', 3)
+        .matchHeader('x-kinvey-api-version', '3')
         .get(`/appdata/${environmentId}/myCollection/_count/`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
         .reply(200, { count: 30 });
 
       const collection = this.store().collection('myCollection');
@@ -633,18 +1068,16 @@ describe('dataStore', () => {
       });
     });
 
-    it('should get a count of all records using mastersecret', (done) => {
+    it('should get a count of all records using user context', (done) => {
       nock('https://baas.kinvey.com')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', 3)
+        .matchHeader('authorization', authorization)
+        .matchHeader('x-kinvey-api-version', '3')
         .get(`/appdata/${environmentId}/myCollection/_count/`)
-        .basicAuth({
-          user: environmentId,
-          pass: mastersecret
-        })
         .reply(200, { count: 30 });
 
-      const collection = this.store({ useMasterSecret: true }).collection('myCollection');
+      const collection = this.store({ useUserContext: true }).collection('myCollection');
       collection.count((err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 30 });
@@ -652,15 +1085,74 @@ describe('dataStore', () => {
       });
     });
 
-    it('should get a count of all records and skip bl', (done) => {
-      nock('https://baas.kinvey.com')
-        .matchHeader('x-kinvey-skip-business-logic', true)
+    it('should get a count of all records and use bl', (done) => {
+      nock('https://baas.kinvey.com', { badheaders: ['x-kinvey-skip-business-logic'] })
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', 3)
+        .matchHeader('x-kinvey-api-version', '3')
         .get(`/appdata/${environmentId}/myCollection/_count/`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
         .reply(200, { count: 30 });
 
-      const collection = this.store({ skipBl: true }).collection('myCollection');
+      const collection = this.store({ useBl: true }).collection('myCollection');
+      collection.count((err, result) => {
+        should.not.exist(err);
+        result.should.containDeep({ count: 30 });
+        return done();
+      });
+    });
+
+    it('should prevent recursive requests to the same object that use bl', (done) => {
+      const collection = this.store({ useBl: true }).collection(this.taskMetadata.objectName);
+      collection.count((err, result) => {
+        should.not.exist(result);
+        should.exist(err);
+        err.message.should.eql('DataStoreError');
+        err.description.should.eql('Not Allowed');
+        err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
+        return done();
+      });
+    });
+
+    it('should prevent recursive requests to the same object that use user context', (done) => {
+      const collection = this.store({ useUserContext: true }).collection(this.taskMetadata.objectName);
+      collection.count((err, result) => {
+        should.not.exist(result);
+        should.exist(err);
+        err.message.should.eql('DataStoreError');
+        err.description.should.eql('Not Allowed');
+        err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
+        return done();
+      });
+    });
+
+    it('should prevent recursive requests to the same object that use user context and bl', (done) => {
+      const collection = this.store({ useUserContext: true, useBl: true }).collection(this.taskMetadata.objectName);
+      collection.count((err, result) => {
+        should.not.exist(result);
+        should.exist(err);
+        err.message.should.eql('DataStoreError');
+        err.description.should.eql('Not Allowed');
+        err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
+        return done();
+      });
+    });
+
+    it('should allow recursive requests to the same object that use mastersecret and skip bl', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .get(`/appdata/${environmentId}/${this.taskMetadata.objectName}/_count/`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { count: 30 });
+
+      const collection = this.store().collection(this.taskMetadata.objectName);
       collection.count((err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 30 });
@@ -671,8 +1163,13 @@ describe('dataStore', () => {
     it('should get a count of records with a query object', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', 3)
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
         .get(`/appdata/${environmentId}/myCollection/_count/`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
         .query({ query: '{"foo":"bar"}' })
         .reply(200, { count: 12 });
 
@@ -680,7 +1177,7 @@ describe('dataStore', () => {
       query.equalTo('foo', 'bar');
 
       const collection = this.store().collection('myCollection');
-      collection.count(query, (err, result) => {
+      collection.count((err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 12 });
         return done();
