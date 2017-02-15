@@ -59,6 +59,7 @@
     "test-push": "mocha test/lib/modules/push.test.js",
     "test-query": "mocha test/lib/modules/query.test.js",
     "test-requestcontext": "mocha test/lib/modules/requestContext.test.js",
-    "test-tempobjectstore": "mocha test/lib/modules/tempObjectStore.test.js"
+    "test-tempobjectstore": "mocha test/lib/modules/tempObjectStore.test.js",
+    "test-userStore": "mocha test/lib/modules/userStore.test.js"
   }
 }
