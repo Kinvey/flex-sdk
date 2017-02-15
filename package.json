@@ -54,11 +54,13 @@
     "test-backendcontext": "mocha test/lib/modules/backendContext.test.js",
     "test-dataStore": "mocha test/lib/modules/dataStore.test.js",
     "test-email": "mocha test/lib/modules/email.test.js",
+    "test-groupStore": "mocha test/lib/modules/groupStore.test.js",
     "test-entity": "mocha test/lib/modules/entity.test.js",
     "test-kinveydate": "mocha test/lib/modules/kinveyDate.test.js",
     "test-push": "mocha test/lib/modules/push.test.js",
     "test-query": "mocha test/lib/modules/query.test.js",
     "test-requestcontext": "mocha test/lib/modules/requestContext.test.js",
-    "test-tempobjectstore": "mocha test/lib/modules/tempObjectStore.test.js"
+    "test-tempobjectstore": "mocha test/lib/modules/tempObjectStore.test.js",
+    "test-userStore": "mocha test/lib/modules/userStore.test.js"
   }
 }
