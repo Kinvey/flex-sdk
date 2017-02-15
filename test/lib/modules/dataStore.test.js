@@ -403,7 +403,7 @@ describe('dataStore', () => {
       });
     });
 
-    it('should find a single entity records using user context', (done) => {
+    it('should find a single entity record using user context', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
         .matchHeader('x-kinvey-api-version', '3')
@@ -935,7 +935,7 @@ describe('dataStore', () => {
       });
     });
 
-    it('should remove a single entity records using user context', (done) => {
+    it('should remove a single entity record using user context', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
         .matchHeader('x-kinvey-api-version', '3')
