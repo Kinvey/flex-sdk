@@ -5,7 +5,14 @@
 * Change request to context
 * Fix completion handlers to properly handle pre/post step context
 * Added `setBody` and `setQuery` to data/function completion hanlder
+* Added `useBl` option to userStore and dataStore.  Set to `true` to enable business logic execution for a store request.  Defaults to false.  
+* Added `useUserContext` option to userStore and dataStore. Set to `true` to execute the request under user's authentication context.  Defaults to false.
+* dataStore and authStore now default to using mastersecret credentials and not executing business logic
+* Circular requests to userStore/dataStore (e.g. saving back to the sae collection in a post hook) now must not execute BL and must be executed under masterSecret credentials.  
+* Some internal refactoring
 * DEPRECATED:  Passing the entity directly in the `complete()` method.  Will be removed in future version.
+* DEPRECATED:  useMasterSecret argument for userStore and dataStore.  Stores now default to using master secret.  Use `useUserContext` to use the context of the current user for dataStore or userStore requests.  
+* DEPRECATED:  skipBl argument for userStore and dataStore.  Stores now default to not executing business logic hooks in response to store requests.  Use `useBl` to enable BL execution.  
 
 ### 1.2.0
 * Append flex SDK version to task response
