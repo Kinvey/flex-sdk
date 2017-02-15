@@ -365,7 +365,7 @@ describe('userStore', () => {
       });
     });
 
-    it('should find a single user records using user context', (done) => {
+    it('should find a single user record using user context', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
         .matchHeader('x-kinvey-api-version', '3')
