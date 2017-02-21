@@ -1,6 +1,6 @@
 {
   "name": "kinvey-flex-sdk",
-  "version": "2.0.0-b.6",
+  "version": "2.0.0-b.7",
   "description": "SDK for creating Kinvey Flex Services",
   "engines": {
     "node": "= 6.x.x"
@@ -17,7 +17,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "bson": "0.4.23",
-    "kinvey-code-task-runner": "2.0.0",
+    "kinvey-code-task-runner": "dev",
     "kinvey-datalink-errors": "0.2.2",
     "lodash.forown": "4.2.0",
     "lodash.get": "4.3.0",
