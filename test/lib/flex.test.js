@@ -16,6 +16,7 @@ const flexPackageJson = require('../../package.json');
 const should = require('should');
 const proxyquire = require('proxyquire');
 const sinon = require('sinon');
+const uuid = require('uuid');
 
 const mockTaskReceiver = require('./mocks/mockTaskReceiver.js');
 
@@ -189,6 +190,139 @@ describe('service creation', () => {
         result.discoveryObjects.dataLink.should.be.an.Object();
         result.discoveryObjects.businessLogic.should.be.an.Object();
         result.discoveryObjects.auth.should.be.an.Object();
+        done();
+      });
+    });
+  });
+
+  it('should reject a task if shared secret auth is enabled and the authKey is not included', (done) => {
+    sdk.service({ sharedSecret: uuid.v4() }, (err, flex) => {
+      const task = {
+        appMetadata: {
+          _id: '12345',
+          appsecret: 'appsecret',
+          mastersecret: 'mastersecret',
+          pushService: void 0,
+          restrictions: {
+            level: 'starter'
+          },
+          API_version: 3,
+          name: 'DevApp',
+          platform: null
+        },
+        taskType: 'data',
+        method: 'GET',
+        request: {
+          method: 'GET',
+          headers: {},
+          body: {},
+          serviceObjectName: 'foo'
+        },
+        response: {}
+      };
+
+      flex.data.serviceObject('foo').onGetAll((context, complete) => {
+        const body = { foo: 'bar' };
+        complete().setBody(body).ok().done();
+      });
+
+      mockTaskReceiver.taskReceived()(task, (err, result) => {
+        err.response.body.message.should.eql('InvalidCredentials');
+        err.response.body.description.should.eql('Invalid credentials.  Please retry your request with correct credentials.');
+        err.response.statusCode.should.eql(401);
+        err.response.body.debug.should.eql('The Authorization Key was not valid or missing.');
+        should.not.exist(result);
+        should.not.exist(err.response.body.foo);
+        done();
+      });
+    });
+  });
+
+  it('should reject a task if shared secret auth is enabled and the authKey does not match', (done) => {
+    sdk.service({ sharedSecret: uuid.v4() }, (err, flex) => {
+      const task = {
+        appMetadata: {
+          _id: '12345',
+          appsecret: 'appsecret',
+          mastersecret: 'mastersecret',
+          pushService: void 0,
+          restrictions: {
+            level: 'starter'
+          },
+          API_version: 3,
+          name: 'DevApp',
+          platform: null
+        },
+        authKey: uuid.v4(),
+        taskType: 'data',
+        method: 'GET',
+        request: {
+          method: 'GET',
+          headers: {},
+          body: {},
+          serviceObjectName: 'foo'
+        },
+        response: {}
+      };
+
+      flex.data.serviceObject('foo').onGetAll((context, complete) => {
+        const body = { foo: 'bar' };
+        complete().setBody(body).ok().done();
+      });
+
+      mockTaskReceiver.taskReceived()(task, (err, result) => {
+        err.response.body.message.should.eql('InvalidCredentials');
+        err.response.body.description.should.eql('Invalid credentials.  Please retry your request with correct credentials.');
+        err.response.statusCode.should.eql(401);
+        err.response.body.debug.should.eql('The Authorization Key was not valid or missing.');
+        should.not.exist(result);
+        should.not.exist(err.response.body.foo);
+        done();
+      });
+    });
+  });
+
+  it('should process a task if shared secret auth is enabled and the authKey is included', (done) => {
+    const authKey = uuid.v4();
+
+    sdk.service({ sharedSecret: authKey }, (err, flex) => {
+      const task = {
+        appMetadata: {
+          _id: '12345',
+          appsecret: 'appsecret',
+          mastersecret: 'mastersecret',
+          pushService: void 0,
+          restrictions: {
+            level: 'starter'
+          },
+          API_version: 3,
+          name: 'DevApp',
+          platform: null
+        },
+        authKey,
+        taskType: 'data',
+        method: 'GET',
+        request: {
+          method: 'GET',
+          headers: {},
+          body: {},
+          serviceObjectName: 'foo'
+        },
+        response: {}
+      };
+
+      flex.data.serviceObject('foo').onGetAll((context, complete) => {
+        const body = { foo: 'bar' };
+        complete().setBody(body).ok().done();
+      });
+
+      mockTaskReceiver.taskReceived()(task, (err, result) => {
+        should.not.exist(err);
+        result.response.body.foo.should.eql('bar');
+        result.response.statusCode.should.eql(200);
+        should.not.exist(result.response.body.message);
+        should.not.exist(result.response.body.description);
+        should.not.exist(result.response.body.debug);
         done();
       });
     });
