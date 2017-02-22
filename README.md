@@ -31,6 +31,17 @@ sdk.service({ host: 'somehost', port: 7777 }, (err, flex) => {
 });
 ```
 
+You can also specify a shared secret to be used by this service.  Any client that accesses this service *must* contain this shared secret, or requests will be rejected with a `401 Unauthorized` error.  
+
+```
+sdk.service({ sharedSecret: '<some shared secret>'} }, (err, flex) => {
+  // code goes here
+});
+```
+
+Once set here, you must set this shared secret in the Kinvey console when configuring your service for Kinvey requests to execute properly.  For testing locally, this shared secret can be passed in the `X-Auth-Key` http header.  
+
+
 To run your code locally, execute `node .` in the root of your project.  Routes are:
 
 For FlexData:
@@ -462,16 +473,15 @@ The `context` object contains the following properties:
 | --------- | ----------- |
 | method    | the HTTP method (GET, POST, PUT, DELETE) |
 | headers   | the HTTP request headers |
-| collectionName | the name of the collection |
 | body | the body of the request |
 
 The `body` can contain up to three arguments:
 
 | property | description |
 | --------- | ----------- |
-| username    | the username of the user logging in|
-| password   | The password of the user logging in |
-| coptions | Optional request options. |
+| username    | the username of the user logging in | 
+| password  | The password of the user logging in |
+| options | Optional request options. |
 
 The completion handlers object follows a builder pattern for creating the handler's response.  The pattern for the completion handler is `complete().[setToken(<token>).addAttribut(key, value).removeAttribute(key, value)].<status>.<done|next>`
 
@@ -651,7 +661,6 @@ The following modules are available:
 * [backendContext](#backend-context-module) Provides methods to access information about the current backend context.
 * [dataStore](#data-store-module) Fetch, query, and write to Kinvey collections.
 * [email](#email-module) Send Email notifications
-* [groupStore](#group-store-module) Fetch, query, and write to Kinvey groups.
 * [Kinvey Entity](#kinvey-entity-module) Kinvey entity utilities
 * [kinveyDate](#kinvey-date-module) Kinvey date utilities
 * [push](#push-module) Send push notifications to a user's device
@@ -715,19 +724,15 @@ The `dataStore` method also takes an optional `options` argument is an optional 
 
 | Option             | Description                  |
 |:-------------------|:------------------------| 
-| `useBl` | If set to true, executes BL hooks associated with the dataStore request.  If false, business logic hooks will not execute.  Defaults to false. | 
-| `useUserContext` | Uses user context credentials to access the datastore if set to `true`.  If false, will execute in the context of `mastersecret`.  Defaults to false. |
-| `useMasterSecret` | **DEPRECATED:  use `useUserContext` instead** Uses the mastersecret credentials to access the datastore if set to `true`.  If set to false, will use the current user credentials. |
-| `skipBl` | **DEPRECATED: use `useBl` instead** If set to true, skips BL processing when accessing the datastore.  If false or not included, it will default to executing any BL associated with the store. |
-
-**NOTE** Requests that use userContext will *automatically* execute BL, as requests to the Kinvey platform using a user context cannot skip BL.  
+| `useMasterSecret` | Uses the mastersecret credentials to access the datastore if set to `true`.  If not included or set to false, will use the current user credentials. |
+| `skipBl` | If set to true, skips BL processing when accessing the datastore.  If false or not included, it will default to executing any BL associated with the store. **NOTE** skipBL *must* be used in conjunection with `useMasterSecret` as user requests that skip BL are not allowed.|
 
 For example:  
 
 ```
 const options = {
-  useBl: true,
-  useUserContext: false
+  skipBl: true,
+  useMasterSecret: false
 }
 
 const store = modules.dataStore(options);
@@ -750,12 +755,10 @@ The `collection` object contains methods for accessing data within the collectio
 | `removeById(entityId, callback)` | Removes a single entity by its `_id`. |
 | `count(query, callback)` | Gets a count of all records that would be returned by the `query`.  The `query` is a `Query` object created with `modules.Query`.  If no `Query` object is supplied, the `count` method will return a count of the number of entities in the collection. | 
 
-**NOTE** Circular requests (request to the same collection as the originating Flex request) *must* be executed under `mastersecret` credentials and must not use business logic.  If either `useUserContext` or `useBl` are set to true, these types of requests will fail with an error in the callback.  
-
 For example:
 
 ```
-  const store = dataStore({ useUserContext: true });
+  const store = dataStore({ useMasterSecret: true });
   const products = store.collection('products');
   products.findById(1234, (err, result) => {
     if (err) {
@@ -810,63 +813,6 @@ To send an HTML email, it is important to note that the reply-to *must* be inclu
 Email calls are asynchronous in nature.  They can be invoked without a callback, but are not guaranteed to complete before continuing to the next statement.  However, once invoked they will complete the sending of the email, even if the function ends via a complete handler. 
 
 *Note:* The email module is currently only available for services running on the Kinvey Microservices Runtime, and is not available externally or for local testing.  
-
-### [groupStore](#group-store-module)
-
-Use the groupStore module to interact with Kinvey Groups.  The groupStore module can be used to create, update, retrieve, and remove Kinvey User groups.  
-
-To initialize the groupStore:
-
-```
-const store = modules.groupStore();
-```
-
-The `groupStore` method also takes an optional `options` argument is an optional object containing store options for the current store.  The options are:
-
-| Option             | Description                  |
-|:-------------------|:------------------------| 
-| `useUserContext` | Uses user context credentials to access the groupStore if set to `true`.  If false, will execute in the context of `mastersecret`.  Defaults to false. |
-
-
-For example:  
-
-```
-const options = {
-  useUserContext: true
-}
-
-const store = modules.groupStore(options);
-```
-
-The `groupStore` object contains methods for accessing Kinvey groups.  All methods take a `callback` function.  
-
-*Note:*  most methods take a callback with `err` and `results` arguments. 
-
-| Method             | Description                  |
-|:-------------------|:------------------------|
-| `create(group, callback)` | Creates a new `group`.  The group object should be formatted according to the [Group API Specification](http://devcenter.kinvey.com/rest/guides/users#usergroupscreate) |
-| `update(ugroupser, callback)` | Updates the provided `group`.  Note that the `group` entity supplied must contain an `_id`. The group object should be formatted according to the [Group API Specification](http://devcenter.kinvey.com/rest/guides/users#usergroupsupdate) |  |
-| `remove(groupId, callback)` | Removes a single group by its `_id`. Note this method deletes the user from the userStore and is non-recoverable. |
-| `findById(groupId, callback)` | Finds a user based on its ID. |
-
-For example:
-
-```
-  const store =  groupStore({ useUserContext: true });
-  store.findById(1234, (err, result) => {
-    if (err) {
-      return complete().setBody(err).runtimeError().done();
-    }
-    store.update(result, (err, savedResult) => {
-      if (err) {
-        return complete(err).runtimeError().done();
-      }
-      complete().setBody(savedResult).ok().next();
-    });
-  });
-```
-
-**NOTE** When testing groupStore in particular locally, special headers need to be added to your local tests.  These headers will be added automatically by Kinvey in production use.  For information on the required headers, see the section on [testing locally](#testing-locally)  
 
 ### [Kinvey Entity](#kinvey-entity-module)
 
@@ -1505,19 +1451,15 @@ The `userStore` method also takes an optional `options` argument is an optional 
 
 | Option             | Description                  |
 |:-------------------|:------------------------| 
-| `useBl` | If set to true, executes BL hooks associated with the userStore request.  If false, business logic hooks will not execute.  Defaults to false. | 
-| `useUserContext` | Uses user context credentials to access the userStore if set to `true`.  If false, will execute in the context of `mastersecret`.  Defaults to false. |
-| `useMasterSecret` | **DEPRECATED:  use `useUserContext` instead** Uses the mastersecret credentials to access the userStore if set to `true`.  If set to false, will use the current user credentials. |
-| `skipBl` | **DEPRECATED: use `useBl` instead** If set to true, skips BL processing when accessing the userStore.  If false or not included, it will default to executing any BL associated with the store. |
-
-**NOTE** Requests that use userContext will *automatically* execute BL, as requests to the Kinvey platform using a user context cannot skip BL.  
+| `useMasterSecret` | Uses the mastersecret credentials to access the userstore if set to `true`.  If not included or set to false, will use the current user credentials. |
+| `skipBl` | If set to true, skips BL processing when accessing the userstore.  If false or not included, it will default to executing any BL associated with the store. **NOTE** skipBL *must* be used in conjunection with `useMasterSecret` as user requests that skip BL are not allowed. |
 
 For example:  
 
 ```
 const options = {
-  useBl: true,
-  useUserContext: true
+  skipBl: true,
+  useMasterSecret: true
 }
 
 const store = modules.userStore(options);
@@ -1539,12 +1481,10 @@ The `userStore` object contains methods for accessing Kinvey users.  All methods
 | `restore(userId, callback)` | Restores a suspended user. |
 | `count(query, callback)` | Gets a count of all users that would be returned by the `query`.  The `query` is a `Query` object created with `modules.Query`.  If no `Query` object is supplied, the `count` method will return a count of the total number of users. | 
 
-**NOTE** Circular requests to the userStore (request to the useStore when the origin originating Flex request was also a request to the userStore) *must* be executed under `mastersecret` credentials and must not use business logic.  If either `useUserContext` or `useBl` are set to true, these types of requests will fail with an error in the callback.  
-
 For example:
 
 ```
-  const store =  userStore({ useUserContext: true });
+  const store =  userStore({ useMasterSecret: true });
   store.findById(1234, (err, result) => {
     if (err) {
       return complete().setBody(err).runtimeError().done();
@@ -1562,6 +1502,7 @@ For example:
 
 **NOTE** When testing userStore in particular locally, special headers need to be added to your local tests.  These headers will be added automatically by Kinvey in production use.  For information on the required headers, see the section on [testing locally](#testing-locally)  
 
+
 ## [Testing Locally](#testing-locally)
 
 In production use, certain data is sent to the the service by Kinvey for use in certain modules.  This data can be sent via HTTP headers when testing locally.  Different modules within the backend-sdk require these arguments. All are optional, but required if you want to make use of certain features in local testing.  
@@ -1573,6 +1514,7 @@ In production use, certain data is sent to the the service by Kinvey for use in 
 | `X-Kinvey-Original-Request-Headers` | A stringified JSON object that contains the request headers that belong to the request context of the BL or data request | `requestContext`, `dataStore`, `userStore`, the `request` argument in all handlers (if you want to access request headers) |
 | `X-Kinvey-Username` | The username of the user making the request. | `requestContext`, `dataStore`, `userStore` |
 | `X-Kinvey-User-Id` | The User Id | `requestContext`, `dataStore`, `userStore` |
+| `X-Auth-Key` | The shared secret API Key used for accessing this flex service |
 
 The `X-Kinvey-App-Metadata` object contains:
 
