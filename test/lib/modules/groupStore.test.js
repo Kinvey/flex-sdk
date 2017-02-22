@@ -323,7 +323,7 @@ describe('groupStore', () => {
         })
         .basicAuth({
           user: environmentId,
-          pass: appsecret
+          pass: mastersecret
         })
         .reply(200, { _id: 1234, username: 'abc' });
 
@@ -344,7 +344,7 @@ describe('groupStore', () => {
         })
         .basicAuth({
           user: environmentId,
-          pass: appsecret
+          pass: mastersecret
         })
         .reply(200, { _id: 1234, username: 'abc' });
 
@@ -364,7 +364,7 @@ describe('groupStore', () => {
         })
         .basicAuth({
           user: environmentId,
-          pass: appsecret
+          pass: mastersecret
         })
         .reply(200, { _id: 1234, username: 'abc' });
 
@@ -418,7 +418,7 @@ describe('groupStore', () => {
         })
         .basicAuth({
           user: environmentId,
-          pass: appsecret
+          pass: mastersecret
         })
         .reply(200, { _id: 1234, username: 'abc' });
 
@@ -603,25 +603,6 @@ describe('groupStore', () => {
         .matchHeader('content-type', 'application/json')
         .matchHeader('x-kinvey-api-version', '3')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
-        .delete(`/group/${environmentId}/1234?hard=true`)
-        .basicAuth({
-          user: environmentId,
-          pass: mastersecret
-        })
-        .reply(200);
-
-      this.store().remove(1234, (err, result) => {
-        should.not.exist(err);
-        should.not.exist(result);
-        return done();
-      });
-    });
-
-    it('should not include hard=true if apiVersion is 1', (done) => {
-      nock('https://baas.kinvey.com')
-        .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '1')
-        .matchHeader('x-kinvey-skip-business-logic', 'true')
         .delete(`/group/${environmentId}/1234`)
         .basicAuth({
           user: environmentId,
@@ -629,9 +610,6 @@ describe('groupStore', () => {
         })
         .reply(200);
 
-      const myStore = this.store();
-
-      myStore._requestContext.apiVersion = 1;
       this.store().remove(1234, (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
@@ -645,7 +623,7 @@ describe('groupStore', () => {
         .matchHeader('x-kinvey-api-version', '3')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .matchHeader('authorization', authorization)
-        .delete(`/group/${environmentId}/1234?hard=true`)
+        .delete(`/group/${environmentId}/1234`)
         .reply(200);
 
       this.store({ useUserContext: true }).remove(1234, (err, result) => {
@@ -659,7 +637,7 @@ describe('groupStore', () => {
       nock('https://baas.kinvey.com', { badheaders: ['x-kinvey-skip-business-logic'] })
         .matchHeader('content-type', 'application/json')
         .matchHeader('x-kinvey-api-version', '3')
-        .delete(`/group/${environmentId}/1234?hard=true`)
+        .delete(`/group/${environmentId}/1234`)
         .basicAuth({
           user: environmentId,
           pass: mastersecret
@@ -711,7 +689,7 @@ describe('groupStore', () => {
         .matchHeader('content-type', 'application/json')
         .matchHeader('x-kinvey-api-version', '3')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
-        .delete(`/group/${environmentId}/1234?hard=true`)
+        .delete(`/group/${environmentId}/1234`)
         .basicAuth({
           user: environmentId,
           pass: mastersecret
