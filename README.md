@@ -31,6 +31,17 @@ sdk.service({ host: 'somehost', port: 7777 }, (err, flex) => {
 });
 ```
 
+You can also specify a shared secret to be used by this service.  Any client that accesses this service *must* contain this shared secret, or requests will be rejected with a `401 Unauthorized` error.  
+
+```
+sdk.service({ sharedSecret: '<some shared secret>'} }, (err, flex) => {
+  // code goes here
+});
+```
+
+Once set here, you must set this shared secret in the Kinvey console when configuring your service for Kinvey requests to execute properly.  For testing locally, this shared secret can be passed in the `X-Auth-Key` http header.  
+
+
 To run your code locally, execute `node .` in the root of your project.  Routes are:
 
 For FlexData:
@@ -462,16 +473,15 @@ The `context` object contains the following properties:
 | --------- | ----------- |
 | method    | the HTTP method (GET, POST, PUT, DELETE) |
 | headers   | the HTTP request headers |
-| collectionName | the name of the collection |
 | body | the body of the request |
 
 The `body` can contain up to three arguments:
 
 | property | description |
 | --------- | ----------- |
-| username    | the username of the user logging in|
-| password   | The password of the user logging in |
-| coptions | Optional request options. |
+| username    | the username of the user logging in | 
+| password  | The password of the user logging in |
+| options | Optional request options. |
 
 The completion handlers object follows a builder pattern for creating the handler's response.  The pattern for the completion handler is `complete().[setToken(<token>).addAttribut(key, value).removeAttribute(key, value)].<status>.<done|next>`
 
@@ -1458,7 +1468,6 @@ function handler(context, response, modules){
 }
 ```
 
-
 ### [Temp Object Store](#temp-object-store-module)
 
 A key-value store for persisting temporary data between a pre- and post-hook. `tempObjectStore` is an ephemeral store that only lives for the duration of a single request, but will allow for data that is written in a pre-hook to be read in a dataLino and/or in the post-hook.  The module implements three methods:
@@ -1573,6 +1582,7 @@ In production use, certain data is sent to the the service by Kinvey for use in 
 | `X-Kinvey-Original-Request-Headers` | A stringified JSON object that contains the request headers that belong to the request context of the BL or data request | `requestContext`, `dataStore`, `userStore`, the `request` argument in all handlers (if you want to access request headers) |
 | `X-Kinvey-Username` | The username of the user making the request. | `requestContext`, `dataStore`, `userStore` |
 | `X-Kinvey-User-Id` | The User Id | `requestContext`, `dataStore`, `userStore` |
+| `X-Auth-Key` | The shared secret API Key used for accessing this flex service |
 
 The `X-Kinvey-App-Metadata` object contains:
 

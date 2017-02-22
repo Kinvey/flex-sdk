@@ -22,6 +22,7 @@
     "prefer-template": "warn",
     "radix": "off",
     "guard-for-in": "warn",
-    "spaced-comment":"off"
+    "spaced-comment":"off",
+    "newline-per-chained-call": "off"
   }
 }
