@@ -844,8 +844,8 @@ The `groupStore` object contains methods for accessing Kinvey groups.  All metho
 
 | Method             | Description                  |
 |:-------------------|:------------------------|
-| `create(group, callback)` | Creates a new `group`.  The group object should be formatted as http://devcenter.kinvey.com/rest/guides/users#usergroupscreate |
-| `update(ugroupser, callback)` | Updates the provided `group`.  Note that the `group` entity supplied must contain an `_id`. The group object should be formatted as http://devcenter.kinvey.com/rest/guides/users#usergroupsupdate |  |
+| `create(group, callback)` | Creates a new `group`.  The group object should be formatted according to the [Group API Specification](http://devcenter.kinvey.com/rest/guides/users#usergroupscreate) |
+| `update(ugroupser, callback)` | Updates the provided `group`.  Note that the `group` entity supplied must contain an `_id`. The group object should be formatted according to the [Group API Specification](http://devcenter.kinvey.com/rest/guides/users#usergroupsupdate) |  |
 | `remove(groupId, callback)` | Removes a single group by its `_id`. Note this method deletes the user from the userStore and is non-recoverable. |
 | `findById(groupId, callback)` | Finds a user based on its ID. |
 
@@ -864,7 +864,6 @@ For example:
       complete().setBody(savedResult).ok().next();
     });
   });
-});
 ```
 
 **NOTE** When testing groupStore in particular locally, special headers need to be added to your local tests.  These headers will be added automatically by Kinvey in production use.  For information on the required headers, see the section on [testing locally](#testing-locally)  
