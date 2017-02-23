@@ -1,5 +1,8 @@
 ## Changelog
 
+### 2.0.1
+* Fix stringification bug on some done() calls.
+
 ### 2.0.0
 * Add Auth support to flex under flex.auth
 * Change request to context
