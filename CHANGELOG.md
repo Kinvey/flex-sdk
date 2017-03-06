@@ -1,5 +1,9 @@
 ## Changelog
 
+### 2.0.2
+* Fixed top-level errors to return JSON, fixing the bug where an invalid shared secret would generate the wrong error
+* Set maxSockets to 100 for both http and https agents 
+
 ### 2.0.1
 * Fix stringification bug on some done() calls.
 
