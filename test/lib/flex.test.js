@@ -227,7 +227,7 @@ describe('service creation', () => {
       });
 
       mockTaskReceiver.taskReceived()(task, (err, result) => {
-        err.response.body.message.should.eql('InvalidCredentials');
+        err.response.body.error.should.eql('InvalidCredentials');
         err.response.body.description.should.eql('Invalid credentials.  Please retry your request with correct credentials.');
         err.response.statusCode.should.eql(401);
         err.response.body.debug.should.eql('The Authorization Key was not valid or missing.');
@@ -271,7 +271,7 @@ describe('service creation', () => {
       });
 
       mockTaskReceiver.taskReceived()(task, (err, result) => {
-        err.response.body.message.should.eql('InvalidCredentials');
+        err.response.body.error.should.eql('InvalidCredentials');
         err.response.body.description.should.eql('Invalid credentials.  Please retry your request with correct credentials.');
         err.response.statusCode.should.eql(401);
         err.response.body.debug.should.eql('The Authorization Key was not valid or missing.');
