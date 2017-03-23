@@ -33,6 +33,10 @@ describe('modules / push', () => {
     _id: 'id1'
   };
   const fakeProxyURL = 'http://proxy.proxy';
+  const appMetadata = {
+    _id: 'kid_abcd1234',
+    mastersecret: '12345'
+  };
   const taskMetadata = {
     taskId: 'abcd1234',
     containerId: 'wxyz9876'
@@ -45,7 +49,7 @@ describe('modules / push', () => {
     requestDefaultsStub.returns(requestStub);
     require.cache[require.resolve('request')].exports.defaults = requestDefaultsStub;
     pushModule = require('../../../lib/service/modules/push');
-    pushInstance = pushModule(fakeProxyURL, taskMetadata, emitter);
+    pushInstance = pushModule(fakeProxyURL, appMetadata, taskMetadata, emitter);
     return done();
   });
   afterEach((done) => {
@@ -64,6 +68,13 @@ describe('modules / push', () => {
     it('does not require a callback', (done) => {
       requestStub.post.callsArg(1);
       (() => pushInstance.send(recipients, 'hello')).should.not.throw();
+      return done();
+    });
+    it('appends authorization header details to the request object', (done) => {
+      requestStub.post.callsArg(1);
+      (() => pushInstance.send(recipients, 'hello')).should.not.throw();
+      requestStub.post.args[0][0].auth.user.should.eql(appMetadata._id);
+      requestStub.post.args[0][0].auth.pass.should.eql(appMetadata.mastersecret);
       return done();
     });
     it('should include x-kinvey-wait-for-confirmation = false if no callback is specified', (done) => {

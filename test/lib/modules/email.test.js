@@ -23,6 +23,10 @@ describe('modules / email', () => {
   let requestStub = null;
   const emitter = new EventEmitter();
   const fakeProxyURL = 'http://proxy.proxy';
+  const appMetadata = {
+    _id: 'kid_abcd1234',
+    mastersecret: '12345'
+  };
   const taskMetadata = {
     taskId: 'abcd1234',
     containerId: 'wxyz9876'
@@ -35,7 +39,7 @@ describe('modules / email', () => {
     requestDefaultsStub.returns(requestStub);
     require.cache[require.resolve('request')].exports.defaults = requestDefaultsStub;
     emailModule = require('../../../lib/service/modules/email');
-    emailInstance = emailModule(fakeProxyURL, taskMetadata, emitter);
+    emailInstance = emailModule(fakeProxyURL, appMetadata, taskMetadata, emitter);
     return done();
   });
   afterEach((done) => {
@@ -45,6 +49,13 @@ describe('modules / email', () => {
   it('does not require a callback', (done) => {
     requestStub.post.callsArg(1);
     (() => emailInstance.send('from', 'to', 'subject', 'textBody')).should.not.throw();
+    return done();
+  });
+  it('appends authorization header details to the request object', (done) => {
+    requestStub.post.callsArg(1);
+    (() => emailInstance.send('from', 'to', 'subject', 'textBody')).should.not.throw();
+    requestStub.post.args[0][0].auth.user.should.eql(appMetadata._id);
+    requestStub.post.args[0][0].auth.pass.should.eql(appMetadata.mastersecret);
     return done();
   });
   it('should include x-kinvey-wait-for-confirmation = false if no callback is specified', (done) => {
