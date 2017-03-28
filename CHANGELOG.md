@@ -1,5 +1,8 @@
 ## Changelog
 
+### 2.0.3
+* Fixed bug which broke push module functionality in FSR-hosted services
+
 ### 2.0.2
 * Fixed top-level errors to return JSON, fixing the bug where an invalid shared secret would generate the wrong error
 * Set maxSockets to 100 for both http and https agents 
