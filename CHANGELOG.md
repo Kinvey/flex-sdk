@@ -1,5 +1,8 @@
 ## Changelog
 
+### 2.0.4
+* Fixed bug in error response callback for stores (data, user, group)
+
 ### 2.0.3
 * Fixed bug which broke push module functionality in FSR-hosted services
 
