@@ -25,7 +25,29 @@ To use this module, require it in your project as such:
 const sdk = require('kinvey-flex-sdk');
 ```
 
-### [Sample service (FlexData)](#flexdata)
+### [Working Flex SDK service examples](#samples)
+This section contains standalone sample microservices for FlexData, FlexFunctions, and FlexAuth frameworks. Note that all three can be combined into one service and are separated for example purposes.
+
+#### [Flex Service initialization Options](#init)
+When [developing and testing FlexServices locally](http://devcenter.kinvey.com/nodejs/guides/flex-services#runninglocally), you can specify a host and port to listen on by passing an options object with an optional host and port.  If no host/port is specified, localhost:10001 will be used:
+
+```
+sdk.service({ host: 'somehost', port: 7777 }, (err, flex) => {
+  // code goes here
+});
+```
+
+You can also specify a shared secret (i.e. a secret key) to be used by this service.  Any client that accesses this service *must* contain this shared secret, or requests will be rejected with a `401 Unauthorized` error.
+
+```
+sdk.service({ sharedSecret: '<some shared secret>'} }, (err, flex) => {
+  // code goes here
+});
+```
+
+Once set here, you must set this shared secret in the Kinvey console when configuring your service for Kinvey requests to execute properly.  For testing locally, this shared secret can be passed in the `X-Auth-Key` http header.
+
+#### [FlexData](#flexdata)
 ```
 const sdk = require('kinvey-flex-sdk');
 sdk.service(function(err, flex) {
@@ -55,7 +77,7 @@ sdk.service(function(err, flex) {
 };
 ```
 
-### [Sample service (FlexFunctions)](#flexfunctions)
+#### [FlexFunctions](#flexfunctions)
 ```
 const sdk = require('kinvey-flex-sdk');
 const request = require('request'); // assumes that the request module was added to package.json
@@ -81,7 +103,7 @@ sdk.service(function(err, flex) {
 };
 ```
 
-### [Sample service (FlexAuth)](#flexauth)
+#### [FlexAuth](#flexauth)
 ```
 const sdk = require('kinvey-flex-sdk');
 const request = require('request'); // assumes that the request module was added to package.json
@@ -101,25 +123,6 @@ sdk.service(function(err, flex) {
   flexFunctions.register('myAuth', authenticate);
 };
 ```
-
-## [Initialization Options](#initoptions)
-When running locally, you can specify a host and port to listen on by passing an options object with an optional host and port.  If no host/port is specified, localhost:10001 will be used:
-
-```
-sdk.service({ host: 'somehost', port: 7777 }, (err, flex) => {
-  // code goes here
-});
-```
-
-You can also specify a shared secret to be used by this service.  Any client that accesses this service *must* contain this shared secret, or requests will be rejected with a `401 Unauthorized` error.  
-
-```
-sdk.service({ sharedSecret: '<some shared secret>'} }, (err, flex) => {
-  // code goes here
-});
-```
-
-Once set here, you must set this shared secret in the Kinvey console when configuring your service for Kinvey requests to execute properly.  For testing locally, this shared secret can be passed in the `X-Auth-Key` http header.
 
 ## Support
 Please contact Kinvey for further information or questions
