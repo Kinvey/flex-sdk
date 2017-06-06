@@ -18,6 +18,7 @@ const sampleTaskInfo = {
   appId: 12345,
   appMetadata: {
     _id: '12345',
+    applicationId: 'abc123',
     appsecret: 'appsecret',
     mastersecret: 'mastersecret',
     pushService: void 0,

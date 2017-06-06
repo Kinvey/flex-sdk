@@ -25,11 +25,14 @@ describe('modules / email', () => {
   const fakeProxyURL = 'http://proxy.proxy';
   const appMetadata = {
     _id: 'kid_abcd1234',
+    applicationId: 'abc123',
     mastersecret: '12345'
   };
   const taskMetadata = {
-    taskId: 'abcd1234',
-    containerId: 'wxyz9876'
+    taskId: 'abcd1234'
+  };
+  const requestMetadata = {
+    requestId: 'ea85600029b04a18a754d57629cff62d'
   };
   before((done) => {
     requestStub = {
@@ -39,7 +42,7 @@ describe('modules / email', () => {
     requestDefaultsStub.returns(requestStub);
     require.cache[require.resolve('request')].exports.defaults = requestDefaultsStub;
     emailModule = require('../../../lib/service/modules/email');
-    emailInstance = emailModule(fakeProxyURL, appMetadata, taskMetadata, emitter);
+    emailInstance = emailModule(fakeProxyURL, appMetadata, taskMetadata, requestMetadata, emitter);
     return done();
   });
   afterEach((done) => {
@@ -209,10 +212,12 @@ describe('modules / email', () => {
         requestBody.cc.should.eql('ccTest');
         requestBody.bcc.should.eql('bccTest');
         const outgoingRequestHeaders = requestStub.post.args[0][0].headers;
+        outgoingRequestHeaders.should.have.property('x-kinvey-application-id');
         outgoingRequestHeaders.should.have.property('x-kinvey-task-id');
-        outgoingRequestHeaders.should.have.property('x-kinvey-container-id');
+        outgoingRequestHeaders.should.have.property('x-kinvey-request-id');
+        outgoingRequestHeaders['x-kinvey-application-id'].should.equal(appMetadata.applicationId);
         outgoingRequestHeaders['x-kinvey-task-id'].should.equal(taskMetadata.taskId);
-        outgoingRequestHeaders['x-kinvey-container-id'].should.equal(taskMetadata.containerId);
+        outgoingRequestHeaders['x-kinvey-request-id'].should.equal(requestMetadata.requestId);
         return done();
       });
   });
