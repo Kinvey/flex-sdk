@@ -220,7 +220,17 @@ describe('FlexAuth', () => {
         return done();
       });
     });
-
+    it('should return a 401 not implemented', (done) => {
+      const taskName = quickRandom();
+      const task = sampleTask(taskName);
+      return auth.process(task, null, (err, result) => {
+        should.not.exist(err);
+        result.response.statusCode.should.eql(401);
+        result.response.body.error.should.eql('server_error');
+        result.response.body.error_description.should.eql('The request invoked a method that is not implemented');
+        return done();
+      });
+    });
     it('should process a next (continuation) handler', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
