@@ -227,12 +227,12 @@ describe('service creation', () => {
       });
 
       mockTaskReceiver.taskReceived()(task, (err, result) => {
-        err.response.body.error.should.eql('InvalidCredentials');
-        err.response.body.description.should.eql('Invalid credentials.  Please retry your request with correct credentials.');
-        err.response.statusCode.should.eql(401);
-        err.response.body.debug.should.eql('The Authorization Key was not valid or missing.');
-        should.not.exist(result);
-        should.not.exist(err.response.body.foo);
+        result.response.body.error.should.eql('InvalidCredentials');
+        result.response.body.description.should.eql('Invalid credentials.  Please retry your request with correct credentials.');
+        result.response.statusCode.should.eql(401);
+        result.response.body.debug.should.eql('The Authorization Key was not valid or missing.');
+        should.not.exist(err);
+        should.not.exist(result.response.body.foo);
         done();
       });
     });
@@ -271,12 +271,37 @@ describe('service creation', () => {
       });
 
       mockTaskReceiver.taskReceived()(task, (err, result) => {
-        err.response.body.error.should.eql('InvalidCredentials');
-        err.response.body.description.should.eql('Invalid credentials.  Please retry your request with correct credentials.');
-        err.response.statusCode.should.eql(401);
-        err.response.body.debug.should.eql('The Authorization Key was not valid or missing.');
-        should.not.exist(result);
-        should.not.exist(err.response.body.foo);
+        result.response.body.error.should.eql('InvalidCredentials');
+        result.response.body.description.should.eql('Invalid credentials.  Please retry your request with correct credentials.');
+        result.response.statusCode.should.eql(401);
+        result.response.body.debug.should.eql('The Authorization Key was not valid or missing.');
+        should.not.exist(err);
+        should.not.exist(result.response.body.foo);
+        done();
+      });
+    });
+  });
+
+  it('should process a task if shared secret auth is enabled and the taskType is discovery', (done) => {
+    sdk.service({ sharedSecret: uuid.v4() }, (err, flex) => {
+      const task = {
+        taskType: 'serviceDiscovery',
+      };
+
+      flex.data.serviceObject('foo').onGetAll((context, complete) => {
+        const body = { foo: 'bar' };
+        complete().setBody(body).ok().done();
+      });
+
+      mockTaskReceiver.taskReceived()(task, (err, result) => {
+        should.not.exist(err);
+        should.exist(result.discoveryObjects);
+        result.discoveryObjects.dataLink.should.be.an.Object();
+        result.discoveryObjects.businessLogic.should.be.an.Object();
+        result.discoveryObjects.auth.should.be.an.Object();
+        Array.isArray(result.discoveryObjects.dataLink.serviceObjects).should.eql(true);
+        result.discoveryObjects.dataLink.serviceObjects.length.should.eql(1);
+        result.discoveryObjects.dataLink.serviceObjects[0].should.eql('foo');
         done();
       });
     });
