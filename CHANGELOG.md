@@ -1,5 +1,11 @@
 ## Changelog
 
+### 2.0.5
+* Added NotImplementedHandler for FlexAuth requests that don't have a defined handler
+* Fixed shared secrets hanging the flex service
+* Fixed shared secrets not working locally if shared secret is defined
+* Bumped kinvey-code-task-runner to v2.2.0 to add mapping of tempObjectStore for external flex functions requests
+
 ### 2.0.4
 * Fixed bug in error response callback for stores (data, user, group)
 
