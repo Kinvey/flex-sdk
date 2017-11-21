@@ -1,5 +1,8 @@
 ## Changelog
 
+### 2.0.6
+* Fixed kinveyEntity not retaining a passed-in _id
+
 ### 2.0.5
 * Added NotImplementedHandler for FlexAuth requests that don't have a defined handler
 * Fixed shared secrets hanging the flex service
