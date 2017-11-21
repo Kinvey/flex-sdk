@@ -120,6 +120,16 @@ describe('modules / kinvey', () => {
       ke1.should.eql(ke2);
       return done();
     });
+    it('retains existing _id when a kinveyEntity with existing _id is passed in', (done) => {
+      const existingId = 'existing_id';
+      const testObject = {
+        _id: existingId,
+        key: 'value'
+      };
+      const ke = kinveyInstance.entity(testObject);
+      ke._id.should.eql(existingId);
+      return done();
+    });
     it('returns the passed in object', (done) => {
       const testObject = {
         first: 1
