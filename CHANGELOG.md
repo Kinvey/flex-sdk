@@ -1,5 +1,10 @@
 ## Changelog
 
+### 2.0.7
+* FLEX-154: Add support for filtering with values like null, 0, and ""
+* Added query tests and fixed a few query bugs
+* Updated moment to 2.21.0
+
 ### 2.0.6
 * Fixed kinveyEntity not retaining a passed-in _id
 
