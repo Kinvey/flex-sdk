@@ -1,3 +1,5 @@
+/* eslint prefer-arrow-callback: 0 */                 // turning off because should.throws breaks with =>
+
 /**
  * Copyright (c) 2016 Kinvey Inc.
  *
@@ -23,7 +25,7 @@ describe('Query', () => {
         const query = new Query();
         query.fields = {};
         return query;
-      }, function(err) {
+      }, function error(err) {
         return err.toString() === 'Error: QueryError' && err.debug === 'fields must be an Array';
       });
     });
@@ -46,7 +48,7 @@ describe('Query', () => {
       should.throws(() => {
         const query = new Query();
         query.fields = {};
-      }, function(err) {
+      }, function error(err) {
         return err.toString() === 'Error: QueryError' && err.debug === 'fields must be an Array';
       });
     });
@@ -70,7 +72,7 @@ describe('Query', () => {
       should.throws(() => {
         const query = new Query();
         query.limit = {};
-      }, function(err) {
+      }, function error(err) {
         return err.toString() === 'Error: QueryError' && err.debug === 'limit must be a number';
       });
     });
@@ -94,7 +96,7 @@ describe('Query', () => {
       should.throws(() => {
         const query = new Query();
         query.skip = {};
-      }, function(err) {
+      }, function error(err) {
         return err.toString() === 'Error: QueryError' && err.debug === 'skip must be a number';
       });
     });
@@ -155,7 +157,7 @@ describe('Query', () => {
     });
 
     it('should add an equal to filter for = false', () => {
-      const field = randomString()
+      const field = randomString();
       const value = false;
       const query = new Query();
       query.equalTo(field, value);
@@ -268,7 +270,7 @@ describe('Query', () => {
       should.throws(() => {
         const query = new Query();
         query.greaterThan(randomString(), null);
-      }, function(err) {
+      }, function error(err) {
         return err.toString() === 'Error: QueryError' && err.debug === 'You must supply a number or string.';
       });
     });
@@ -308,7 +310,7 @@ describe('Query', () => {
       should.throws(() => {
         const query = new Query();
         query.greaterThanOrEqualTo(randomString(), null);
-      }, function(err) {
+      }, function error(err) {
         return err.toString() === 'Error: QueryError' && err.debug === 'You must supply a number or string.';
       });
     });
@@ -348,7 +350,7 @@ describe('Query', () => {
       should.throws(() => {
         const query = new Query();
         query.lessThan(randomString(), null);
-      }, function(err) {
+      }, function error(err) {
         return err.toString() === 'Error: QueryError' && err.debug === 'You must supply a number or string.';
       });
     });
@@ -388,7 +390,7 @@ describe('Query', () => {
       should.throws(() => {
         const query = new Query();
         query.lessThanOrEqualTo(randomString(), null);
-      }, function(err) {
+      }, function error(err) {
         return err.toString() === 'Error: QueryError' && err.debug === 'You must supply a number or string.';
       });
     });
@@ -449,7 +451,7 @@ describe('Query', () => {
     });
 
     it('should add an equal to filter for = false', () => {
-      const field = randomString()
+      const field = randomString();
       const value = false;
       const query = new Query();
       query.notEqualTo(field, value);
@@ -469,7 +471,6 @@ describe('Query', () => {
       const value = NaN;
       const query = new Query();
       query.notEqualTo(field, value);
-      console.log(query.toPlainObject());
       query.toPlainObject().filter[field].should.containEql({ $ne: NaN });
     });
 
@@ -541,7 +542,7 @@ describe('Query', () => {
         should.throws(() => {
           const query = new Query();
           query.and(randomString(), null);
-        }, function(err) {
+        }, function error(err) {
           return err.toString() === 'Error: QueryError' && err.debug === 'query argument must be of type: Kinvey.Query[] or Object[].';
         });
       });
@@ -598,7 +599,7 @@ describe('Query', () => {
         should.throws(() => {
           const query = new Query();
           query.nor(randomString(), null);
-        }, function(err) {
+        }, function error(err) {
           return err.toString() === 'Error: QueryError' && err.debug === 'query argument must be of type: Kinvey.Query[] or Object[].';
         });
       });
@@ -655,7 +656,7 @@ describe('Query', () => {
         should.throws(() => {
           const query = new Query();
           query.or(randomString(), null);
-        }, function(err) {
+        }, function error(err) {
           return err.toString() === 'Error: QueryError' && err.debug === 'query argument must be of type: Kinvey.Query[] or Object[].';
         });
       });
@@ -740,7 +741,7 @@ describe('Query', () => {
       should.throws(() => {
         const query = new Query();
         query.mod(randomString(), null);
-      }, function(err) {
+      }, function error(err) {
         return err.toString() === 'Error: QueryError' && err.debug === 'divisor must be a number';
       });
     });
@@ -749,7 +750,7 @@ describe('Query', () => {
       should.throws(() => {
         const query = new Query();
         query.mod(randomString(), 5, null);
-      }, function(err) {
+      }, function error(err) {
         return err.toString() === 'Error: QueryError' && err.debug === 'remainder must be a number';
       });
     });
@@ -783,7 +784,7 @@ describe('Query', () => {
         const field = randomString();
         const query = new Query();
         return query.matches(field, /^abc/, { ignoreCase: true });
-      }, function(err) {
+      }, function error(err) {
         return err.toString() === 'Error: QueryError' && err.debug === 'ignoreCase is not supported.';
       });
     });
@@ -794,7 +795,7 @@ describe('Query', () => {
         const field = randomString();
         const query = new Query();
         return query.matches(field, '/abc/');
-      }, function(err) {
+      }, function error(err) {
         return err.toString() === 'Error: QueryError' && err.debug === debugErr;
       });
     });
@@ -848,7 +849,7 @@ describe('Query', () => {
           const field = randomString();
           const query = new Query();
           return query.matches(field, /^foo/i);
-        }, function(err) {
+        }, function error(err) {
           return err.toString() === 'Error: QueryError' && err.debug === 'ignoreCase is not supported.';
         });
       });
@@ -945,7 +946,7 @@ describe('Query', () => {
       should.throws(() => {
         const query = new Query();
         query.near(randomString(), []);
-      }, function(err) {
+      }, function error(err) {
         return err.toString() === 'Error: QueryError' && err.debug === 'coord must be a [number, number]';
       });
     });
@@ -978,7 +979,7 @@ describe('Query', () => {
       should.throws(() => {
         const query = new Query();
         query.withinBox(randomString(), [], [1, 1]);
-      }, function(err) {
+      }, function error(err) {
         return err.toString() === 'Error: QueryError' && err.debug === 'bottomLeftCoord must be a [number, number]';
       });
     });
@@ -987,7 +988,7 @@ describe('Query', () => {
       should.throws(() => {
         const query = new Query();
         query.withinBox(randomString(), [1, 1], []);
-      }, function(err) {
+      }, function error(err) {
         return err.toString() === 'Error: QueryError' && err.debug === 'upperRightCoord must be a [number, number]';
       });
     });
@@ -1011,7 +1012,7 @@ describe('Query', () => {
       should.throws(() => {
         const query = new Query();
         query.withinPolygon(randomString(), []);
-      }, function(err) {
+      }, function error(err) {
         return err.toString() === 'Error: QueryError' && err.debug === 'coords must be [[number, number]]';
       });
     });
@@ -1035,7 +1036,7 @@ describe('Query', () => {
       should.throws(() => {
         const query = new Query();
         query.size(randomString(), null);
-      }, function(err) {
+      }, function error(err) {
         return err.toString() === 'Error: QueryError' && err.debug === 'size must be a number';
       });
     });
@@ -1363,7 +1364,7 @@ describe('Query', () => {
         const query = new Query();
         query.greaterThan('field', {});
         return query.process([]);
-      }, function(err) {
+      }, function error(err) {
         return err.toString() === 'Error: QueryError' && err.debug === 'You must supply a number or string.';
       });
     });
@@ -1380,7 +1381,7 @@ describe('Query', () => {
         const query = new Query();
         query.greaterThanOrEqualTo('field', {});
         return query.process([]);
-      }, function(err) {
+      }, function error(err) {
         return err.toString() === 'Error: QueryError' && err.debug === 'You must supply a number or string.';
       });
     });
@@ -1397,7 +1398,7 @@ describe('Query', () => {
         const query = new Query();
         query.lessThan('field', {});
         return query.process([]);
-      }, function(err) {
+      }, function error(err) {
         return err.toString() === 'Error: QueryError' && err.debug === 'You must supply a number or string.';
       });
     });
@@ -1414,7 +1415,7 @@ describe('Query', () => {
         const query = new Query();
         query.lessThanOrEqualTo('field', {});
         return query.process([]);
-      }, function(err) {
+      }, function error(err) {
         return err.toString() === 'Error: QueryError' && err.debug === 'You must supply a number or string.';
       });
     });
@@ -1468,7 +1469,7 @@ describe('Query', () => {
       should.throws(() => {
         const query = new Query();
         return query.process({});
-      }, function(err) {
+      }, function error(err) {
         return err.toString() === 'Error: QueryError' && err.debug === 'data argument must be of type: Array.';
       });
     });
