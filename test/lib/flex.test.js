@@ -17,6 +17,7 @@ const should = require('should');
 const proxyquire = require('proxyquire');
 const sinon = require('sinon');
 const uuid = require('uuid');
+const sdkVersion = require('../../package.json').version;
 
 const mockTaskReceiver = require('./mocks/mockTaskReceiver.js');
 
@@ -231,6 +232,7 @@ describe('service creation', () => {
         result.response.body.description.should.eql('Invalid credentials.  Please retry your request with correct credentials.');
         result.response.statusCode.should.eql(401);
         result.response.body.debug.should.eql('The Authorization Key was not valid or missing.');
+        result.sdkVersion.should.eql(sdkVersion);
         should.not.exist(err);
         should.not.exist(result.response.body.foo);
         done();

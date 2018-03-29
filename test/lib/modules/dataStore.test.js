@@ -1177,7 +1177,7 @@ describe('dataStore', () => {
       query.equalTo('foo', 'bar');
 
       const collection = this.store().collection('myCollection');
-      collection.count((err, result) => {
+      collection.count(query, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 12 });
         return done();
