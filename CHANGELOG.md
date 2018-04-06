@@ -1,5 +1,10 @@
 ## Changelog
 
+### 2.0.8
+* FLEX-172 Add the sdk version to the task object before validation for authKey. Add check for it in unit test. Small fix for unit test for count() missing a query.
+* FLEX-171 When validation functions in service modules call their callbacks with a task as a first argument, don't pass this task as an error argument to receiver.
+* Bumped code task runner to 2.2.1
+
 ### 2.0.7
 * FLEX-154: Add support for filtering with values like null, 0, and ""
 * Added query tests and fixed a few query bugs
