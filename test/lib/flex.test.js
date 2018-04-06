@@ -196,6 +196,31 @@ describe('service creation', () => {
     });
   });
 
+  it('should not call callback with an error when task result is an error', (done) => {
+    sdk.service((err, sdk) => {
+      const task = {
+        appMetadata: {
+          _id: '12345',
+        },
+        taskType: 'functions',
+        taskName: null, // this causes a validation error during process
+        method: 'GET',
+        request: {
+          method: 'GET',
+          headers: {},
+          body: {}
+        },
+        response: {}
+      };
+
+      mockTaskReceiver.taskReceived()(task, (err, result) => {
+        should.not.exist(err);
+        should.exist(result);
+        done();
+      });
+    });
+  });
+
   it('should reject a task if shared secret auth is enabled and the authKey is not included', (done) => {
     sdk.service({ sharedSecret: uuid.v4() }, (err, flex) => {
       const task = {
