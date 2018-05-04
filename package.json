@@ -17,15 +17,15 @@
   "license": "Apache-2.0",
   "dependencies": {
     "bson": "0.4.23",
-    "kinvey-code-task-runner": "2.2.1",
+    "kinvey-code-task-runner": "2.2.2",
     "kinvey-datalink-errors": "0.3.0",
     "lodash.forown": "4.2.0",
     "lodash.get": "4.3.0",
     "lodash.has": "4.4.0",
     "lodash.isnil": "4.0.0",
     "lodash.isempty": "4.4.0",
-    "lodash.assign":"4.2.0",
-    "lodash.foreach":"4.5.0",
+    "lodash.assign": "4.2.0",
+    "lodash.foreach": "4.5.0",
     "moment": "2.21.0",
     "request": "2.72.0",
     "sift": "3.2.6"
