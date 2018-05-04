@@ -1,5 +1,9 @@
 ## Changelog
 
+### 2.0.9
+* FLEX-173 Fix for content.objectName undefined if request.collectionName passed
+* Update code-task-receiver to 2.2.2
+
 ### 2.0.8
 * FLEX-172 Add the sdk version to the task object before validation for authKey. Add check for it in unit test. Small fix for unit test for count() missing a query.
 * FLEX-171 When validation functions in service modules call their callbacks with a task as a first argument, don't pass this task as an error argument to receiver.
