@@ -177,6 +177,34 @@ describe('FlexFunctions', () => {
       });
       functions.process(task, {}, () => {});
     });
+
+    it('includes objectName if passed in request.objectName', (done) => {
+      const taskName = quickRandom();
+      const task = sampleTask(taskName);
+      task.request.objectName = 'foo';
+      functions.register(taskName, (context, complete, modules) => {
+        context.should.be.an.Object();
+        complete.should.be.a.Function();
+        modules.should.be.an.Object();
+        context.objectName.should.eql('foo');
+        return done();
+      });
+      functions.process(task, {}, () => {});
+    });
+
+    it('includes objectName if passed in request.collectionName', (done) => {
+      const taskName = quickRandom();
+      const task = sampleTask(taskName);
+      task.request.collectionName = 'foo';
+      functions.register(taskName, (context, complete, modules) => {
+        context.should.be.an.Object();
+        complete.should.be.a.Function();
+        modules.should.be.an.Object();
+        context.objectName.should.eql('foo');
+        return done();
+      });
+      functions.process(task, {}, () => {});
+    });
   });
   describe('completion handlers', () => {
     afterEach((done) => {
