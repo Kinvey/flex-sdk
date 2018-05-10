@@ -147,7 +147,8 @@ describe('modules / kinvey', () => {
           'getReaders',
           'addReader',
           'removeReader',
-          'getWriters', 'addWriter',
+          'getWriters',
+          'addWriter',
           'removeWriter',
           'getReaderGroups',
           'addReaderGroup',
@@ -158,7 +159,16 @@ describe('modules / kinvey', () => {
           'getGloballyReadable',
           'getGloballyWritable',
           'setGloballyReadable',
-          'setGloballyWritable'
+          'setGloballyWritable',
+          'getReaderRoles',
+          'getUpdateRoles',
+          'getDeleteRoles',
+          'addReaderRole',
+          'addUpdateRole',
+          'addDeleteRole',
+          'removeReaderRole',
+          'removeUpdateRole',
+          'removeDeleteRole'
         ];
       kinveyInstance.entity(testObject);
       const keys = Object.keys(testObject._acl);
@@ -622,6 +632,366 @@ describe('modules / kinvey', () => {
             }
           });
           ke._acl.removeWriterGroup(1).getWriterGroups().should.eql([2, 3]);
+          return done();
+        });
+      });
+      describe('getReaderRoles', () => {
+        it('returns empty array when no role readers', (done) => {
+          const ke = kinveyInstance.entity();
+          ke._acl.getReaderRoles().should.eql([]);
+          return done();
+        });
+        return it('returns correct value for entity with readers', (done) => {
+          const ke = kinveyInstance.entity({
+            _acl: {
+              roles: {
+                r: [1, 2, 3]
+              }
+            }
+          });
+          ke._acl.getReaderRoles().should.eql([1, 2, 3]);
+          return done();
+        });
+      });
+      describe('addReaderRole', () => {
+        it('Adds a reader to an stub entity', (done) => {
+          const ke = kinveyInstance.entity();
+          ke._acl.addReaderRole('1');
+          ke._acl.getReaderRoles().should.eql(['1']);
+          return done();
+        });
+        it('wont add an existing reader id', (done) => {
+          const ke = kinveyInstance.entity({
+            _acl: {
+              roles: {
+                r: [1, 2, 3]
+              }
+            }
+          });
+          ke._acl.addReaderRole(1);
+          ke._acl.getReaderRoles().should.eql([1, 2, 3]);
+          return done();
+        });
+        it('appends a role ID to existing list', (done) => {
+          const ke = kinveyInstance.entity({
+            _acl: {
+              roles: {
+                r: [1, 2, 3]
+              }
+            }
+          });
+          ke._acl.addReaderRole(4);
+          ke._acl.getReaderRoles().should.eql([1, 2, 3, 4]);
+          return done();
+        });
+        return it('returns entity acls for method chaining', (done) => {
+          const ke = kinveyInstance.entity({
+            _acl: {
+              roles: {
+                r: [1, 2, 3]
+              }
+            }
+          });
+          ke._acl.addReaderRole(4).getReaderRoles().should.eql([1, 2, 3, 4]);
+          return done();
+        });
+      });
+      describe('removeReaderRole', () => {
+        it('removes a reader role when a match is found', (done) => {
+          const ke = kinveyInstance.entity({
+            _acl: {
+              roles: {
+                r: [1, 2, 3]
+              }
+            }
+          });
+          ke._acl.removeReaderRole(1);
+          ke._acl.getReaderRoles().should.eql([2, 3]);
+          return done();
+        });
+        it('does nothing when a match is not found', (done) => {
+          const ke = kinveyInstance.entity({
+            _acl: {
+              roles: {
+                r: [1, 2, 3]
+              }
+            }
+          });
+          ke._acl.removeReaderRole(4);
+          ke._acl.getReaderRoles().should.eql([1, 2, 3]);
+          return done();
+        });
+        it('does nothing when no reader roles are defined', (done) => {
+          const ke = kinveyInstance.entity({
+            _acl: {
+              roles: {}
+            }
+          });
+          ke._acl.removeReaderRole(1);
+          ke._acl.getReaderRoles().should.eql([]);
+          return done();
+        });
+        it('will remove all instances of a role id', (done) => {
+          const ke = kinveyInstance.entity({
+            _acl: {
+              roles: {
+                r: [1, 2, 3, 1]
+              }
+            }
+          });
+          ke._acl.removeReaderRole(1);
+          ke._acl.getReaderRoles().should.eql([2, 3]);
+          return done();
+        });
+        return it('returns entity acls for method chaining', (done) => {
+          const ke = kinveyInstance.entity({
+            _acl: {
+              roles: {
+                r: [1, 2, 3, 1]
+              }
+            }
+          });
+          ke._acl.removeReaderRole(1).getReaderRoles().should.eql([2, 3]);
+          return done();
+        });
+      });
+      describe('getUpdateRoles', () => {
+        it('returns empty array when no role updates', (done) => {
+          const ke = kinveyInstance.entity();
+          ke._acl.getUpdateRoles().should.eql([]);
+          return done();
+        });
+        return it('returns correct value for entity with updates', (done) => {
+          const ke = kinveyInstance.entity({
+            _acl: {
+              roles: {
+                u: [1, 2, 3]
+              }
+            }
+          });
+          ke._acl.getUpdateRoles().should.eql([1, 2, 3]);
+          return done();
+        });
+      });
+      describe('addUpdateRole', () => {
+        it('Adds a update to an stub entity', (done) => {
+          const ke = kinveyInstance.entity();
+          ke._acl.addUpdateRole('1');
+          ke._acl.getUpdateRoles().should.eql(['1']);
+          return done();
+        });
+        it('wont add an existing update id', (done) => {
+          const ke = kinveyInstance.entity({
+            _acl: {
+              roles: {
+                u: [1, 2, 3]
+              }
+            }
+          });
+          ke._acl.addUpdateRole(1);
+          ke._acl.getUpdateRoles().should.eql([1, 2, 3]);
+          return done();
+        });
+        it('appends a role ID to existing list', (done) => {
+          const ke = kinveyInstance.entity({
+            _acl: {
+              roles: {
+                u: [1, 2, 3]
+              }
+            }
+          });
+          ke._acl.addUpdateRole(4);
+          ke._acl.getUpdateRoles().should.eql([1, 2, 3, 4]);
+          return done();
+        });
+        return it('returns entity acls for method chaining', (done) => {
+          const ke = kinveyInstance.entity({
+            _acl: {
+              roles: {
+                u: [1, 2, 3]
+              }
+            }
+          });
+          ke._acl.addUpdateRole(4).getUpdateRoles().should.eql([1, 2, 3, 4]);
+          return done();
+        });
+      });
+      describe('removeUpdateRole', () => {
+        it('removes a update role when a match is found', (done) => {
+          const ke = kinveyInstance.entity({
+            _acl: {
+              roles: {
+                u: [1, 2, 3]
+              }
+            }
+          });
+          ke._acl.removeUpdateRole(1);
+          ke._acl.getUpdateRoles().should.eql([2, 3]);
+          return done();
+        });
+        it('does nothing when a match is not found', (done) => {
+          const ke = kinveyInstance.entity({
+            _acl: {
+              roles: {
+                u: [1, 2, 3]
+              }
+            }
+          });
+          ke._acl.removeUpdateRole(4);
+          ke._acl.getUpdateRoles().should.eql([1, 2, 3]);
+          return done();
+        });
+        it('does nothing when no update roles are defined', (done) => {
+          const ke = kinveyInstance.entity({
+            _acl: {
+              roles: {}
+            }
+          });
+          ke._acl.removeUpdateRole(1);
+          ke._acl.getUpdateRoles().should.eql([]);
+          return done();
+        });
+        it('will remove all instances of a role id', (done) => {
+          const ke = kinveyInstance.entity({
+            _acl: {
+              roles: {
+                u: [1, 2, 3, 1]
+              }
+            }
+          });
+          ke._acl.removeUpdateRole(1);
+          ke._acl.getUpdateRoles().should.eql([2, 3]);
+          return done();
+        });
+        return it('returns entity acls for method chaining', (done) => {
+          const ke = kinveyInstance.entity({
+            _acl: {
+              roles: {
+                u: [1, 2, 3, 1]
+              }
+            }
+          });
+          ke._acl.removeUpdateRole(1).getUpdateRoles().should.eql([2, 3]);
+          return done();
+        });
+      });
+      describe('getDeleteRoles', () => {
+        it('returns empty array when no role deletes', (done) => {
+          const ke = kinveyInstance.entity();
+          ke._acl.getDeleteRoles().should.eql([]);
+          return done();
+        });
+        return it('returns correct value for entity with deletes', (done) => {
+          const ke = kinveyInstance.entity({
+            _acl: {
+              roles: {
+                d: [1, 2, 3]
+              }
+            }
+          });
+          ke._acl.getDeleteRoles().should.eql([1, 2, 3]);
+          return done();
+        });
+      });
+      describe('addDeleteRole', () => {
+        it('Adds a delete to an stub entity', (done) => {
+          const ke = kinveyInstance.entity();
+          ke._acl.addDeleteRole('1');
+          ke._acl.getDeleteRoles().should.eql(['1']);
+          return done();
+        });
+        it('wont add an existing delete id', (done) => {
+          const ke = kinveyInstance.entity({
+            _acl: {
+              roles: {
+                d: [1, 2, 3]
+              }
+            }
+          });
+          ke._acl.addDeleteRole(1);
+          ke._acl.getDeleteRoles().should.eql([1, 2, 3]);
+          return done();
+        });
+        it('appends a role ID to existing list', (done) => {
+          const ke = kinveyInstance.entity({
+            _acl: {
+              roles: {
+                d: [1, 2, 3]
+              }
+            }
+          });
+          ke._acl.addDeleteRole(4);
+          ke._acl.getDeleteRoles().should.eql([1, 2, 3, 4]);
+          return done();
+        });
+        return it('returns entity acls for method chaining', (done) => {
+          const ke = kinveyInstance.entity({
+            _acl: {
+              roles: {
+                d: [1, 2, 3]
+              }
+            }
+          });
+          ke._acl.addDeleteRole(4).getDeleteRoles().should.eql([1, 2, 3, 4]);
+          return done();
+        });
+      });
+      describe('removeDeleteRole', () => {
+        it('removes a delete role when a match is found', (done) => {
+          const ke = kinveyInstance.entity({
+            _acl: {
+              roles: {
+                d: [1, 2, 3]
+              }
+            }
+          });
+          ke._acl.removeDeleteRole(1);
+          ke._acl.getDeleteRoles().should.eql([2, 3]);
+          return done();
+        });
+        it('does nothing when a match is not found', (done) => {
+          const ke = kinveyInstance.entity({
+            _acl: {
+              roles: {
+                d: [1, 2, 3]
+              }
+            }
+          });
+          ke._acl.removeDeleteRole(4);
+          ke._acl.getDeleteRoles().should.eql([1, 2, 3]);
+          return done();
+        });
+        it('does nothing when no delete roles are defined', (done) => {
+          const ke = kinveyInstance.entity({
+            _acl: {
+              roles: {}
+            }
+          });
+          ke._acl.removeDeleteRole(1);
+          ke._acl.getDeleteRoles().should.eql([]);
+          return done();
+        });
+        it('will remove all instances of a role id', (done) => {
+          const ke = kinveyInstance.entity({
+            _acl: {
+              roles: {
+                d: [1, 2, 3, 1]
+              }
+            }
+          });
+          ke._acl.removeDeleteRole(1);
+          ke._acl.getDeleteRoles().should.eql([2, 3]);
+          return done();
+        });
+        return it('returns entity acls for method chaining', (done) => {
+          const ke = kinveyInstance.entity({
+            _acl: {
+              roles: {
+                d: [1, 2, 3, 1]
+              }
+            }
+          });
+          ke._acl.removeDeleteRole(1).getDeleteRoles().should.eql([2, 3]);
           return done();
         });
       });
