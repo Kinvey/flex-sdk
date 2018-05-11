@@ -301,6 +301,26 @@ describe('groupStore', () => {
         return done();
       });
     });
+
+    it('should return an error if null group _id', (done) => {
+      this.store().findById(null, (err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('GroupStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('groupId is required');
+        return done();
+      });
+    });
+
+    it('should return an error if blank group _id', (done) => {
+      this.store().findById('', (err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('GroupStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('groupId is required');
+        return done();
+      });
+    });
   });
 
   describe('create', () => {
@@ -705,6 +725,26 @@ describe('groupStore', () => {
 
     it('should return an error if missing groupId', (done) => {
       this.store().remove((err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('GroupStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('groupId is required');
+        return done();
+      });
+    });
+
+    it('should return an error if null groupId', (done) => {
+      this.store().remove(null, (err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('GroupStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('groupId is required');
+        return done();
+      });
+    });
+
+    it('should return an error if blank groupId', (done) => {
+      this.store().remove('', (err, result) => {
         should.not.exist(result);
         err.message.should.eql('GroupStoreError');
         err.description.should.eql('Bad Request');
