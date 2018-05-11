@@ -1,5 +1,13 @@
 ## Changelog
 
+### 2.1.0
+* Added role helper to kinveyEntity module (ronheiney)
+* FLEX-212 Disable proxy for push and email modules
+* FLEX-68 Disable proxy when using dataStore
+* FLEX-204 Fixed errors for null or empty entityIds for dataStore, groupStore, and userStore
+* Updated request module to 2.85.0
+* Updated code-task-receiver to 2.2.3 to add response object parsing for FlexFunctions (FLEX-220)
+
 ### 2.0.9
 * FLEX-173 Fix for content.objectName undefined if request.collectionName passed
 * Update code-task-receiver to 2.2.2
