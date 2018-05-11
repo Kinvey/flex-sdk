@@ -27,7 +27,7 @@
     "lodash.assign": "4.2.0",
     "lodash.foreach": "4.5.0",
     "moment": "2.21.0",
-    "request": "2.72.0",
+    "request": "2.85.0",
     "sift": "3.2.6"
   },
   "devDependencies": {
