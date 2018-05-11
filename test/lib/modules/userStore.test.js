@@ -448,7 +448,17 @@ describe('userStore', () => {
     });
 
     it('should return an error if missing user _id', (done) => {
-      this.store().findById((err, result) => {
+      this.store().findById(null, (err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('userId is required');
+        return done();
+      });
+    });
+
+    it('should return an error if blank user _id', (done) => {
+      this.store().findById('', (err, result) => {
         should.not.exist(result);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
@@ -995,6 +1005,26 @@ describe('userStore', () => {
         return done();
       });
     });
+
+    it('should return an error if null userId', (done) => {
+      this.store().remove(null, (err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('userId is required');
+        return done();
+      });
+    });
+
+    it('should return an error if blank userId', (done) => {
+      this.store().remove('', (err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('userId is required');
+        return done();
+      });
+    });
   });
 
   describe('count', () => {
@@ -1282,6 +1312,26 @@ describe('userStore', () => {
         return done();
       });
     });
+
+    it('should return an error if null userId', (done) => {
+      this.store().suspend(null, (err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('userId is required');
+        return done();
+      });
+    });
+
+    it('should return an error if blank userId', (done) => {
+      this.store().suspend('', (err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('userId is required');
+        return done();
+      });
+    });
   });
 
   describe('restore', () => {
@@ -1404,6 +1454,26 @@ describe('userStore', () => {
 
     it('should return an error if missing userId', (done) => {
       this.store().suspend((err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('userId is required');
+        return done();
+      });
+    });
+
+    it('should return an error if null userId', (done) => {
+      this.store().suspend(null, (err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('userId is required');
+        return done();
+      });
+    });
+
+    it('should return an error if blank userId', (done) => {
+      this.store().suspend('', (err, result) => {
         should.not.exist(result);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');

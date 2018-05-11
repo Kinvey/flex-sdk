@@ -505,6 +505,28 @@ describe('dataStore', () => {
         return done();
       });
     });
+
+    it('should return an error if null entityId', (done) => {
+      const collection = this.store().collection('myCollection');
+      collection.findById(null, (err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('DataStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('entityId is required');
+        return done();
+      });
+    });
+
+    it('should return an error if blank entityId', (done) => {
+      const collection = this.store().collection('myCollection');
+      collection.findById('', (err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('DataStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('entityId is required');
+        return done();
+      });
+    });
   });
   describe('save', () => {
     beforeEach(() => {
@@ -1030,6 +1052,28 @@ describe('dataStore', () => {
     it('should return an error if missing entityId', (done) => {
       const collection = this.store().collection('myCollection');
       collection.removeById((err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('DataStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('entityId is required');
+        return done();
+      });
+    });
+
+    it('should return an error if null entityId', (done) => {
+      const collection = this.store().collection('myCollection');
+      collection.removeById(null, (err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('DataStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('entityId is required');
+        return done();
+      });
+    });
+
+    it('should return an error if blank entityId', (done) => {
+      const collection = this.store().collection('myCollection');
+      collection.removeById('', (err, result) => {
         should.not.exist(result);
         err.message.should.eql('DataStoreError');
         err.description.should.eql('Bad Request');
