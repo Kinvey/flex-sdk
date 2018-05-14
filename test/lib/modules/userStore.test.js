@@ -207,6 +207,22 @@ describe('userStore', () => {
       nock.cleanAll();
     });
 
+    it('should return a Promise', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .get(`/user/${environmentId}/`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, [{ _id: 123, username: 'abc' }, { _id: 456, username: 'xyz' }]);
+
+      (this.store().find()).should.be.a.Promise();      // eslint-disable-line new-cap
+      return done();
+    });
+
     it('should find all records', (done) => {
       nock('https://baas.kinvey.com')
        .matchHeader('content-type', 'application/json')
@@ -224,6 +240,25 @@ describe('userStore', () => {
         result.should.containDeep([{ _id: 123, username: 'abc' }, { _id: 456, username: 'xyz' }]);
         return done();
       });
+    });
+
+    it('should resolve with all records if callback isn\'t passed', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .get(`/user/${environmentId}/`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, [{ _id: 123, username: 'abc' }, { _id: 456, username: 'xyz' }]);
+
+      this.store().find()
+        .then((result) => {
+          result.should.containDeep([{ _id: 123, username: 'abc' }, { _id: 456, username: 'xyz' }]);
+          return done();
+        });
     });
 
     it('should find all records using userContext', (done) => {
@@ -312,6 +347,17 @@ describe('userStore', () => {
       });
     });
 
+    it('should invoke rejection handler if error occurs and callback isn\'t passed', (done) => {
+      this.storeUserRequest({ useBl: true }).find()
+        .catch((err) => {
+          should.exist(err);
+          err.message.should.eql('UserStoreError');
+          err.description.should.eql('Not Allowed');
+          err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+          return done();
+        });
+    });
+
     it('should find records with a query object', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
@@ -334,6 +380,29 @@ describe('userStore', () => {
         return done();
       });
     });
+
+    it('should resolve with a query object if callback isn\'t passed', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .get(`/user/${environmentId}/`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .query({ query: '{"foo":"bar"}' })
+        .reply(200, [{ _id: 123, username: 'abc' }, { _id: 456, username: 'xyz' }]);
+
+      const query = new Query();
+      query.equalTo('foo', 'bar');
+
+      this.store().find(query)
+        .then((result) => {
+          result.should.containDeep([{ _id: 123, username: 'abc' }, { _id: 456, username: 'xyz' }]);
+          return done();
+        });
+    });
   });
 
   describe('findById', () => {
@@ -344,6 +413,22 @@ describe('userStore', () => {
 
     afterEach(() => {
       nock.cleanAll();
+    });
+
+    it('should return a Promise', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .get(`/user/${environmentId}/1234`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { _id: 1234, username: 'abc' });
+
+      (this.store().findById(1234)).should.be.a.Promise();     // eslint-disable-line new-cap
+      return done();
     });
 
     it('should find a single user', (done) => {
@@ -363,6 +448,25 @@ describe('userStore', () => {
         result.should.containDeep({ _id: 1234, username: 'abc' });
         return done();
       });
+    });
+
+    it('should resolve a single user if a callback isn\'t passed', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .get(`/user/${environmentId}/1234`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { _id: 1234, username: 'abc' });
+
+      this.store().findById(1234)
+        .then((result) => {
+          result.should.containDeep({ _id: 1234, username: 'abc' });
+          return done();
+        });
     });
 
     it('should find a single user record using user context', (done) => {
@@ -466,6 +570,17 @@ describe('userStore', () => {
         return done();
       });
     });
+
+    it('should reject if an error occurs and a callback isn\'t passed', (done) => {
+      this.storeUserRequest({ useBl: true }).findById('1234')
+        .catch((err) => {
+          should.exist(err);
+          err.message.should.eql('UserStoreError');
+          err.description.should.eql('Not Allowed');
+          err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+          return done();
+        });
+    });
   });
 
   describe('getCurrentUser', () => {
@@ -476,6 +591,22 @@ describe('userStore', () => {
 
     afterEach(() => {
       nock.cleanAll();
+    });
+
+    it('should return a Promise', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .get(`/user/${environmentId}/${authenticatedUserId}`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { _id: `${authenticatedUserId}`, username: 'abc' });
+
+      (this.store().getCurrentUser()).should.be.a.Promise();    // eslint-disable-line new-cap
+      return done();
     });
 
     it('should get the current user entity', (done) => {
@@ -495,6 +626,25 @@ describe('userStore', () => {
         result.should.containDeep({ _id: `${authenticatedUserId}`, username: 'abc' });
         return done();
       });
+    });
+
+    it('should resolve the current user entity if a callback isn\'t passed', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .get(`/user/${environmentId}/${authenticatedUserId}`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { _id: `${authenticatedUserId}`, username: 'abc' });
+
+      this.store().getCurrentUser()
+        .then((result) => {
+          result.should.containDeep({ _id: `${authenticatedUserId}`, username: 'abc' });
+          return done();
+        });
     });
 
     it('should get the current user and use bl', (done) => {
@@ -572,6 +722,17 @@ describe('userStore', () => {
         return done();
       });
     });
+
+    it('should invoke rejection handler if an error occurs and a callback isn\'t passed', (done) => {
+      this.storeUserRequest({ useBl: true }).getCurrentUser()
+        .catch((err) => {
+          should.exist(err);
+          err.message.should.eql('UserStoreError');
+          err.description.should.eql('Not Allowed');
+          err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+          return done();
+        });
+    });
   });
 
   describe('create', () => {
@@ -582,6 +743,24 @@ describe('userStore', () => {
 
     afterEach(() => {
       nock.cleanAll();
+    });
+
+    it('should return a Promise', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .post(`/user/${environmentId}/`, {
+          username: 'abc'
+        })
+        .basicAuth({
+          user: environmentId,
+          pass: appsecret
+        })
+        .reply(200, { _id: 1234, username: 'abc' });
+
+      (this.store().create({ username: 'abc' })).should.be.a.Promise();   // eslint-disable-line new-cap
+      return done();
     });
 
     it('should create a new entity', (done) => {
@@ -603,6 +782,27 @@ describe('userStore', () => {
         result.should.containDeep({ _id: 1234, username: 'abc' });
         return done();
       });
+    });
+
+    it('should resolve on create if a callback isn\'t passed', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .post(`/user/${environmentId}/`, {
+          username: 'abc'
+        })
+        .basicAuth({
+          user: environmentId,
+          pass: appsecret
+        })
+        .reply(200, { _id: 1234, username: 'abc' });
+
+      this.store().create({ username: 'abc' })
+        .then((result) => {
+          result.should.containDeep({ _id: 1234, username: 'abc' });
+          return done();
+        });
     });
 
     it('should create a new entity using appsecret', (done) => {
@@ -709,6 +909,17 @@ describe('userStore', () => {
         return done();
       });
     });
+
+    it('should invoke rejection handler if an error occurs and a callback isn\'t passed', (done) => {
+      this.storeUserRequest({ useBl: true }).create({ username: 'abc' })
+        .catch((err) => {
+          should.exist(err);
+          err.message.should.eql('UserStoreError');
+          err.description.should.eql('Not Allowed');
+          err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+          return done();
+        });
+    });
   });
 
   describe('update', () => {
@@ -719,6 +930,25 @@ describe('userStore', () => {
 
     afterEach(() => {
       nock.cleanAll();
+    });
+
+    it('should return a Promise', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .put(`/user/${environmentId}/1234`, {
+          _id: 1234,
+          username: 'abc'
+        })
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { _id: 1234, username: 'abc' });
+
+      (this.store().update({ _id: 1234, username: 'abc' })).should.be.a.Promise();    // eslint-disable-line new-cap
+      return done();
     });
 
     it('should update an existing user', (done) => {
@@ -741,6 +971,28 @@ describe('userStore', () => {
         result.should.containDeep({ _id: 1234, username: 'abc' });
         return done();
       });
+    });
+
+    it('should resolve on update of an existing user if a callback isn\'t passed', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .put(`/user/${environmentId}/1234`, {
+          _id: 1234,
+          username: 'abc'
+        })
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { _id: 1234, username: 'abc' });
+
+      this.store().update({ _id: 1234, username: 'abc' })
+        .then((result) => {
+          result.should.containDeep({ _id: 1234, username: 'abc' });
+          return done();
+        });
     });
 
     it('should update an existing user using user context', (done) => {
@@ -857,6 +1109,17 @@ describe('userStore', () => {
         return done();
       });
     });
+
+    it('should invoke rejection handler on error if a callback isn\'t passed', (done) => {
+      this.storeUserRequest({ useBl: true }).update({ _id: 1234, username: 'abc' })
+        .catch((err) => {
+          should.exist(err);
+          err.message.should.eql('UserStoreError');
+          err.description.should.eql('Not Allowed');
+          err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+          return done();
+        });
+    });
   });
 
   describe('remove', () => {
@@ -867,6 +1130,22 @@ describe('userStore', () => {
 
     afterEach(() => {
       nock.cleanAll();
+    });
+
+    it('should return a Promise', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .delete(`/user/${environmentId}/1234?hard=true`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200);
+
+      (this.store().remove(1234)).should.be.a.Promise();    // eslint-disable-line new-cap
+      return done();
     });
 
     it('should remove a single user', (done) => {
@@ -886,6 +1165,25 @@ describe('userStore', () => {
         should.not.exist(result);
         return done();
       });
+    });
+
+    it('should resolve on removing a single user if callback isn\'t passed', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .delete(`/user/${environmentId}/1234?hard=true`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200);
+
+      this.store().remove(1234)
+        .then((result) => {
+          should.not.exist(result);
+          return done();
+        });
     });
 
     it('should not include hard=true if apiVersion is 1', (done) => {
@@ -1025,6 +1323,17 @@ describe('userStore', () => {
         return done();
       });
     });
+
+    it('should invoke the rejection handler if an error occurs and a callback isn\'t passed', (done) => {
+      this.storeUserRequest({ useBl: true }).remove('1234')
+        .catch((err) => {
+          should.exist(err);
+          err.message.should.eql('UserStoreError');
+          err.description.should.eql('Not Allowed');
+          err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+          return done();
+        });
+    });
   });
 
   describe('count', () => {
@@ -1036,6 +1345,23 @@ describe('userStore', () => {
     afterEach(() => {
       nock.cleanAll();
     });
+
+    it('should return a Promise', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .get(`/user/${environmentId}/_count/`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { count: 30 });
+
+      (this.store().count()).should.be.a.Promise();   // eslint-disable-line new-cap
+      return done();
+    });
+
 
     it('should get a count of all users', (done) => {
       nock('https://baas.kinvey.com')
@@ -1054,6 +1380,25 @@ describe('userStore', () => {
         result.should.containDeep({ count: 30 });
         return done();
       });
+    });
+
+    it('should resolve count of all users if a callback isn\'t passed', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .get(`/user/${environmentId}/_count/`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { count: 30 });
+
+      this.store().count()
+        .then((result) => {
+          result.should.containDeep({ count: 30 });
+          return done();
+        });
     });
 
     it('should get a count of all users using user context', (done) => {
@@ -1142,6 +1487,17 @@ describe('userStore', () => {
       });
     });
 
+    it('should invoke the rejection handler on an error if a callback isn\'t passed', (done) => {
+      this.storeUserRequest({ useBl: true }).count()
+        .catch((err) => {
+          should.exist(err);
+          err.message.should.eql('UserStoreError');
+          err.description.should.eql('Not Allowed');
+          err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+          return done();
+        });
+    });
+
     it('should get a count of records with a query object', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
@@ -1164,6 +1520,29 @@ describe('userStore', () => {
         return done();
       });
     });
+
+    it('should resolve count of records with a query object if a callback isn\'t passed', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .get(`/user/${environmentId}/_count/`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .query({ query: '{"foo":"bar"}' })
+        .reply(200, { count: 12 });
+
+      const query = new Query();
+      query.equalTo('foo', 'bar');
+
+      this.store().count(query)
+        .then((result) => {
+          result.should.containDeep({ count: 12 });
+          return done();
+        });
+    });
   });
 
   describe('suspend', () => {
@@ -1174,6 +1553,22 @@ describe('userStore', () => {
 
     afterEach(() => {
       nock.cleanAll();
+    });
+
+    it('should return a Promise', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .delete(`/user/${environmentId}/1234`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200);
+
+      (this.store().suspend(1234)).should.be.a.Promise();         // eslint-disable-line new-cap
+      return done();
     });
 
     it('should suspend a single user', (done) => {
@@ -1193,6 +1588,25 @@ describe('userStore', () => {
         should.not.exist(result);
         return done();
       });
+    });
+
+    it('should resolve on suspend if a callback isn\'t passed', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .delete(`/user/${environmentId}/1234`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200);
+
+      this.store().suspend(1234)
+        .then((result) => {
+          should.not.exist(result);
+          return done();
+        });
     });
 
     it('should include soft=true if apiVersion is 1', (done) => {
@@ -1233,7 +1647,7 @@ describe('userStore', () => {
       });
     });
 
-    it('should remove a single entity and use bl', (done) => {
+    it('should suspend a single entity and use bl', (done) => {
       nock('https://baas.kinvey.com', { badheaders: ['x-kinvey-skip-business-logic'] })
         .matchHeader('content-type', 'application/json')
         .matchHeader('x-kinvey-api-version', '3')
@@ -1332,6 +1746,17 @@ describe('userStore', () => {
         return done();
       });
     });
+
+    it('should invoke rejection handler if an error occurs and a callback isn\'t passed', (done) => {
+      this.storeUserRequest({ useBl: true }).suspend('1234')
+        .catch((err) => {
+          should.exist(err);
+          err.message.should.eql('UserStoreError');
+          err.description.should.eql('Not Allowed');
+          err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+          return done();
+        });
+    });
   });
 
   describe('restore', () => {
@@ -1342,6 +1767,22 @@ describe('userStore', () => {
 
     afterEach(() => {
       nock.cleanAll();
+    });
+
+    it('should return a Promise', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .post(`/user/${environmentId}/1234/_restore`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200);
+
+      (this.store().restore(1234)).should.be.a.Promise();     // eslint-disable-line new-cap
+      return done();
     });
 
     it('should restore a single user', (done) => {
@@ -1361,6 +1802,25 @@ describe('userStore', () => {
         should.not.exist(result);
         return done();
       });
+    });
+
+    it('should resolve a single user restore if a callback isn\'t passed', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .post(`/user/${environmentId}/1234/_restore`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200);
+
+      this.store().restore(1234)
+        .then((result) => {
+          should.not.exist(result);
+          return done();
+        });
     });
 
     it('should restore a single user record and override user context with mastersecret', (done) => {
@@ -1480,6 +1940,17 @@ describe('userStore', () => {
         err.debug.should.eql('userId is required');
         return done();
       });
+    });
+
+    it('should invoke the rejection handler if an error occurs and a callback isn\'t passed', (done) => {
+      this.storeUserRequest({ useBl: true }).restore(1234)
+        .catch((err) => {
+          should.exist(err);
+          err.message.should.eql('UserStoreError');
+          err.description.should.eql('Not Allowed');
+          err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+          return done();
+        });
     });
   });
 });

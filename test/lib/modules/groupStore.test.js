@@ -16,7 +16,6 @@ const nock = require('nock');
 const should = require('should');
 const uuid = require('uuid');
 const groupStore = require('../../../lib/service/modules/groupStore');
-const Query = require('../../../lib/service/modules/query');
 const environmentId = 'kid1234';
 const blFlags = {};
 const appsecret = '123456';
@@ -191,6 +190,22 @@ describe('groupStore', () => {
       nock.cleanAll();
     });
 
+    it('should return a Promise', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .get(`/group/${environmentId}/1234`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { _id: 1234, username: 'abc' });
+
+      (this.store().findById(1234)).should.be.a.Promise();    // eslint-disable-line new-cap
+      return done();
+    });
+
     it('should find a single group', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
@@ -208,6 +223,25 @@ describe('groupStore', () => {
         result.should.containDeep({ _id: 1234, username: 'abc' });
         return done();
       });
+    });
+
+    it('should resolve a single group if a callback isn\'t passed', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .get(`/group/${environmentId}/1234`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { _id: 1234, username: 'abc' });
+
+      this.store().findById(1234)
+        .then((result) => {
+          result.should.containDeep({ _id: 1234, username: 'abc' });
+          return done();
+        });
     });
 
     it('should find a single group record using user context', (done) => {
@@ -321,6 +355,17 @@ describe('groupStore', () => {
         return done();
       });
     });
+
+    it('should invoke rejection handler if an error occurs and a callback isn\'t passed', (done) => {
+      this.storeUserRequest({ useBl: true }).findById('1234')
+        .catch((err) => {
+          should.exist(err);
+          err.message.should.eql('GroupStoreError');
+          err.description.should.eql('Not Allowed');
+          err.debug.should.eql('Recursive requests to the group store from the group store cannot use user credentials or use Bl');
+          return done();
+        });
+    });
   });
 
   describe('create', () => {
@@ -331,6 +376,24 @@ describe('groupStore', () => {
 
     afterEach(() => {
       nock.cleanAll();
+    });
+
+    it('should return a Promise', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .post(`/group/${environmentId}/`, {
+          username: 'abc'
+        })
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { _id: 1234, username: 'abc' });
+
+      (this.store().create({ username: 'abc' })).should.be.a.Promise();     // eslint-disable-line new-cap
+      return done();
     });
 
     it('should create a new entity', (done) => {
@@ -352,6 +415,27 @@ describe('groupStore', () => {
         result.should.containDeep({ _id: 1234, username: 'abc' });
         return done();
       });
+    });
+
+    it('should resolve if a callback isn\'t passed', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .post(`/group/${environmentId}/`, {
+          username: 'abc'
+        })
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { _id: 1234, username: 'abc' });
+
+      this.store().create({ username: 'abc' })
+        .then((result) => {
+          result.should.containDeep({ _id: 1234, username: 'abc' });
+          return done();
+        });
     });
 
     it('should create a new entity using appsecret', (done) => {
@@ -458,6 +542,17 @@ describe('groupStore', () => {
         return done();
       });
     });
+
+    it('should invoke rejection handler if an error occurs and a callback isn\'t supplied', (done) => {
+      this.storeUserRequest({ useBl: true }).create({ username: 'abc' })
+        .catch((err) => {
+          should.exist(err);
+          err.message.should.eql('GroupStoreError');
+          err.description.should.eql('Not Allowed');
+          err.debug.should.eql('Recursive requests to the group store from the group store cannot use user credentials or use Bl');
+          return done();
+        });
+    });
   });
 
   describe('update', () => {
@@ -468,6 +563,25 @@ describe('groupStore', () => {
 
     afterEach(() => {
       nock.cleanAll();
+    });
+
+    it('should return a Promise', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .put(`/group/${environmentId}/1234`, {
+          _id: 1234,
+          username: 'abc'
+        })
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { _id: 1234, username: 'abc' });
+
+      (this.store().update({ _id: 1234, username: 'abc' })).should.be.a.Promise();    // eslint-disable-line new-cap
+      return done();
     });
 
     it('should update an existing group', (done) => {
@@ -490,6 +604,28 @@ describe('groupStore', () => {
         result.should.containDeep({ _id: 1234, username: 'abc' });
         return done();
       });
+    });
+
+    it('should resolve on update of an existing group if a callback isn\'t passed', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .put(`/group/${environmentId}/1234`, {
+          _id: 1234,
+          username: 'abc'
+        })
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { _id: 1234, username: 'abc' });
+
+      this.store().update({ _id: 1234, username: 'abc' })
+        .then((result) => {
+          result.should.containDeep({ _id: 1234, username: 'abc' });
+          return done();
+        });
     });
 
     it('should update an existing group using user context', (done) => {
@@ -606,6 +742,17 @@ describe('groupStore', () => {
         return done();
       });
     });
+
+    it('should invoke rejection handler if an error occurs and callback isn\'t passed', (done) => {
+      this.storeUserRequest({ useBl: true }).update({ _id: 1234, username: 'abc' })
+        .catch((err) => {
+          should.exist(err);
+          err.message.should.eql('GroupStoreError');
+          err.description.should.eql('Not Allowed');
+          err.debug.should.eql('Recursive requests to the group store from the group store cannot use user credentials or use Bl');
+          return done();
+        });
+    });
   });
 
   describe('remove', () => {
@@ -616,6 +763,22 @@ describe('groupStore', () => {
 
     afterEach(() => {
       nock.cleanAll();
+    });
+
+    it('should return a Promise', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .delete(`/group/${environmentId}/1234`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200);
+
+      (this.store().remove(1234)).should.be.a.Promise();      // eslint-disable-line new-cap
+      return done();
     });
 
     it('should remove a single group', (done) => {
@@ -635,6 +798,25 @@ describe('groupStore', () => {
         should.not.exist(result);
         return done();
       });
+    });
+
+    it('should resolve on remove if a callback isn\'t passed', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .delete(`/group/${environmentId}/1234`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200);
+
+      this.store().remove(1234)
+        .then((result) => {
+          should.not.exist(result);
+          return done();
+        });
     });
 
     it('should remove a single group record using user context', (done) => {
@@ -751,6 +933,17 @@ describe('groupStore', () => {
         err.debug.should.eql('groupId is required');
         return done();
       });
+    });
+
+    it('should invoke rejection handler if an error occurs and callback isn\'t passed', (done) => {
+      this.storeUserRequest({ useBl: true }).remove('1234')
+        .catch((err) => {
+          should.exist(err);
+          err.message.should.eql('GroupStoreError');
+          err.description.should.eql('Not Allowed');
+          err.debug.should.eql('Recursive requests to the group store from the group store cannot use user credentials or use Bl');
+          return done();
+        });
     });
   });
 });
