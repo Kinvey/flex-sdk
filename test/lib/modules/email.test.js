@@ -49,11 +49,28 @@ describe('modules / email', () => {
     requestStub.post.reset();
     return done();
   });
-  it('does not require a callback', (done) => {
-    requestStub.post.callsArg(1);
-    (() => emailInstance.send('from', 'to', 'subject', 'textBody')).should.not.throw();
+
+  it('should return a Promise', (done) => {
+    (emailInstance.send('from', 'to', 'subject', 'textBody')).should.be.a.Promise(); // eslint-disable-line new-cap
     return done();
   });
+
+  it('should invoke the callback if specified', (done) => {
+    requestStub.post.callsArg(1);
+    emailInstance.send('from', 'to', 'subject', 'textBody', (err) => {
+      should.not.exist(err);
+      done();
+    });
+  });
+
+  it('should invoke the promise handlers if no callback specified', (done) => {
+    requestStub.post.callsArg(1);
+    const promise = emailInstance.send('from', 'to', 'subject', 'textBody');
+    promise.then((res) => {
+      done();
+    });
+  });
+
   it('appends authorization header details to the request object', (done) => {
     requestStub.post.callsArg(1);
     (() => emailInstance.send('from', 'to', 'subject', 'textBody')).should.not.throw();
@@ -61,35 +78,7 @@ describe('modules / email', () => {
     requestStub.post.args[0][0].auth.pass.should.eql(appMetadata.mastersecret);
     return done();
   });
-  it('should include x-kinvey-wait-for-confirmation = false if no callback is specified', (done) => {
-    requestStub.post.callsArg(1);
-    (() => emailInstance.send('from', 'to', 'subject', 'textBody')).should.not.throw();
-    requestStub.post.args[0][0].headers['x-kinvey-wait-for-confirmation'].should.eql('false');
-    return done();
-  });
-  it('should include x-kinvey-wait-for-confirmation = true if a callback is specified', (done) => {
-    requestStub.post.callsArgWith(1, 'error!');
-    return emailInstance.send('from', 'to', 'subject', 'textBody', (err) => {
-      should.exist(err);
-      err.should.eql('error!');
-      requestStub.post.args[0][0].headers['x-kinvey-wait-for-confirmation'].should.eql('true');
-      return done();
-    });
-  });
-  it('should register the proxy task if a callback isn\'t included', (done) => {
-    let emittersCalled = 0;
-    emitter.once('proxyTaskStarted', () => {
-      emittersCalled += 1;
-    });
-    emitter.once('proxyTaskCompleted', () => {
-      emittersCalled += 1;
-      emittersCalled.should.eql(2);
-      return done();
-    });
-    requestStub.post.callsArg(1);
-    emailInstance.send('from', 'to', 'subject', 'textBody');
-    return requestStub.post.args[0][0].headers['x-kinvey-wait-for-confirmation'].should.eql('false');
-  });
+
   it('throws if \'from\', \'to\', \'subject\' and \'textBody\' are not all specified', (done) => {
     (() => emailInstance.send()).should.throw();
     (() => emailInstance.send('from')).should.throw();
@@ -100,6 +89,7 @@ describe('modules / email', () => {
     (() => emailInstance.send('from', 'to', null, 'textBody')).should.throw();
     return done();
   });
+
   it('can pass a callback instead of replyTo argument', (done) => {
     requestStub.post.callsArgWith(1, 'error!');
     return emailInstance.send('from', 'to', 'subject', 'textBody', (err) => {
@@ -108,6 +98,7 @@ describe('modules / email', () => {
       return done();
     });
   });
+
   it('can pass a callback instead of htmlBody argument', (done) => {
     requestStub.post.callsArgWith(1, 'error!');
     return emailInstance.send('from', 'to', 'subject', 'textBody', 'replyTo', (err) => {
@@ -116,6 +107,7 @@ describe('modules / email', () => {
       return done();
     });
   });
+
   it('can pass a callback instead of cc argument', (done) => {
     requestStub.post.callsArgWith(1, 'error!');
     return emailInstance.send('from', 'to', 'subject', 'textBody', 'replyTo', 'htmlBody', (err) => {
@@ -124,6 +116,7 @@ describe('modules / email', () => {
       return done();
     });
   });
+
   it('can pass a callback instead of bcc argument', (done) => {
     requestStub.post.callsArgWith(1, 'error!');
     return emailInstance.send('from', 'to', 'subject', 'textBody', 'replyTo', 'htmlBody', 'cc', (err) => {
@@ -132,6 +125,7 @@ describe('modules / email', () => {
       return done();
     });
   });
+
   it('can pass a callback as the last argument', (done) => {
     requestStub.post.callsArgWith(1, 'error!');
     return emailInstance.send('from', 'to', 'subject', 'textBody', 'replyTo', 'htmlBody', 'cc', 'bcc', (err) => {
@@ -140,7 +134,8 @@ describe('modules / email', () => {
       return done();
     });
   });
-  it('returns an error if one has occurred while communicating with the proxy', (done) => {
+
+  it('calls back an error if one has occurred while communicating with the proxy', (done) => {
     requestStub.post.callsArgWith(1, 'error!');
     return emailInstance.send('from', 'to', 'subject', 'textBody', (err) => {
       should.exist(err);
@@ -148,7 +143,18 @@ describe('modules / email', () => {
       return done();
     });
   });
-  it('returns an error if the proxy returned a status code greater than or equal to 400', (done) => {
+
+  it('invokes rejection handler if an error has occurred while communicating with the proxy', (done) => {
+    requestStub.post.callsArgWith(1, 'error!');
+    return emailInstance.send('from', 'to', 'subject', 'textBody')
+      .catch((err) => {
+        should.exist(err);
+        err.should.eql('error!');
+        return done();
+      });
+  });
+
+  it('calls back an error if the proxy returned a status code greater than or equal to 400', (done) => {
     requestStub.post.callsArgWith(1, null, {
       statusCode: 401
     }, 'error!');
@@ -158,6 +164,19 @@ describe('modules / email', () => {
       return done();
     });
   });
+
+  it('invokes rejection handler if the proxy returned a status code greater than or equal to 400', (done) => {
+    requestStub.post.callsArgWith(1, null, {
+      statusCode: 401
+    }, 'error!');
+    return emailInstance.send('from', 'to', 'subject', 'textBody')
+      .catch((err) => {
+        should.exist(err);
+        err.should.eql('error!');
+        return done();
+      });
+  });
+
   it('POSTs to the proxy\'s /email/send URL', (done) => {
     requestStub.post.callsArgWith(1, {});
     return emailInstance.send('from', 'to', 'subject', 'textBody', () => {
@@ -165,6 +184,7 @@ describe('modules / email', () => {
       return done();
     });
   });
+
   it('sends a null replyTo parameter if no replyTo argument is specified', (done) => {
     requestStub.post.callsArgWith(1, {});
     return emailInstance.send('from', 'to', 'subject', 'textBody', () => {
@@ -173,6 +193,7 @@ describe('modules / email', () => {
       return done();
     });
   });
+
   it('sends a null html parameter if no htmlBody argument is specified', (done) => {
     requestStub.post.callsArgWith(1, {});
     return emailInstance.send('from', 'to', 'subject', 'textBody', () => {
@@ -181,6 +202,7 @@ describe('modules / email', () => {
       return done();
     });
   });
+
   it('sends a null cc parameter if no cc argument is specified', (done) => {
     requestStub.post.callsArgWith(1, {});
     return emailInstance.send('from', 'to', 'subject', 'textBody', 'htmlBody', () => {
@@ -189,6 +211,7 @@ describe('modules / email', () => {
       return done();
     });
   });
+
   it('sends a null bcc parameter if no bcc argument is specified', (done) => {
     requestStub.post.callsArgWith(1, {});
     return emailInstance.send('from', 'to', 'subject', 'textBody', 'htmlBody', 'cc', () => {
@@ -197,6 +220,7 @@ describe('modules / email', () => {
       return done();
     });
   });
+
   it('sends the appropriate arguments to the proxy', (done) => {
     requestStub.post.callsArgWith(1, {});
     return emailInstance.send(
@@ -221,6 +245,7 @@ describe('modules / email', () => {
         return done();
       });
   });
+
   return it('returns the response from the mail server if one is returned', (done) => {
     requestStub.post.callsArgWith(1, null, {}, {
       mailServerResponse: 'response!'

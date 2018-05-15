@@ -29,21 +29,26 @@ describe('modules / push', () => {
       _id: 'id2'
     }
   ];
+
   const recipient = {
     _id: 'id1'
   };
+
   const fakeProxyURL = 'http://proxy.proxy';
   const appMetadata = {
     _id: 'kid_abcd1234',
     applicationId: 'abc123',
     mastersecret: '12345'
   };
+
   const taskMetadata = {
     taskId: 'abcd1234'
   };
+
   const requestMetadata = {
     requestId: 'ea85600029b04a18a754d57629cff62d'
   };
+
   before((done) => {
     requestStub = {
       post: sinon.stub()
@@ -55,24 +60,45 @@ describe('modules / push', () => {
     pushInstance = pushModule(fakeProxyURL, appMetadata, taskMetadata, requestMetadata, emitter);
     return done();
   });
+
   afterEach((done) => {
     requestStub.post.reset();
     return done();
   });
+
   it('\'send\' and \'sendMessage\' point to the same method', (done) => {
     pushInstance.send.should.eql(pushInstance.sendMessage);
     return done();
   });
+
   it('\'broadcast\' and \'broadcastMessage\' point to the same method', (done) => {
     pushInstance.broadcast.should.eql(pushInstance.broadcastMessage);
     return done();
   });
+
   describe('methods / send', () => {
-    it('does not require a callback', (done) => {
+    it('should return a Promise', (done) => {
       requestStub.post.callsArg(1);
-      (() => pushInstance.send(recipients, 'hello')).should.not.throw();
+      (pushInstance.send(recipients, 'hello')).should.be.a.Promise(); // eslint-disable-line new-cap
       return done();
     });
+
+    it('should invoke the callback if specified', (done) => {
+      requestStub.post.callsArg(1);
+      pushInstance.send(recipients, 'hello', (err) => {
+        should.not.exist(err);
+        done();
+      });
+    });
+
+    it('should invoke the promise handlers if no callback specified', (done) => {
+      requestStub.post.callsArg(1);
+      const promise = pushInstance.send(recipients, 'hello');
+      promise.then((res) => {
+        done();
+      });
+    });
+
     it('appends authorization header details to the request object', (done) => {
       requestStub.post.callsArg(1);
       (() => pushInstance.send(recipients, 'hello')).should.not.throw();
@@ -80,36 +106,8 @@ describe('modules / push', () => {
       requestStub.post.args[0][0].auth.pass.should.eql(appMetadata.mastersecret);
       return done();
     });
-    it('should include x-kinvey-wait-for-confirmation = false if no callback is specified', (done) => {
-      requestStub.post.callsArg(1);
-      (() => pushInstance.send(recipients, 'hello')).should.not.throw();
-      requestStub.post.args[0][0].headers['x-kinvey-wait-for-confirmation'].should.eql('false');
-      return done();
-    });
-    it('should include x-kinvey-wait-for-confirmation = true if a callback is specified', (done) => {
-      requestStub.post.callsArgWith(1, 'error!');
-      return pushInstance.send(recipients, 'hello', (err) => {
-        should.exist(err);
-        err.should.eql('error!');
-        requestStub.post.args[0][0].headers['x-kinvey-wait-for-confirmation'].should.eql('true');
-        return done();
-      });
-    });
-    it('should register the proxy task if a callback isn\'t included', (done) => {
-      let emittersCalled = 0;
-      emitter.once('proxyTaskStarted', () => {
-        emittersCalled += 1;
-      });
-      emitter.once('proxyTaskCompleted', () => {
-        emittersCalled += 1;
-        emittersCalled.should.eql(2);
-        return done();
-      });
-      requestStub.post.callsArg(1);
-      pushInstance.send(recipients, 'hello');
-      return requestStub.post.args[0][0].headers['x-kinvey-wait-for-confirmation'].should.eql('false');
-    });
-    it('returns an error if one has occurred while communicating with the proxy', (done) => {
+
+    it('calls back an error if one has occurred while communicating with the proxy', (done) => {
       requestStub.post.callsArgWith(1, 'error!');
       return pushInstance.send(recipients, 'hello', (err, result) => {
         should.exist(err);
@@ -118,7 +116,18 @@ describe('modules / push', () => {
         return done();
       });
     });
-    it('returns an error if the proxy returned a status code greater than or equal to 400', (done) => {
+
+    it('invokes rejection handler if an error has occurred while communicating with the proxy', (done) => {
+      requestStub.post.callsArgWith(1, 'error!');
+      return pushInstance.send(recipients, 'hello')
+        .catch((err) => {
+          should.exist(err);
+          err.should.eql('error!');
+          return done();
+        });
+    });
+
+    it('calls back an error if the proxy returned a status code greater than or equal to 400', (done) => {
       requestStub.post.callsArgWith(1, null, {
         statusCode: 401
       }, 'error!');
@@ -129,6 +138,19 @@ describe('modules / push', () => {
         return done();
       });
     });
+
+    it('invokes rejection handler if the proxy returned a status code greater than or equal to 400', (done) => {
+      requestStub.post.callsArgWith(1, null, {
+        statusCode: 401
+      }, 'error!');
+      return pushInstance.send(recipients, 'hello')
+        .catch((err) => {
+          should.exist(err);
+          err.should.eql('error!');
+          return done();
+        });
+    });
+
     it('POSTs to the proxy\'s /push/sendMessage URL', (done) => {
       requestStub.post.callsArgWith(1, {});
       return pushInstance.send(recipients, 'hello', () => {
@@ -136,17 +158,20 @@ describe('modules / push', () => {
         return done();
       });
     });
+
     it('throws an error if no receipents are specified', (done) => {
       requestStub.post.callsArgWith(1, {});
       (() => pushInstance.send(null, 'hello')).should.throw(/.*users.*/);
       (() => pushInstance.send()).should.throw(/.*users.*/);
       return done();
     });
+
     it('throws an error if no message is specified', (done) => {
       requestStub.post.callsArgWith(1, {});
       (() => pushInstance.send(recipients, null)).should.throw(/.*message.*/);
       return done();
     });
+
     it('send the appropriate arguments to the proxy', (done) => {
       requestStub.post.callsArgWith(1, {});
       return pushInstance.send(recipients, 'hello', () => {
@@ -156,6 +181,7 @@ describe('modules / push', () => {
         return done();
       });
     });
+
     return it('converts a user single object to an array', (done) => {
       requestStub.post.callsArgWith(1, {});
       return pushInstance.send(recipient, 'hello', () => {
@@ -167,42 +193,31 @@ describe('modules / push', () => {
       });
     });
   });
+
   describe('methods / broadcast', () => {
-    it('does not require a callback', (done) => {
+    it('should return a Promise', (done) => {
       requestStub.post.callsArg(1);
-      (() => pushInstance.broadcast('hello')).should.not.throw();
+      (pushInstance.broadcast('hello')).should.be.a.Promise(); // eslint-disable-line new-cap
       return done();
     });
-    it('should include x-kinvey-wait-for-confirmation = false if no callback is specified', (done) => {
+
+    it('should invoke the callback if specified', (done) => {
       requestStub.post.callsArg(1);
-      (() => pushInstance.broadcast('hello')).should.not.throw();
-      requestStub.post.args[0][0].headers['x-kinvey-wait-for-confirmation'].should.eql('false');
-      return done();
-    });
-    it('should include x-kinvey-wait-for-confirmation = true if a callback is specified', (done) => {
-      requestStub.post.callsArgWith(1, 'error!');
-      return pushInstance.broadcast('hello', (err) => {
-        should.exist(err);
-        err.should.eql('error!');
-        requestStub.post.args[0][0].headers['x-kinvey-wait-for-confirmation'].should.eql('true');
-        return done();
+      pushInstance.broadcast('hello', (err) => {
+        should.not.exist(err);
+        done();
       });
     });
-    it('should register the proxy task if a callback isn\'t included', (done) => {
-      let emittersCalled = 0;
-      emitter.once('proxyTaskStarted', () => {
-        emittersCalled += 1;
-      });
-      emitter.once('proxyTaskCompleted', () => {
-        emittersCalled += 1;
-        emittersCalled.should.eql(2);
-        return done();
-      });
+
+    it('should invoke the promise handlers if no callback specified', (done) => {
       requestStub.post.callsArg(1);
-      pushInstance.broadcast('hello');
-      return requestStub.post.args[0][0].headers['x-kinvey-wait-for-confirmation'].should.eql('false');
+      const promise = pushInstance.broadcast('hello');
+      promise.then((res) => {
+        done();
+      });
     });
-    it('returns an error if one has occurred while communicating with the proxy', (done) => {
+
+    it('calls back an error if one has occurred while communicating with the proxy', (done) => {
       requestStub.post.callsArgWith(1, 'error!');
       return pushInstance.broadcast('hello', (err, result) => {
         should.exist(err);
@@ -211,7 +226,18 @@ describe('modules / push', () => {
         return done();
       });
     });
-    it('returns an error if the proxy returned a status code greater than or equal to 400', (done) => {
+
+    it('invokes rejection handler if an error has occurred while communicating with the proxy', (done) => {
+      requestStub.post.callsArgWith(1, 'error!');
+      return pushInstance.broadcast('hello')
+        .catch((err) => {
+          should.exist(err);
+          err.should.eql('error!');
+          return done();
+        });
+    });
+
+    it('calls back an error if the proxy returned a status code greater than or equal to 400', (done) => {
       requestStub.post.callsArgWith(1, null, {
         statusCode: 401
       }, 'error!');
@@ -222,6 +248,19 @@ describe('modules / push', () => {
         return done();
       });
     });
+
+    it('invokes the rejection handler if the proxy returned a status code greater than or equal to 400', (done) => {
+      requestStub.post.callsArgWith(1, null, {
+        statusCode: 401
+      }, 'error!');
+      return pushInstance.broadcast('hello')
+        .catch((err) => {
+          should.exist(err);
+          err.should.eql('error!');
+          return done();
+        });
+    });
+
     it('POSTs to the proxy\'s /push/sendBroadcast URL', (done) => {
       requestStub.post.callsArgWith(1, {});
       return pushInstance.broadcast('hello', () => {
@@ -229,12 +268,14 @@ describe('modules / push', () => {
         return done();
       });
     });
+
     it('throws an error if no message is specified', (done) => {
       requestStub.post.callsArgWith(1, {});
       (() => pushInstance.broadcast()).should.throw(/.*message.*/);
       (() => pushInstance.broadcast(null)).should.throw(/.*message.*/);
       return done();
     });
+
     return it('sends the appropriate arguments to the proxy', (done) => {
       requestStub.post.callsArgWith(1, {});
       return pushInstance.broadcast('hello', () => {
@@ -251,45 +292,35 @@ describe('modules / push', () => {
       });
     });
   });
+
   describe('methods / sendPayload', () => {
     const iOSAps = 'iOS APs';
     const iOSExtras = 'iOS extras';
     const androidPayload = 'android payload';
-    it('does not require a callback', (done) => {
+
+    it('should return a Promise', (done) => {
       requestStub.post.callsArg(1);
-      (() => pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload)).should.not.throw();
+      (pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload)).should.be.a.Promise(); // eslint-disable-line new-cap
       return done();
     });
-    it('should include x-kinvey-wait-for-confirmation = false if no callback is specified', (done) => {
+
+    it('should invoke the callback if specified', (done) => {
       requestStub.post.callsArg(1);
-      (() => pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload)).should.not.throw();
-      requestStub.post.args[0][0].headers['x-kinvey-wait-for-confirmation'].should.eql('false');
-      return done();
-    });
-    it('should include x-kinvey-wait-for-confirmation = true if a callback is specified', (done) => {
-      requestStub.post.callsArgWith(1, 'error!');
-      return pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload, (err) => {
-        should.exist(err);
-        err.should.eql('error!');
-        requestStub.post.args[0][0].headers['x-kinvey-wait-for-confirmation'].should.eql('true');
-        return done();
+      pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload, (err) => {
+        should.not.exist(err);
+        done();
       });
     });
-    it('should register the proxy task if a callback isn\'t included', (done) => {
-      let emittersCalled = 0;
-      emitter.once('proxyTaskStarted', () => {
-        emittersCalled += 1;
-      });
-      emitter.once('proxyTaskCompleted', () => {
-        emittersCalled += 1;
-        emittersCalled.should.eql(2);
-        return done();
-      });
+
+    it('should invoke the promise handlers if no callback specified', (done) => {
       requestStub.post.callsArg(1);
-      pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload);
-      return requestStub.post.args[0][0].headers['x-kinvey-wait-for-confirmation'].should.eql('false');
+      const promise = pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload);
+      promise.then((res) => {
+        done();
+      });
     });
-    it('returns an error if one has occurred while communicating with the proxy', (done) => {
+
+    it('calls back an error if one has occurred while communicating with the proxy', (done) => {
       requestStub.post.callsArgWith(1, 'error!');
       return pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload, (err, result) => {
         should.exist(err);
@@ -298,7 +329,18 @@ describe('modules / push', () => {
         return done();
       });
     });
-    it('returns an error if the proxy returned a status code greater than or equal to 400', (done) => {
+
+    it('invokes the rejection handler if an error has occurred while communicating with the proxy', (done) => {
+      requestStub.post.callsArgWith(1, 'error!');
+      return pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload)
+        .catch((err) => {
+          should.exist(err);
+          err.should.eql('error!');
+          return done();
+        });
+    });
+
+    it('calls back an error if the proxy returned a status code greater than or equal to 400', (done) => {
       requestStub.post.callsArgWith(1, null, {
         statusCode: 401
       }, 'error!');
@@ -309,6 +351,19 @@ describe('modules / push', () => {
         return done();
       });
     });
+
+    it('invokes the rejection handler if the proxy returned a status code greater than or equal to 400', (done) => {
+      requestStub.post.callsArgWith(1, null, {
+        statusCode: 401
+      }, 'error!');
+      return pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload)
+        .catch((err) => {
+          should.exist(err);
+          err.should.eql('error!');
+          return done();
+        });
+    });
+
     it('POSTs to the proxy\'s /push/sendMessage URL', (done) => {
       requestStub.post.callsArgWith(1, {});
       return pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload, () => {
@@ -316,12 +371,14 @@ describe('modules / push', () => {
         return done();
       });
     });
+
     it('throws an error if no receipents are specified', (done) => {
       requestStub.post.callsArgWith(1, {});
       (() => pushInstance.sendPayload(null, iOSAps, iOSExtras, androidPayload)).should.throw(/.*users.*/);
       (() => pushInstance.sendPayload()).should.throw(/.*users.*/);
       return done();
     });
+
     return it('sends the appropriate arguments to the proxy', (done) => {
       requestStub.post.callsArgWith(1, {});
       return pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload, () => {
@@ -343,45 +400,35 @@ describe('modules / push', () => {
       });
     });
   });
+
   return describe('methods / broadcastPayload', () => {
     const iOSAps = 'iOS APs';
     const iOSExtras = 'iOS extras';
     const androidPayload = 'android payload';
-    it('does not require a callback', (done) => {
+
+    it('should return a Promise', (done) => {
       requestStub.post.callsArg(1);
-      (() => pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload)).should.not.throw();
+      (pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload)).should.be.a.Promise(); // eslint-disable-line new-cap
       return done();
     });
-    it('should include x-kinvey-wait-for-confirmation = false if no callback is specified', (done) => {
+
+    it('should invoke the callback if specified', (done) => {
       requestStub.post.callsArg(1);
-      (() => pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload)).should.not.throw();
-      requestStub.post.args[0][0].headers['x-kinvey-wait-for-confirmation'].should.eql('false');
-      return done();
-    });
-    it('should include x-kinvey-wait-for-confirmation = true if a callback is specified', (done) => {
-      requestStub.post.callsArgWith(1, 'error!');
-      return pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload, (err) => {
-        should.exist(err);
-        err.should.eql('error!');
-        requestStub.post.args[0][0].headers['x-kinvey-wait-for-confirmation'].should.eql('true');
-        return done();
+      pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload, (err) => {
+        should.not.exist(err);
+        done();
       });
     });
-    it('should register the proxy task if a callback isn\'t included', (done) => {
-      let emittersCalled = 0;
-      emitter.once('proxyTaskStarted', () => {
-        emittersCalled += 1;
-      });
-      emitter.once('proxyTaskCompleted', () => {
-        emittersCalled += 1;
-        emittersCalled.should.eql(2);
-        return done();
-      });
+
+    it('should invoke the promise handlers if no callback specified', (done) => {
       requestStub.post.callsArg(1);
-      pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload);
-      return requestStub.post.args[0][0].headers['x-kinvey-wait-for-confirmation'].should.eql('false');
+      const promise = pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload);
+      promise.then((res) => {
+        done();
+      });
     });
-    it('returns an error if one has occurred while communicating with the proxy', (done) => {
+
+    it('calls back an error if one has occurred while communicating with the proxy', (done) => {
       requestStub.post.callsArgWith(1, 'error!');
       return pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload, (err, result) => {
         should.exist(err);
@@ -390,7 +437,18 @@ describe('modules / push', () => {
         return done();
       });
     });
-    it('returns an error if the proxy returned a status code greater than or equal to 400', (done) => {
+
+    it('invokes the rejection handler if an error has occurred while communicating with the proxy', (done) => {
+      requestStub.post.callsArgWith(1, 'error!');
+      return pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload)
+        .catch((err) => {
+          should.exist(err);
+          err.should.eql('error!');
+          return done();
+        });
+    });
+
+    it('calls back an error if the proxy returned a status code greater than or equal to 400', (done) => {
       requestStub.post.callsArgWith(1, null, {
         statusCode: 401
       }, 'error!');
@@ -401,6 +459,19 @@ describe('modules / push', () => {
         return done();
       });
     });
+
+    it('invokes the rejection handler if the proxy returned a status code greater than or equal to 400', (done) => {
+      requestStub.post.callsArgWith(1, null, {
+        statusCode: 401
+      }, 'error!');
+      return pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload)
+        .catch((err) => {
+          should.exist(err);
+          err.should.eql('error!');
+          return done();
+        });
+    });
+
     it('POSTs to the proxy\'s /push/sendBroadcast URL', (done) => {
       requestStub.post.callsArgWith(1, {});
       return pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload, () => {
@@ -408,6 +479,7 @@ describe('modules / push', () => {
         return done();
       });
     });
+
     return it('sends the appropriate arguments to the proxy', (done) => {
       requestStub.post.callsArgWith(1, {});
       return pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload, () => {
