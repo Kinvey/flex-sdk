@@ -1953,4 +1953,636 @@ describe('userStore', () => {
         });
     });
   });
+
+  describe('assign roles', () => {
+    beforeEach(() => {
+      this.store = userStore(this.appMetadata, this.requestContext, this.taskMetadata);
+      this.storeUserRequest = userStore(this.appMetadata, this.requestContext, this.taskMetadataUser);
+    });
+
+    afterEach(() => {
+      nock.cleanAll();
+    });
+
+    it('should return a Promise', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .put(`/user/${environmentId}/1234/roles/5678`, {})
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { _id: 1234, username: 'abc' });
+
+      (this.store().assignRole(1234, 5678)).should.be.a.Promise();    // eslint-disable-line new-cap
+      return done();
+    });
+
+    it('should assign a role to a user', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .put(`/user/${environmentId}/1234/roles/5678`, {})
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { _id: 1234, username: 'abc' });
+
+      this.store().assignRole(1234, 5678, (err, result) => {
+        should.not.exist(err);
+        result.should.containDeep({ _id: 1234, username: 'abc' });
+        return done();
+      });
+    });
+
+    it('should resolve on assigning a role to a user if a callback isn\'t passed', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .put(`/user/${environmentId}/1234/roles/5678`, {})
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { _id: 1234, username: 'abc' });
+
+      this.store().assignRole(1234, 5678)
+        .then((result) => {
+          result.should.containDeep({ _id: 1234, username: 'abc' });
+          return done();
+        });
+    });
+
+    it('should assign a role to a user using user context', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .matchHeader('authorization', authorization)
+        .put(`/user/${environmentId}/1234/roles/5678`, {})
+        .reply(200, { _id: 1234, username: 'abc' });
+
+      this.store({ useUserContext: true }).assignRole(1234, 5678, (err, result) => {
+        should.not.exist(err);
+        result.should.containDeep({ _id: 1234, username: 'abc' });
+        return done();
+      });
+    });
+
+    it('should assign a role to a user and use bl', (done) => {
+      nock('https://baas.kinvey.com', { badheaders: ['x-kinvey-skip-business-logic'] })
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('content-type', 'application/json')
+        .put(`/user/${environmentId}/1234/roles/5678`, {})
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { _id: 1234, username: 'abc' });
+
+      this.store({ useBl: true }).assignRole(1234, 5678, (err, result) => {
+        should.not.exist(err);
+        result.should.containDeep({ _id: 1234, username: 'abc' });
+        return done();
+      });
+    });
+
+    it('should prevent recursive requests to the same object that use bl', (done) => {
+      this.storeUserRequest({ useBl: true }).assignRole(1234, 5678, (err, result) => {
+        should.not.exist(result);
+        should.exist(err);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Not Allowed');
+        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        return done();
+      });
+    });
+
+    it('should prevent recursive requests to the same object that use user context', (done) => {
+      this.storeUserRequest({ useUserContext: true }).assignRole(1234, 5678, (err, result) => {
+        should.not.exist(result);
+        should.exist(err);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Not Allowed');
+        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        return done();
+      });
+    });
+
+    it('should prevent recursive requests to the same object that use user context and bl', (done) => {
+      this.storeUserRequest({ useUserContext: true, useBl: true }).assignRole(1234, 5678, (err, result) => {
+        should.not.exist(result);
+        should.exist(err);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Not Allowed');
+        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        return done();
+      });
+    });
+
+    it('should allow recursive requests to the same object that use mastersecret and skip bl', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .put(`/user/${environmentId}/1234/roles/5678`, {})
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { _id: 1234, username: 'abc' });
+
+      this.storeUserRequest().assignRole(1234, 5678, (err, result) => {
+        should.not.exist(err);
+        result.should.containDeep({ _id: 1234, username: 'abc' });
+        return done();
+      });
+    });
+
+    it('should return an error if no userId entity is supplied', (done) => {
+      this.store().assignRole((err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('userId is required');
+        return done();
+      });
+    });
+
+    it('should return an error if null userId', (done) => {
+      this.store().assignRole(null, (err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('userId is required');
+        return done();
+      });
+    });
+
+    it('should return an error if blank userId', (done) => {
+      this.store().assignRole('', (err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('userId is required');
+        return done();
+      });
+    });
+
+    it('should return an error if missing roleId', (done) => {
+      this.store().assignRole(1234, (err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('roleId is required');
+        return done();
+      });
+    });
+
+    it('should return an error if null roleId', (done) => {
+      this.store().assignRole(1234, null, (err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('roleId is required');
+        return done();
+      });
+    });
+
+    it('should return an error if blank roleId', (done) => {
+      this.store().assignRole(1234, '', (err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('roleId is required');
+        return done();
+      });
+    });
+
+    it('should invoke rejection handler on error if a callback isn\'t passed', (done) => {
+      this.storeUserRequest({ useBl: true }).assignRole(1234, 5678)
+        .catch((err) => {
+          should.exist(err);
+          err.message.should.eql('UserStoreError');
+          err.description.should.eql('Not Allowed');
+          err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+          return done();
+        });
+    });
+  });
+
+  describe('revoke roles', () => {
+    beforeEach(() => {
+      this.store = userStore(this.appMetadata, this.requestContext, this.taskMetadata);
+      this.storeUserRequest = userStore(this.appMetadata, this.requestContext, this.taskMetadataUser);
+    });
+
+    afterEach(() => {
+      nock.cleanAll();
+    });
+
+    it('should return a Promise', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .delete(`/user/${environmentId}/1234/roles/5678`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200);
+
+      (this.store().revokeRole(1234, 5678)).should.be.a.Promise();    // eslint-disable-line new-cap
+      return done();
+    });
+
+    it('should revoke a role', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .delete(`/user/${environmentId}/1234/roles/5678`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200);
+
+      this.store().revokeRole(1234, 5678, (err, result) => {
+        should.not.exist(err);
+        should.not.exist(result);
+        return done();
+      });
+    });
+
+    it('should resolve on revoking a role if callback isn\'t passed', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .delete(`/user/${environmentId}/1234/roles/5678`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200);
+
+      this.store().revokeRole(1234, 5678)
+        .then((result) => {
+          should.not.exist(result);
+          return done();
+        });
+    });
+
+    it('should revoke a role using user context', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .matchHeader('authorization', authorization)
+        .delete(`/user/${environmentId}/1234/roles/5678`)
+        .reply(200);
+
+      this.store({ useUserContext: true }).revokeRole(1234, 5678, (err, result) => {
+        should.not.exist(err);
+        should.not.exist(result);
+        return done();
+      });
+    });
+
+    it('should revoke a role and use bl', (done) => {
+      nock('https://baas.kinvey.com', { badheaders: ['x-kinvey-skip-business-logic'] })
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .delete(`/user/${environmentId}/1234/roles/5678`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200);
+
+      this.store({ useBl: true }).revokeRole(1234, 5678, (err, result) => {
+        should.not.exist(err);
+        should.not.exist(result);
+        return done();
+      });
+    });
+
+    it('should prevent recursive requests to the same object that use bl', (done) => {
+      this.storeUserRequest({ useBl: true }).revokeRole(1234, 5678, (err, result) => {
+        should.not.exist(result);
+        should.exist(err);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Not Allowed');
+        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        return done();
+      });
+    });
+
+    it('should prevent recursive requests to the same object that use user context', (done) => {
+      this.storeUserRequest({ useUserContext: true }).revokeRole(1234, 5678, (err, result) => {
+        should.not.exist(result);
+        should.exist(err);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Not Allowed');
+        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        return done();
+      });
+    });
+
+    it('should prevent recursive requests to the same object that use user context and bl', (done) => {
+      this.storeUserRequest({ useUserContext: true, useBl: true }).revokeRole(1234, 5678, (err, result) => {
+        should.not.exist(result);
+        should.exist(err);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Not Allowed');
+        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        return done();
+      });
+    });
+
+    it('should allow recursive requests to the same object that use mastersecret and skip bl', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .delete(`/user/${environmentId}/1234/roles/5678`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200);
+
+      this.storeUserRequest().revokeRole('1234', '5678', (err, result) => {
+        should.not.exist(err);
+        should.not.exist(result);
+        return done();
+      });
+    });
+
+    it('should return an error if missing userId', (done) => {
+      this.store().revokeRole((err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('userId is required');
+        return done();
+      });
+    });
+
+    it('should return an error if null userId', (done) => {
+      this.store().revokeRole(null, (err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('userId is required');
+        return done();
+      });
+    });
+
+    it('should return an error if blank userId', (done) => {
+      this.store().revokeRole('', (err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('userId is required');
+        return done();
+      });
+    });
+
+    it('should return an error if missing roleId', (done) => {
+      this.store().revokeRole(1234, (err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('roleId is required');
+        return done();
+      });
+    });
+
+    it('should return an error if null roleId', (done) => {
+      this.store().revokeRole(1234, null, (err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('roleId is required');
+        return done();
+      });
+    });
+
+    it('should return an error if blank roleId', (done) => {
+      this.store().revokeRole(1234, '', (err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('roleId is required');
+        return done();
+      });
+    });
+
+    it('should invoke the rejection handler if an error occurs and a callback isn\'t passed', (done) => {
+      this.storeUserRequest({ useBl: true }).revokeRole('1234', '5678')
+        .catch((err) => {
+          should.exist(err);
+          err.message.should.eql('UserStoreError');
+          err.description.should.eql('Not Allowed');
+          err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+          return done();
+        });
+    });
+  });
+
+  describe('list roles', () => {
+    beforeEach(() => {
+      this.store = userStore(this.appMetadata, this.requestContext, this.taskMetadata);
+      this.storeUserRequest = userStore(this.appMetadata, this.requestContext, this.taskMetadataUser);
+    });
+
+    afterEach(() => {
+      nock.cleanAll();
+    });
+
+    it('should return a Promise', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .get(`/user/${environmentId}/1234/roles`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { _id: 1234, username: 'abc' });
+
+      (this.store().listRoles(1234)).should.be.a.Promise();     // eslint-disable-line new-cap
+      return done();
+    });
+
+    it('should list a user\'s roles', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .get(`/user/${environmentId}/1234/roles`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { _id: 1234, username: 'abc' });
+
+      this.store().listRoles(1234, (err, result) => {
+        should.not.exist(err);
+        result.should.containDeep({ _id: 1234, username: 'abc' });
+        return done();
+      });
+    });
+
+    it('should resolve a single user \'s roles if a callback isn\'t passed', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .get(`/user/${environmentId}/1234/roles`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { _id: 1234, username: 'abc' });
+
+      this.store().listRoles(1234)
+        .then((result) => {
+          result.should.containDeep({ _id: 1234, username: 'abc' });
+          return done();
+        });
+    });
+
+    it('should list a single user\'s roles using user context', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .matchHeader('authorization', authorization)
+        .get(`/user/${environmentId}/1234/roles`)
+        .reply(200, { _id: 1234, username: 'abc' });
+
+      this.store({ useUserContext: true }).listRoles(1234, (err, result) => {
+        should.not.exist(err);
+        result.should.containDeep({ _id: 1234, username: 'abc' });
+        return done();
+      });
+    });
+
+    it('should find a single user\'s roles and use bl', (done) => {
+      nock('https://baas.kinvey.com', { badheaders: ['x-kinvey-skip-business-logic'] })
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .get(`/user/${environmentId}/1234/roles`)
+        .reply(200, { _id: 1234, someData: 'abc' });
+
+      this.store({ useBl: true }).listRoles('1234', (err, result) => {
+        should.not.exist(err);
+        result.should.containDeep({ _id: 1234, someData: 'abc' });
+        return done();
+      });
+    });
+
+    it('should prevent recursive requests to the same object that use bl', (done) => {
+      this.storeUserRequest({ useBl: true }).listRoles('1234', (err, result) => {
+        should.not.exist(result);
+        should.exist(err);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Not Allowed');
+        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        return done();
+      });
+    });
+
+    it('should prevent recursive requests to the same object that use user context', (done) => {
+      this.storeUserRequest({ useUserContext: true }).listRoles('1234', (err, result) => {
+        should.not.exist(result);
+        should.exist(err);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Not Allowed');
+        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        return done();
+      });
+    });
+
+    it('should prevent recursive requests to the same object that use user context and bl', (done) => {
+      this.storeUserRequest({ useUserContext: true, useBl: true }).listRoles('1234', (err, result) => {
+        should.not.exist(result);
+        should.exist(err);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Not Allowed');
+        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        return done();
+      });
+    });
+
+    it('should allow recursive requests to the same object that use mastersecret and skip bl', (done) => {
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .get(`/user/${environmentId}/1234/roles`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { _id: 1234, username: 'abc' });
+
+      this.storeUserRequest().listRoles(1234, (err, result) => {
+        should.not.exist(err);
+        result.should.containDeep({ _id: 1234, username: 'abc' });
+        return done();
+      });
+    });
+
+    it('should return an error if missing user _id', (done) => {
+      this.store().listRoles((err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('userId is required');
+        return done();
+      });
+    });
+
+    it('should return an error if null user _id', (done) => {
+      this.store().listRoles(null, (err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('userId is required');
+        return done();
+      });
+    });
+
+    it('should return an error if blank user _id', (done) => {
+      this.store().listRoles('', (err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('userId is required');
+        return done();
+      });
+    });
+
+    it('should reject if an error occurs and a callback isn\'t passed', (done) => {
+      this.storeUserRequest({ useBl: true }).listRoles('1234')
+        .catch((err) => {
+          should.exist(err);
+          err.message.should.eql('UserStoreError');
+          err.description.should.eql('Not Allowed');
+          err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+          return done();
+        });
+    });
+  });
 });
