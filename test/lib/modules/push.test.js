@@ -17,6 +17,8 @@ const should = require('should');
 const sinon = require('sinon');
 const request = require('request');
 
+const FAKE_BAAS_URL = 'http://baas.baas';
+
 describe('modules / push', () => {
   let pushModule = null;
   let pushInstance = null;
@@ -34,11 +36,11 @@ describe('modules / push', () => {
     _id: 'id1'
   };
 
-  const fakeProxyURL = 'http://proxy.proxy';
   const appMetadata = {
     _id: 'kid_abcd1234',
     applicationId: 'abc123',
-    mastersecret: '12345'
+    mastersecret: '12345',
+    baasUrl: FAKE_BAAS_URL
   };
 
   const taskMetadata = {
@@ -57,7 +59,7 @@ describe('modules / push', () => {
     requestDefaultsStub.returns(requestStub);
     require.cache[require.resolve('request')].exports.defaults = requestDefaultsStub;
     pushModule = require('../../../lib/service/modules/push');
-    pushInstance = pushModule(fakeProxyURL, appMetadata, taskMetadata, requestMetadata, emitter);
+    pushInstance = pushModule(appMetadata, taskMetadata, requestMetadata, emitter);
     return done();
   });
 
@@ -107,7 +109,7 @@ describe('modules / push', () => {
       return done();
     });
 
-    it('calls back an error if one has occurred while communicating with the proxy', (done) => {
+    it('calls back an error if one has occurred while communicating with the server', (done) => {
       requestStub.post.callsArgWith(1, 'error!');
       return pushInstance.send(recipients, 'hello', (err, result) => {
         should.exist(err);
@@ -117,7 +119,7 @@ describe('modules / push', () => {
       });
     });
 
-    it('invokes rejection handler if an error has occurred while communicating with the proxy', (done) => {
+    it('invokes rejection handler if an error has occurred while communicating with the server', (done) => {
       requestStub.post.callsArgWith(1, 'error!');
       return pushInstance.send(recipients, 'hello')
         .catch((err) => {
@@ -127,7 +129,7 @@ describe('modules / push', () => {
         });
     });
 
-    it('calls back an error if the proxy returned a status code greater than or equal to 400', (done) => {
+    it('calls back an error if the server returned a status code greater than or equal to 400', (done) => {
       requestStub.post.callsArgWith(1, null, {
         statusCode: 401
       }, 'error!');
@@ -139,7 +141,7 @@ describe('modules / push', () => {
       });
     });
 
-    it('invokes rejection handler if the proxy returned a status code greater than or equal to 400', (done) => {
+    it('invokes rejection handler if the server returned a status code greater than or equal to 400', (done) => {
       requestStub.post.callsArgWith(1, null, {
         statusCode: 401
       }, 'error!');
@@ -151,10 +153,10 @@ describe('modules / push', () => {
         });
     });
 
-    it('POSTs to the proxy\'s /push/sendMessage URL', (done) => {
+    it('POSTs to the server\'s /push/sendMessage URL', (done) => {
       requestStub.post.callsArgWith(1, {});
       return pushInstance.send(recipients, 'hello', () => {
-        requestStub.post.args[0][0].url.should.eql(`${fakeProxyURL}/push/sendMessage`);
+        requestStub.post.args[0][0].url.should.eql(`${FAKE_BAAS_URL}/push/${appMetadata._id}/sendMessage`);
         return done();
       });
     });
@@ -172,7 +174,7 @@ describe('modules / push', () => {
       return done();
     });
 
-    it('send the appropriate arguments to the proxy', (done) => {
+    it('send the appropriate arguments to the server', (done) => {
       requestStub.post.callsArgWith(1, {});
       return pushInstance.send(recipients, 'hello', () => {
         const requestBody = requestStub.post.args[0][0].json;
@@ -217,7 +219,7 @@ describe('modules / push', () => {
       });
     });
 
-    it('calls back an error if one has occurred while communicating with the proxy', (done) => {
+    it('calls back an error if one has occurred while communicating with the server', (done) => {
       requestStub.post.callsArgWith(1, 'error!');
       return pushInstance.broadcast('hello', (err, result) => {
         should.exist(err);
@@ -227,7 +229,7 @@ describe('modules / push', () => {
       });
     });
 
-    it('invokes rejection handler if an error has occurred while communicating with the proxy', (done) => {
+    it('invokes rejection handler if an error has occurred while communicating with the server', (done) => {
       requestStub.post.callsArgWith(1, 'error!');
       return pushInstance.broadcast('hello')
         .catch((err) => {
@@ -237,7 +239,7 @@ describe('modules / push', () => {
         });
     });
 
-    it('calls back an error if the proxy returned a status code greater than or equal to 400', (done) => {
+    it('calls back an error if the server returned a status code greater than or equal to 400', (done) => {
       requestStub.post.callsArgWith(1, null, {
         statusCode: 401
       }, 'error!');
@@ -249,7 +251,7 @@ describe('modules / push', () => {
       });
     });
 
-    it('invokes the rejection handler if the proxy returned a status code greater than or equal to 400', (done) => {
+    it('invokes the rejection handler if the server returned a status code greater than or equal to 400', (done) => {
       requestStub.post.callsArgWith(1, null, {
         statusCode: 401
       }, 'error!');
@@ -261,10 +263,10 @@ describe('modules / push', () => {
         });
     });
 
-    it('POSTs to the proxy\'s /push/sendBroadcast URL', (done) => {
+    it('POSTs to the server\'s /push/sendBroadcast URL', (done) => {
       requestStub.post.callsArgWith(1, {});
       return pushInstance.broadcast('hello', () => {
-        requestStub.post.args[0][0].url.should.eql(`${fakeProxyURL}/push/sendBroadcast`);
+        requestStub.post.args[0][0].url.should.eql(`${FAKE_BAAS_URL}/push/${appMetadata._id}/sendBroadcast`);
         return done();
       });
     });
@@ -276,18 +278,14 @@ describe('modules / push', () => {
       return done();
     });
 
-    return it('sends the appropriate arguments to the proxy', (done) => {
+    return it('sends the appropriate arguments to the server', (done) => {
       requestStub.post.callsArgWith(1, {});
       return pushInstance.broadcast('hello', () => {
         const requestBody = requestStub.post.args[0][0].json;
         requestBody.messageContent.should.eql('hello');
         const outgoingRequestHeaders = requestStub.post.args[0][0].headers;
-        outgoingRequestHeaders.should.have.property('x-kinvey-application-id');
-        outgoingRequestHeaders.should.have.property('x-kinvey-task-id');
-        outgoingRequestHeaders.should.have.property('x-kinvey-request-id');
-        outgoingRequestHeaders['x-kinvey-application-id'].should.equal(appMetadata.applicationId);
-        outgoingRequestHeaders['x-kinvey-task-id'].should.equal(taskMetadata.taskId);
-        outgoingRequestHeaders['x-kinvey-request-id'].should.equal(requestMetadata.requestId);
+        outgoingRequestHeaders.should.have.property('x-kinvey-api-version');
+        outgoingRequestHeaders['x-kinvey-api-version'].should.equal('3');
         return done();
       });
     });
@@ -320,7 +318,7 @@ describe('modules / push', () => {
       });
     });
 
-    it('calls back an error if one has occurred while communicating with the proxy', (done) => {
+    it('calls back an error if one has occurred while communicating with the server', (done) => {
       requestStub.post.callsArgWith(1, 'error!');
       return pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload, (err, result) => {
         should.exist(err);
@@ -330,7 +328,7 @@ describe('modules / push', () => {
       });
     });
 
-    it('invokes the rejection handler if an error has occurred while communicating with the proxy', (done) => {
+    it('invokes the rejection handler if an error has occurred while communicating with the server', (done) => {
       requestStub.post.callsArgWith(1, 'error!');
       return pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload)
         .catch((err) => {
@@ -340,7 +338,7 @@ describe('modules / push', () => {
         });
     });
 
-    it('calls back an error if the proxy returned a status code greater than or equal to 400', (done) => {
+    it('calls back an error if the server returned a status code greater than or equal to 400', (done) => {
       requestStub.post.callsArgWith(1, null, {
         statusCode: 401
       }, 'error!');
@@ -352,7 +350,7 @@ describe('modules / push', () => {
       });
     });
 
-    it('invokes the rejection handler if the proxy returned a status code greater than or equal to 400', (done) => {
+    it('invokes the rejection handler if the server returned a status code greater than or equal to 400', (done) => {
       requestStub.post.callsArgWith(1, null, {
         statusCode: 401
       }, 'error!');
@@ -364,10 +362,10 @@ describe('modules / push', () => {
         });
     });
 
-    it('POSTs to the proxy\'s /push/sendMessage URL', (done) => {
+    it('POSTs to the server\'s /push/sendMessage URL', (done) => {
       requestStub.post.callsArgWith(1, {});
       return pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload, () => {
-        requestStub.post.args[0][0].url.should.eql(`${fakeProxyURL}/push/sendMessage`);
+        requestStub.post.args[0][0].url.should.eql(`${FAKE_BAAS_URL}/push/${appMetadata._id}/sendMessage`);
         return done();
       });
     });
@@ -379,7 +377,7 @@ describe('modules / push', () => {
       return done();
     });
 
-    return it('sends the appropriate arguments to the proxy', (done) => {
+    return it('sends the appropriate arguments to the server', (done) => {
       requestStub.post.callsArgWith(1, {});
       return pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload, () => {
         const requestBody = requestStub.post.args[0][0].json;
@@ -390,12 +388,8 @@ describe('modules / push', () => {
           androidPayload
         });
         const outgoingRequestHeaders = requestStub.post.args[0][0].headers;
-        outgoingRequestHeaders.should.have.property('x-kinvey-application-id');
-        outgoingRequestHeaders.should.have.property('x-kinvey-task-id');
-        outgoingRequestHeaders.should.have.property('x-kinvey-request-id');
-        outgoingRequestHeaders['x-kinvey-application-id'].should.equal(appMetadata.applicationId);
-        outgoingRequestHeaders['x-kinvey-task-id'].should.equal(taskMetadata.taskId);
-        outgoingRequestHeaders['x-kinvey-request-id'].should.equal(requestMetadata.requestId);
+        outgoingRequestHeaders.should.have.property('x-kinvey-api-version');
+        outgoingRequestHeaders['x-kinvey-api-version'].should.equal('3');
         return done();
       });
     });
@@ -428,7 +422,7 @@ describe('modules / push', () => {
       });
     });
 
-    it('calls back an error if one has occurred while communicating with the proxy', (done) => {
+    it('calls back an error if one has occurred while communicating with the server', (done) => {
       requestStub.post.callsArgWith(1, 'error!');
       return pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload, (err, result) => {
         should.exist(err);
@@ -438,7 +432,7 @@ describe('modules / push', () => {
       });
     });
 
-    it('invokes the rejection handler if an error has occurred while communicating with the proxy', (done) => {
+    it('invokes the rejection handler if an error has occurred while communicating with the server', (done) => {
       requestStub.post.callsArgWith(1, 'error!');
       return pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload)
         .catch((err) => {
@@ -448,7 +442,7 @@ describe('modules / push', () => {
         });
     });
 
-    it('calls back an error if the proxy returned a status code greater than or equal to 400', (done) => {
+    it('calls back an error if the server returned a status code greater than or equal to 400', (done) => {
       requestStub.post.callsArgWith(1, null, {
         statusCode: 401
       }, 'error!');
@@ -460,7 +454,7 @@ describe('modules / push', () => {
       });
     });
 
-    it('invokes the rejection handler if the proxy returned a status code greater than or equal to 400', (done) => {
+    it('invokes the rejection handler if the server returned a status code greater than or equal to 400', (done) => {
       requestStub.post.callsArgWith(1, null, {
         statusCode: 401
       }, 'error!');
@@ -472,15 +466,15 @@ describe('modules / push', () => {
         });
     });
 
-    it('POSTs to the proxy\'s /push/sendBroadcast URL', (done) => {
+    it('POSTs to the server\'s /push/sendBroadcast URL', (done) => {
       requestStub.post.callsArgWith(1, {});
       return pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload, () => {
-        requestStub.post.args[0][0].url.should.eql(`${fakeProxyURL}/push/sendBroadcast`);
+        requestStub.post.args[0][0].url.should.eql(`${FAKE_BAAS_URL}/push/${appMetadata._id}/sendBroadcast`);
         return done();
       });
     });
 
-    return it('sends the appropriate arguments to the proxy', (done) => {
+    return it('sends the appropriate arguments to the server', (done) => {
       requestStub.post.callsArgWith(1, {});
       return pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload, () => {
         const requestBody = requestStub.post.args[0][0].json;
@@ -490,12 +484,8 @@ describe('modules / push', () => {
           androidPayload
         });
         const outgoingRequestHeaders = requestStub.post.args[0][0].headers;
-        outgoingRequestHeaders.should.have.property('x-kinvey-application-id');
-        outgoingRequestHeaders.should.have.property('x-kinvey-task-id');
-        outgoingRequestHeaders.should.have.property('x-kinvey-request-id');
-        outgoingRequestHeaders['x-kinvey-application-id'].should.equal(appMetadata.applicationId);
-        outgoingRequestHeaders['x-kinvey-task-id'].should.equal(taskMetadata.taskId);
-        outgoingRequestHeaders['x-kinvey-request-id'].should.equal(requestMetadata.requestId);
+        outgoingRequestHeaders.should.have.property('x-kinvey-api-version');
+        outgoingRequestHeaders['x-kinvey-api-version'].should.equal('3');
         return done();
       });
     });

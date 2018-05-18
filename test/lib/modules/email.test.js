@@ -17,16 +17,18 @@ const EventEmitter = require('events').EventEmitter;
 const sinon = require('sinon');
 const request = require('request');
 
+const FAKE_BAAS_URL = 'http://baas.baas';
+
 describe('modules / email', () => {
   let emailModule = null;
   let emailInstance = null;
   let requestStub = null;
   const emitter = new EventEmitter();
-  const fakeProxyURL = 'http://proxy.proxy';
   const appMetadata = {
     _id: 'kid_abcd1234',
     applicationId: 'abc123',
-    mastersecret: '12345'
+    mastersecret: '12345',
+    baasUrl: FAKE_BAAS_URL
   };
   const taskMetadata = {
     taskId: 'abcd1234'
@@ -42,7 +44,7 @@ describe('modules / email', () => {
     requestDefaultsStub.returns(requestStub);
     require.cache[require.resolve('request')].exports.defaults = requestDefaultsStub;
     emailModule = require('../../../lib/service/modules/email');
-    emailInstance = emailModule(fakeProxyURL, appMetadata, taskMetadata, requestMetadata, emitter);
+    emailInstance = emailModule(appMetadata, taskMetadata, requestMetadata, emitter);
     return done();
   });
   afterEach((done) => {
@@ -154,7 +156,7 @@ describe('modules / email', () => {
       });
   });
 
-  it('calls back an error if the proxy returned a status code greater than or equal to 400', (done) => {
+  it('calls back an error if the server returned a status code greater than or equal to 400', (done) => {
     requestStub.post.callsArgWith(1, null, {
       statusCode: 401
     }, 'error!');
@@ -165,7 +167,7 @@ describe('modules / email', () => {
     });
   });
 
-  it('invokes rejection handler if the proxy returned a status code greater than or equal to 400', (done) => {
+  it('invokes rejection handler if the server returned a status code greater than or equal to 400', (done) => {
     requestStub.post.callsArgWith(1, null, {
       statusCode: 401
     }, 'error!');
@@ -177,10 +179,10 @@ describe('modules / email', () => {
       });
   });
 
-  it('POSTs to the proxy\'s /email/send URL', (done) => {
+  it('POSTs to the server\'s send-email endpoint', (done) => {
     requestStub.post.callsArgWith(1, {});
     return emailInstance.send('from', 'to', 'subject', 'textBody', () => {
-      requestStub.post.args[0][0].url.should.eql(`${fakeProxyURL}/email/send`);
+      requestStub.post.args[0][0].url.should.eql(`${FAKE_BAAS_URL}/rpc/${appMetadata._id}/send-email`);
       return done();
     });
   });
@@ -221,7 +223,7 @@ describe('modules / email', () => {
     });
   });
 
-  it('sends the appropriate arguments to the proxy', (done) => {
+  it('sends the appropriate arguments to the server', (done) => {
     requestStub.post.callsArgWith(1, {});
     return emailInstance.send(
       'fromTest', 'toTest', 'subjectTest', 'textBodyTest', 'replyToTest', 'htmlBodyTest', 'ccTest', 'bccTest'
@@ -236,12 +238,8 @@ describe('modules / email', () => {
         requestBody.cc.should.eql('ccTest');
         requestBody.bcc.should.eql('bccTest');
         const outgoingRequestHeaders = requestStub.post.args[0][0].headers;
-        outgoingRequestHeaders.should.have.property('x-kinvey-application-id');
-        outgoingRequestHeaders.should.have.property('x-kinvey-task-id');
-        outgoingRequestHeaders.should.have.property('x-kinvey-request-id');
-        outgoingRequestHeaders['x-kinvey-application-id'].should.equal(appMetadata.applicationId);
-        outgoingRequestHeaders['x-kinvey-task-id'].should.equal(taskMetadata.taskId);
-        outgoingRequestHeaders['x-kinvey-request-id'].should.equal(requestMetadata.requestId);
+        outgoingRequestHeaders.should.have.property('x-kinvey-api-version');
+        outgoingRequestHeaders['x-kinvey-api-version'].should.equal('3');
         return done();
       });
   });
