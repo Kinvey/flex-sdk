@@ -204,6 +204,10 @@ describe('endpointRunner', () => {
   describe('execute', () => {
     beforeEach(() => {
       this.runner = endpointRunner(this.appMetadata, this.requestContext, this.taskMetadata);
+      this.payload = [
+        { _id: uuid(), someData: uuid() },
+        { _id: uuid(), someData: uuid() }
+      ];
     });
 
     afterEach(() => {
@@ -212,7 +216,7 @@ describe('endpointRunner', () => {
     });
 
     it('should return a promise', (done) => {
-      nock('https://baas.kinvey.com')
+      nock(baasUrl)
         .matchHeader('content-type', 'application/json')
         .matchHeader('x-kinvey-api-version', '3')
         .post(`/rpc/${environmentId}/custom/myEndpoint`)
@@ -220,7 +224,7 @@ describe('endpointRunner', () => {
           user: environmentId,
           pass: mastersecret
         })
-        .reply(200, [{ _id: 123, someData: 'abc' }, { _id: 456, someData: 'xyz' }]);
+        .reply(200, this.payload);
 
       const endpoint = this.runner().endpoint('myEndpoint');
       (endpoint.execute({})).should.be.a.Promise(); // eslint-disable-line new-cap
@@ -228,7 +232,7 @@ describe('endpointRunner', () => {
     });
 
     it('should execute an endpoint', (done) => {
-      nock('https://baas.kinvey.com')
+      nock(baasUrl)
         .matchHeader('content-type', 'application/json')
         .matchHeader('x-kinvey-api-version', '3')
         .post(`/rpc/${environmentId}/custom/myEndpoint`)
@@ -236,18 +240,18 @@ describe('endpointRunner', () => {
           user: environmentId,
           pass: mastersecret
         })
-        .reply(200, [{ _id: 123, someData: 'abc' }, { _id: 456, someData: 'xyz' }]);
+        .reply(200, this.payload);
 
       const endpoint = this.runner().endpoint('myEndpoint');
       endpoint.execute({}, (err, result) => {
         should.not.exist(err);
-        result.should.containDeep([{ _id: 123, someData: 'abc' }, { _id: 456, someData: 'xyz' }]);
+        result.should.containDeep(this.payload);
         return done();
       });
     });
 
     it('should include a body', (done) => {
-      nock('https://baas.kinvey.com')
+      nock(baasUrl)
         .matchHeader('content-type', 'application/json')
         .matchHeader('x-kinvey-api-version', '3')
         .post(`/rpc/${environmentId}/custom/myEndpoint`, { foo: 'bar' })
@@ -255,18 +259,18 @@ describe('endpointRunner', () => {
           user: environmentId,
           pass: mastersecret
         })
-        .reply(200, [{ _id: 123, someData: 'abc' }, { _id: 456, someData: 'xyz' }]);
+        .reply(200, this.payload);
 
       const endpoint = this.runner().endpoint('myEndpoint');
       endpoint.execute({ foo: 'bar' }, (err, result) => {
         should.not.exist(err);
-        result.should.containDeep([{ _id: 123, someData: 'abc' }, { _id: 456, someData: 'xyz' }]);
+        result.should.containDeep(this.payload);
         return done();
       });
     });
 
     it('should include empty object as body if null body passed', (done) => {
-      nock('https://baas.kinvey.com')
+      nock(baasUrl)
         .matchHeader('content-type', 'application/json')
         .matchHeader('x-kinvey-api-version', '3')
         .post(`/rpc/${environmentId}/custom/myEndpoint`, {})
@@ -274,18 +278,18 @@ describe('endpointRunner', () => {
           user: environmentId,
           pass: mastersecret
         })
-        .reply(200, [{ _id: 123, someData: 'abc' }, { _id: 456, someData: 'xyz' }]);
+        .reply(200, this.payload);
 
       const endpoint = this.runner().endpoint('myEndpoint');
       endpoint.execute(null, (err, result) => {
         should.not.exist(err);
-        result.should.containDeep([{ _id: 123, someData: 'abc' }, { _id: 456, someData: 'xyz' }]);
+        result.should.containDeep(this.payload);
         return done();
       });
     });
 
     it('should include empty object as body if no body passed', (done) => {
-      nock('https://baas.kinvey.com')
+      nock(baasUrl)
         .matchHeader('content-type', 'application/json')
         .matchHeader('x-kinvey-api-version', '3')
         .post(`/rpc/${environmentId}/custom/myEndpoint`, {})
@@ -293,18 +297,18 @@ describe('endpointRunner', () => {
           user: environmentId,
           pass: mastersecret
         })
-        .reply(200, [{ _id: 123, someData: 'abc' }, { _id: 456, someData: 'xyz' }]);
+        .reply(200, this.payload);
 
       const endpoint = this.runner().endpoint('myEndpoint');
       endpoint.execute((err, result) => {
         should.not.exist(err);
-        result.should.containDeep([{ _id: 123, someData: 'abc' }, { _id: 456, someData: 'xyz' }]);
+        result.should.containDeep(this.payload);
         return done();
       });
     });
 
     it('should resolve endpoint if callback isn\'t passed', (done) => {
-      nock('https://baas.kinvey.com')
+      nock(baasUrl)
         .matchHeader('content-type', 'application/json')
         .matchHeader('x-kinvey-api-version', '3')
         .post(`/rpc/${environmentId}/custom/myEndpoint`)
@@ -312,28 +316,28 @@ describe('endpointRunner', () => {
           user: environmentId,
           pass: mastersecret
         })
-        .reply(200, [{ _id: 123, someData: 'abc' }, { _id: 456, someData: 'xyz' }]);
+        .reply(200, this.payload);
 
       const endpoint = this.runner().endpoint('myEndpoint');
       endpoint.execute()
         .then((result) => {
-          result.should.containDeep([{ _id: 123, someData: 'abc' }, { _id: 456, someData: 'xyz' }]);
+          result.should.containDeep(this.payload);
           return done();
         });
     });
 
     it('should execute using userContext', (done) => {
-      nock('https://baas.kinvey.com')
+      nock(baasUrl)
         .matchHeader('content-type', 'application/json')
         .matchHeader('x-kinvey-api-version', '3')
         .matchHeader('authorization', authorization)
         .post(`/rpc/${environmentId}/custom/myEndpoint`)
-        .reply(200, [{ _id: 123, someData: 'abc' }, { _id: 456, someData: 'xyz' }]);
+        .reply(200, this.payload);
 
       const endpoint = this.runner({ useUserContext: true }).endpoint('myEndpoint');
       endpoint.execute({}, (err, result) => {
         should.not.exist(err);
-        result.should.containDeep([{ _id: 123, someData: 'abc' }, { _id: 456, someData: 'xyz' }]);
+        result.should.containDeep(this.payload);
         return done();
       });
     });
