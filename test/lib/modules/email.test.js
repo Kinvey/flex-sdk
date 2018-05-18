@@ -137,7 +137,7 @@ describe('modules / email', () => {
     });
   });
 
-  it('calls back an error if one has occurred while communicating with the proxy', (done) => {
+  it('calls back an error if one has occurred while communicating with the server', (done) => {
     requestStub.post.callsArgWith(1, 'error!');
     return emailInstance.send('from', 'to', 'subject', 'textBody', (err) => {
       should.exist(err);
@@ -146,13 +146,12 @@ describe('modules / email', () => {
     });
   });
 
-  it('invokes rejection handler if an error has occurred while communicating with the proxy', (done) => {
+  it('invokes rejection handler if an error has occurred while communicating with the server', () => {
     requestStub.post.callsArgWith(1, 'error!');
     return emailInstance.send('from', 'to', 'subject', 'textBody')
       .catch((err) => {
         should.exist(err);
         err.should.eql('error!');
-        return done();
       });
   });
 
@@ -167,7 +166,7 @@ describe('modules / email', () => {
     });
   });
 
-  it('invokes rejection handler if the server returned a status code greater than or equal to 400', (done) => {
+  it('invokes rejection handler if the server returned a status code greater than or equal to 400', () => {
     requestStub.post.callsArgWith(1, null, {
       statusCode: 401
     }, 'error!');
@@ -175,7 +174,6 @@ describe('modules / email', () => {
       .catch((err) => {
         should.exist(err);
         err.should.eql('error!');
-        return done();
       });
   });
 
