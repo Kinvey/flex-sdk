@@ -356,6 +356,16 @@ describe('groupStore', () => {
       });
     });
 
+    it('should reject if missing group _id and no callback is passed', (done) => {
+      this.store().findById()
+        .catch((err) => {
+          err.message.should.eql('GroupStoreError');
+          err.description.should.eql('Bad Request');
+          err.debug.should.eql('groupId is required');
+          return done();
+        });
+    });
+
     it('should invoke rejection handler if an error occurs and a callback isn\'t passed', (done) => {
       this.storeUserRequest({ useBl: true }).findById('1234')
         .catch((err) => {
@@ -541,6 +551,16 @@ describe('groupStore', () => {
         err.debug.should.eql('A group entity must be supplied');
         return done();
       });
+    });
+
+    it('should reject if missing group _id and no callback is passed', (done) => {
+      this.store().create()
+        .catch((err) => {
+          err.message.should.eql('GroupStoreError');
+          err.description.should.eql('Bad Request');
+          err.debug.should.eql('A group entity must be supplied');
+          return done();
+        });
     });
 
     it('should invoke rejection handler if an error occurs and a callback isn\'t supplied', (done) => {
@@ -733,6 +753,16 @@ describe('groupStore', () => {
       });
     });
 
+    it('should reject if missing group entity and no callback is passed', (done) => {
+      this.store().update()
+        .catch((err) => {
+          err.message.should.eql('GroupStoreError');
+          err.description.should.eql('Bad Request');
+          err.debug.should.eql('A group entity must be supplied');
+          return done();
+        });
+    });
+
     it('should return an error if an entity is supplied without a valid _id', (done) => {
       this.store().update({ username: 'foo' }, (err, result) => {
         should.not.exist(result);
@@ -741,6 +771,16 @@ describe('groupStore', () => {
         err.debug.should.eql('A group entity must be supplied containing at least an _id');
         return done();
       });
+    });
+
+    it('should reject if an entity is supploed without a valid _id and no callback is passed', (done) => {
+      this.store().update({ username: 'foo' })
+        .catch((err) => {
+          err.message.should.eql('GroupStoreError');
+          err.description.should.eql('Bad Request');
+          err.debug.should.eql('A group entity must be supplied containing at least an _id');
+          return done();
+        });
     });
 
     it('should invoke rejection handler if an error occurs and callback isn\'t passed', (done) => {
@@ -933,6 +973,16 @@ describe('groupStore', () => {
         err.debug.should.eql('groupId is required');
         return done();
       });
+    });
+
+    it('should reject if missing group _id and no callback is passed', (done) => {
+      this.store().remove()
+        .catch((err) => {
+          err.message.should.eql('GroupStoreError');
+          err.description.should.eql('Bad Request');
+          err.debug.should.eql('groupId is required');
+          return done();
+        });
     });
 
     it('should invoke rejection handler if an error occurs and callback isn\'t passed', (done) => {
