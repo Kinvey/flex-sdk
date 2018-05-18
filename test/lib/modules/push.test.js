@@ -119,13 +119,12 @@ describe('modules / push', () => {
       });
     });
 
-    it('invokes rejection handler if an error has occurred while communicating with the server', (done) => {
+    it('invokes rejection handler if an error has occurred while communicating with the server', () => {
       requestStub.post.callsArgWith(1, 'error!');
       return pushInstance.send(recipients, 'hello')
         .catch((err) => {
           should.exist(err);
           err.should.eql('error!');
-          return done();
         });
     });
 
@@ -141,7 +140,7 @@ describe('modules / push', () => {
       });
     });
 
-    it('invokes rejection handler if the server returned a status code greater than or equal to 400', (done) => {
+    it('invokes rejection handler if the server returned a status code greater than or equal to 400', () => {
       requestStub.post.callsArgWith(1, null, {
         statusCode: 401
       }, 'error!');
@@ -149,7 +148,6 @@ describe('modules / push', () => {
         .catch((err) => {
           should.exist(err);
           err.should.eql('error!');
-          return done();
         });
     });
 
@@ -229,13 +227,12 @@ describe('modules / push', () => {
       });
     });
 
-    it('invokes rejection handler if an error has occurred while communicating with the server', (done) => {
+    it('invokes rejection handler if an error has occurred while communicating with the server', () => {
       requestStub.post.callsArgWith(1, 'error!');
       return pushInstance.broadcast('hello')
         .catch((err) => {
           should.exist(err);
           err.should.eql('error!');
-          return done();
         });
     });
 
@@ -251,7 +248,7 @@ describe('modules / push', () => {
       });
     });
 
-    it('invokes the rejection handler if the server returned a status code greater than or equal to 400', (done) => {
+    it('invokes the rejection handler if the server returned a status code greater than or equal to 400', () => {
       requestStub.post.callsArgWith(1, null, {
         statusCode: 401
       }, 'error!');
@@ -259,7 +256,6 @@ describe('modules / push', () => {
         .catch((err) => {
           should.exist(err);
           err.should.eql('error!');
-          return done();
         });
     });
 
@@ -328,13 +324,12 @@ describe('modules / push', () => {
       });
     });
 
-    it('invokes the rejection handler if an error has occurred while communicating with the server', (done) => {
+    it('invokes the rejection handler if an error has occurred while communicating with the server', () => {
       requestStub.post.callsArgWith(1, 'error!');
       return pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload)
         .catch((err) => {
           should.exist(err);
           err.should.eql('error!');
-          return done();
         });
     });
 
@@ -350,7 +345,7 @@ describe('modules / push', () => {
       });
     });
 
-    it('invokes the rejection handler if the server returned a status code greater than or equal to 400', (done) => {
+    it('invokes the rejection handler if the server returned a status code greater than or equal to 400', () => {
       requestStub.post.callsArgWith(1, null, {
         statusCode: 401
       }, 'error!');
@@ -358,7 +353,6 @@ describe('modules / push', () => {
         .catch((err) => {
           should.exist(err);
           err.should.eql('error!');
-          return done();
         });
     });
 
@@ -432,13 +426,12 @@ describe('modules / push', () => {
       });
     });
 
-    it('invokes the rejection handler if an error has occurred while communicating with the server', (done) => {
+    it('invokes the rejection handler if an error has occurred while communicating with the server', () => {
       requestStub.post.callsArgWith(1, 'error!');
       return pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload)
         .catch((err) => {
           should.exist(err);
           err.should.eql('error!');
-          return done();
         });
     });
 
@@ -454,7 +447,7 @@ describe('modules / push', () => {
       });
     });
 
-    it('invokes the rejection handler if the server returned a status code greater than or equal to 400', (done) => {
+    it('invokes the rejection handler if the server returned a status code greater than or equal to 400', () => {
       requestStub.post.callsArgWith(1, null, {
         statusCode: 401
       }, 'error!');
@@ -462,7 +455,6 @@ describe('modules / push', () => {
         .catch((err) => {
           should.exist(err);
           err.should.eql('error!');
-          return done();
         });
     });
 
