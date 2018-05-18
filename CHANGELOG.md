@@ -1,5 +1,21 @@
 ## Changelog
 
+### 3.0.0
+* BREAKING CHANGE: email and push modules now require a callback or promise handlers.  They can no longer be executed as "fire and forget".   
+* FLEX-206 Added Promise support to Asynchronous flex-sdk modules
+  * dataStore
+  * userStore
+  * groupStore
+  * push
+  * email
+* FLEX-176 Add RoleStore
+* FLEX-240 Add endpointRunner to support executing of custom endpoints
+* FLEX-246 Use new KCS endpoints for push/email
+* FLEX-248 Removed deprecated skipBl and useMasterSecret options for all stores
+* FLEX-247 Change baasUrl property to retrieve it from top-level task object
+* Updated dependencies with nsp warnings
+* Removed lodash isNil package
+
 ### 2.1.0
 * Added role helper to kinveyEntity module (ronheiney)
 * FLEX-212 Disable proxy for push and email modules
