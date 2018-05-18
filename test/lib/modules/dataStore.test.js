@@ -638,6 +638,17 @@ describe('dataStore', () => {
       });
     });
 
+    it('should reject if missing entityId and no callback is passed', (done) => {
+      const collection = this.store().collection('myCollection');
+      collection.findById()
+        .catch((err) => {
+          err.message.should.eql('DataStoreError');
+          err.description.should.eql('Bad Request');
+          err.debug.should.eql('entityId is required');
+          return done();
+        });
+    });
+
     it('should invoke rejection handler if an error occurs and callback isn\'t passed', (done) => {
       const collection = this.store({ useBl: true }).collection(this.taskMetadata.objectName);
       collection.findById(1234)
@@ -818,6 +829,50 @@ describe('dataStore', () => {
         result.should.containDeep({ _id: 1234, someData: 'abc' });
         return done();
       });
+    });
+
+    it('should return an error if missing entity', (done) => {
+      const collection = this.store().collection('myCollection');
+      collection.save((err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('DataStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('entity is required');
+        return done();
+      });
+    });
+
+    it('should return an error if null entity', (done) => {
+      const collection = this.store().collection('myCollection');
+      collection.save(null, (err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('DataStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('entity is required');
+        return done();
+      });
+    });
+
+    it('should return an error if blank entityId', (done) => {
+      const collection = this.store().collection('myCollection');
+      collection.save('', (err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('DataStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('entity is required');
+        return done();
+      });
+    });
+
+    it('should reject if missing entityId and no callback is passed', (done) => {
+      const collection = this.store().collection('myCollection');
+      collection.save()
+        .catch((err) => {
+          err.message.should.eql('DataStoreError');
+          err.description.should.eql('Bad Request');
+          err.debug.should.eql('entity is required');
+          return done();
+        });
     });
 
     it('should invoke the rejection handler if an error occurs and no callback is passed', (done) => {
@@ -1365,6 +1420,17 @@ describe('dataStore', () => {
         err.debug.should.eql('entityId is required');
         return done();
       });
+    });
+
+    it('should reject if missing entityId and no callback is passed', (done) => {
+      const collection = this.store().collection('myCollection');
+      collection.removeById()
+        .catch((err) => {
+          err.message.should.eql('DataStoreError');
+          err.description.should.eql('Bad Request');
+          err.debug.should.eql('entityId is required');
+          return done();
+        });
     });
 
     it('should reject if an error occurs and a callback isn\'t passed', (done) => {

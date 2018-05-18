@@ -571,6 +571,16 @@ describe('userStore', () => {
       });
     });
 
+    it('should reject if missing user _id and no callback is passed', (done) => {
+      this.store().findById()
+        .catch((err) => {
+          err.message.should.eql('UserStoreError');
+          err.description.should.eql('Bad Request');
+          err.debug.should.eql('userId is required');
+          return done();
+        });
+    });
+
     it('should reject if an error occurs and a callback isn\'t passed', (done) => {
       this.storeUserRequest({ useBl: true }).findById('1234')
         .catch((err) => {
@@ -709,16 +719,6 @@ describe('userStore', () => {
       this.storeUserRequest().getCurrentUser((err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: `${authenticatedUserId}`, username: 'abc' });
-        return done();
-      });
-    });
-
-    it('should return an error if missing user _id', (done) => {
-      this.store().findById((err, result) => {
-        should.not.exist(result);
-        err.message.should.eql('UserStoreError');
-        err.description.should.eql('Bad Request');
-        err.debug.should.eql('userId is required');
         return done();
       });
     });
@@ -908,6 +908,16 @@ describe('userStore', () => {
         err.debug.should.eql('A user entity must be supplied');
         return done();
       });
+    });
+
+    it('should reject if missing user entity and no callback is passed', (done) => {
+      this.store().create()
+        .catch((err) => {
+          err.message.should.eql('UserStoreError');
+          err.description.should.eql('Bad Request');
+          err.debug.should.eql('A user entity must be supplied');
+          return done();
+        });
     });
 
     it('should invoke rejection handler if an error occurs and a callback isn\'t passed', (done) => {
@@ -1100,6 +1110,16 @@ describe('userStore', () => {
       });
     });
 
+    it('should reject if no user entity is supplied and no callback is passed', (done) => {
+      this.store().update()
+        .catch((err) => {
+          err.message.should.eql('UserStoreError');
+          err.description.should.eql('Bad Request');
+          err.debug.should.eql('A user entity must be supplied');
+          return done();
+        });
+    });
+
     it('should return an error if an entity is supplied without a valid _id', (done) => {
       this.store().update({ username: 'foo' }, (err, result) => {
         should.not.exist(result);
@@ -1108,6 +1128,16 @@ describe('userStore', () => {
         err.debug.should.eql('A user entity must be supplied containing at least an _id');
         return done();
       });
+    });
+
+    it('should reject if entity is missing user _id and no callback is passed', (done) => {
+      this.store().update({ username: 'foo' })
+        .catch((err) => {
+          err.message.should.eql('UserStoreError');
+          err.description.should.eql('Bad Request');
+          err.debug.should.eql('A user entity must be supplied containing at least an _id');
+          return done();
+        });
     });
 
     it('should invoke rejection handler on error if a callback isn\'t passed', (done) => {
@@ -1322,6 +1352,16 @@ describe('userStore', () => {
         err.debug.should.eql('userId is required');
         return done();
       });
+    });
+
+    it('should reject if missing user _id and no callback is passed', (done) => {
+      this.store().remove()
+        .catch((err) => {
+          err.message.should.eql('UserStoreError');
+          err.description.should.eql('Bad Request');
+          err.debug.should.eql('userId is required');
+          return done();
+        });
     });
 
     it('should invoke the rejection handler if an error occurs and a callback isn\'t passed', (done) => {
@@ -1747,6 +1787,16 @@ describe('userStore', () => {
       });
     });
 
+    it('should reject if missing user _id and no callback is passed', (done) => {
+      this.store().suspend()
+        .catch((err) => {
+          err.message.should.eql('UserStoreError');
+          err.description.should.eql('Bad Request');
+          err.debug.should.eql('userId is required');
+          return done();
+        });
+    });
+
     it('should invoke rejection handler if an error occurs and a callback isn\'t passed', (done) => {
       this.storeUserRequest({ useBl: true }).suspend('1234')
         .catch((err) => {
@@ -1913,7 +1963,7 @@ describe('userStore', () => {
     });
 
     it('should return an error if missing userId', (done) => {
-      this.store().suspend((err, result) => {
+      this.store().restore((err, result) => {
         should.not.exist(result);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
@@ -1923,7 +1973,7 @@ describe('userStore', () => {
     });
 
     it('should return an error if null userId', (done) => {
-      this.store().suspend(null, (err, result) => {
+      this.store().restore(null, (err, result) => {
         should.not.exist(result);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
@@ -1933,13 +1983,23 @@ describe('userStore', () => {
     });
 
     it('should return an error if blank userId', (done) => {
-      this.store().suspend('', (err, result) => {
+      this.store().restore('', (err, result) => {
         should.not.exist(result);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('userId is required');
         return done();
       });
+    });
+
+    it('should reject if missing user _id and no callback is passed', (done) => {
+      this.store().restore()
+        .catch((err) => {
+          err.message.should.eql('UserStoreError');
+          err.description.should.eql('Bad Request');
+          err.debug.should.eql('userId is required');
+          return done();
+        });
     });
 
     it('should invoke the rejection handler if an error occurs and a callback isn\'t passed', (done) => {
@@ -2134,6 +2194,16 @@ describe('userStore', () => {
       });
     });
 
+    it('should reject if missing user _id and no callback is passed', (done) => {
+      this.store().assignRole()
+        .catch((err) => {
+          err.message.should.eql('UserStoreError');
+          err.description.should.eql('Bad Request');
+          err.debug.should.eql('userId is required');
+          return done();
+        });
+    });
+
     it('should return an error if missing roleId', (done) => {
       this.store().assignRole(1234, (err, result) => {
         should.not.exist(result);
@@ -2162,6 +2232,16 @@ describe('userStore', () => {
         err.debug.should.eql('roleId is required');
         return done();
       });
+    });
+
+    it('should reject if missing role _id and no callback is passed', (done) => {
+      this.store().assignRole(1234)
+        .catch((err) => {
+          err.message.should.eql('UserStoreError');
+          err.description.should.eql('Bad Request');
+          err.debug.should.eql('roleId is required');
+          return done();
+        });
     });
 
     it('should invoke rejection handler on error if a callback isn\'t passed', (done) => {
@@ -2356,6 +2436,16 @@ describe('userStore', () => {
       });
     });
 
+    it('should reject if missing user _id and no callback is passed', (done) => {
+      this.store().revokeRole()
+        .catch((err) => {
+          err.message.should.eql('UserStoreError');
+          err.description.should.eql('Bad Request');
+          err.debug.should.eql('userId is required');
+          return done();
+        });
+    });
+
     it('should return an error if missing roleId', (done) => {
       this.store().revokeRole(1234, (err, result) => {
         should.not.exist(result);
@@ -2384,6 +2474,16 @@ describe('userStore', () => {
         err.debug.should.eql('roleId is required');
         return done();
       });
+    });
+
+    it('should reject if missing role _id and no callback is passed', (done) => {
+      this.store().revokeRole(1234)
+        .catch((err) => {
+          err.message.should.eql('UserStoreError');
+          err.description.should.eql('Bad Request');
+          err.debug.should.eql('roleId is required');
+          return done();
+        });
     });
 
     it('should invoke the rejection handler if an error occurs and a callback isn\'t passed', (done) => {
@@ -2572,6 +2672,16 @@ describe('userStore', () => {
         err.debug.should.eql('userId is required');
         return done();
       });
+    });
+
+    it('should reject if missing user _id and no callback is passed', (done) => {
+      this.store().listRoles()
+        .catch((err) => {
+          err.message.should.eql('UserStoreError');
+          err.description.should.eql('Bad Request');
+          err.debug.should.eql('userId is required');
+          return done();
+        });
     });
 
     it('should reject if an error occurs and a callback isn\'t passed', (done) => {
