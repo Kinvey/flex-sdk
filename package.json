@@ -17,7 +17,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "bson": "0.4.23",
-    "kinvey-code-task-runner": "2.2.3",
+    "kinvey-code-task-runner": "2.2.4",
     "kinvey-datalink-errors": "0.3.0",
     "lodash.forown": "4.2.0",
     "lodash.get": "4.3.0",
@@ -26,14 +26,14 @@
     "lodash.assign": "4.2.0",
     "lodash.foreach": "4.5.0",
     "moment": "2.21.0",
-    "request": "2.85.0",
+    "request": "2.86.0",
     "sift": "3.2.6"
   },
   "devDependencies": {
     "eslint": "2.11.1",
     "eslint-config-airbnb-base": "3.0.1",
     "eslint-plugin-import": "1.8.1",
-    "mocha": "2.5.3",
+    "mocha": "^5.1.1",
     "nock": "9.0.5",
     "proxyquire": "1.7.9",
     "should": "11.1.0",
