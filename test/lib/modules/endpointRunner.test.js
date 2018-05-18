@@ -14,37 +14,39 @@
 
 const nock = require('nock');
 const should = require('should');
+const uuid = require('uuid');
 const endpointRunner = require('../../../lib/service/modules/endpointRunner');
-const environmentId = 'kid1234';
-const blFlags = {};
-const appsecret = '123456';
-const mastersecret = '789012';
-const authenticatedUsername = 'test@test.com';
-const baasUrl = 'https://baas.kinvey.com';
-const authenticatedUserId = '1234abcd';
-const apiVersion = 3;
-const authorization = 'Kinvey adfjkldsafjdsalkfjds90fd8sfd=';
+
+const ENVIRONMENT_ID = 'kid1234';
+const APP_SECRET = '123456';
+const MASTER_SECRET = '789012';
+const AUTHENTICATED_USERNAME = 'test@test.com';
+const BAAS_URL = 'https://baas.kinvey.com';
+const AUTHENTICATED_USERID = '1234abcd';
+const API_VERSION = 3;
+const AUTHORIZATION = 'Kinvey adfjkldsafjdsalkfjds90fd8sfd=';
+
 const clientAppVersion = {};
 const customRequestProperties = {};
-const uuid = require('uuid');
+const blFlags = {};
 
 function _generateAppMetadata() {
   return {
-    _id: environmentId,
+    _id: ENVIRONMENT_ID,
     blFlags,
-    appsecret,
-    mastersecret,
-    authenticatedUsername,
-    baasUrl
+    appsecret: APP_SECRET,
+    mastersecret: MASTER_SECRET,
+    authenticatedUsername: AUTHENTICATED_USERNAME,
+    baasUrl: BAAS_URL
   };
 }
 
 function _generateRequestContext() {
   return {
-    authenticatedUsername,
-    authenticatedUserId,
-    apiVersion,
-    authorization,
+    authenticatedUsername: AUTHENTICATED_USERNAME,
+    authenticatedUserId: AUTHENTICATED_USERID,
+    apiVersion: API_VERSION,
+    authorization: AUTHORIZATION,
     clientAppVersion,
     customRequestProperties
   };
@@ -216,13 +218,13 @@ describe('endpointRunner', () => {
     });
 
     it('should return a promise', (done) => {
-      nock(baasUrl)
+      nock(BAAS_URL)
         .matchHeader('content-type', 'application/json')
         .matchHeader('x-kinvey-api-version', '3')
-        .post(`/rpc/${environmentId}/custom/myEndpoint`)
+        .post(`/rpc/${ENVIRONMENT_ID}/custom/myEndpoint`)
         .basicAuth({
-          user: environmentId,
-          pass: mastersecret
+          user: ENVIRONMENT_ID,
+          pass: MASTER_SECRET
         })
         .reply(200, this.payload);
 
@@ -232,13 +234,13 @@ describe('endpointRunner', () => {
     });
 
     it('should execute an endpoint', (done) => {
-      nock(baasUrl)
+      nock(BAAS_URL)
         .matchHeader('content-type', 'application/json')
         .matchHeader('x-kinvey-api-version', '3')
-        .post(`/rpc/${environmentId}/custom/myEndpoint`)
+        .post(`/rpc/${ENVIRONMENT_ID}/custom/myEndpoint`)
         .basicAuth({
-          user: environmentId,
-          pass: mastersecret
+          user: ENVIRONMENT_ID,
+          pass: MASTER_SECRET
         })
         .reply(200, this.payload);
 
@@ -251,13 +253,13 @@ describe('endpointRunner', () => {
     });
 
     it('should include a body', (done) => {
-      nock(baasUrl)
+      nock(BAAS_URL)
         .matchHeader('content-type', 'application/json')
         .matchHeader('x-kinvey-api-version', '3')
-        .post(`/rpc/${environmentId}/custom/myEndpoint`, { foo: 'bar' })
+        .post(`/rpc/${ENVIRONMENT_ID}/custom/myEndpoint`, { foo: 'bar' })
         .basicAuth({
-          user: environmentId,
-          pass: mastersecret
+          user: ENVIRONMENT_ID,
+          pass: MASTER_SECRET
         })
         .reply(200, this.payload);
 
@@ -270,13 +272,13 @@ describe('endpointRunner', () => {
     });
 
     it('should include empty object as body if null body passed', (done) => {
-      nock(baasUrl)
+      nock(BAAS_URL)
         .matchHeader('content-type', 'application/json')
         .matchHeader('x-kinvey-api-version', '3')
-        .post(`/rpc/${environmentId}/custom/myEndpoint`, {})
+        .post(`/rpc/${ENVIRONMENT_ID}/custom/myEndpoint`, {})
         .basicAuth({
-          user: environmentId,
-          pass: mastersecret
+          user: ENVIRONMENT_ID,
+          pass: MASTER_SECRET
         })
         .reply(200, this.payload);
 
@@ -289,13 +291,13 @@ describe('endpointRunner', () => {
     });
 
     it('should include empty object as body if no body passed', (done) => {
-      nock(baasUrl)
+      nock(BAAS_URL)
         .matchHeader('content-type', 'application/json')
         .matchHeader('x-kinvey-api-version', '3')
-        .post(`/rpc/${environmentId}/custom/myEndpoint`, {})
+        .post(`/rpc/${ENVIRONMENT_ID}/custom/myEndpoint`, {})
         .basicAuth({
-          user: environmentId,
-          pass: mastersecret
+          user: ENVIRONMENT_ID,
+          pass: MASTER_SECRET
         })
         .reply(200, this.payload);
 
@@ -308,13 +310,13 @@ describe('endpointRunner', () => {
     });
 
     it('should resolve endpoint if callback isn\'t passed', (done) => {
-      nock(baasUrl)
+      nock(BAAS_URL)
         .matchHeader('content-type', 'application/json')
         .matchHeader('x-kinvey-api-version', '3')
-        .post(`/rpc/${environmentId}/custom/myEndpoint`)
+        .post(`/rpc/${ENVIRONMENT_ID}/custom/myEndpoint`)
         .basicAuth({
-          user: environmentId,
-          pass: mastersecret
+          user: ENVIRONMENT_ID,
+          pass: MASTER_SECRET
         })
         .reply(200, this.payload);
 
@@ -327,11 +329,11 @@ describe('endpointRunner', () => {
     });
 
     it('should execute using userContext', (done) => {
-      nock(baasUrl)
+      nock(BAAS_URL)
         .matchHeader('content-type', 'application/json')
         .matchHeader('x-kinvey-api-version', '3')
-        .matchHeader('authorization', authorization)
-        .post(`/rpc/${environmentId}/custom/myEndpoint`)
+        .matchHeader('AUTHORIZATION', AUTHORIZATION)
+        .post(`/rpc/${ENVIRONMENT_ID}/custom/myEndpoint`)
         .reply(200, this.payload);
 
       const endpoint = this.runner({ useUserContext: true }).endpoint('myEndpoint');
