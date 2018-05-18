@@ -125,18 +125,8 @@ describe('userStore', () => {
       myStore.restore.name.should.eql('restore');
       myStore.count.should.be.a.Function();
       myStore.count.name.should.eql('count');
-      myStore._useMasterSecret.should.be.true();                              // DEPRECATED
-      myStore._skipBl.should.be.true();                                       // DEPRECATED
       myStore._useUserContext.should.be.false();
       myStore._useBl.should.be.false();
-      myStore._appMetadata.should.containDeep(this.appMetadata);
-      myStore._requestContext.should.containDeep(this.requestContext);
-    });
-
-    // DEPRECATED
-    it('should create a UserStore object that uses mastersecret', () => {
-      const myStore = this.store({ useMasterSecret: true });
-      myStore._useMasterSecret.should.be.true();
       myStore._appMetadata.should.containDeep(this.appMetadata);
       myStore._requestContext.should.containDeep(this.requestContext);
     });
@@ -144,14 +134,6 @@ describe('userStore', () => {
     it('should create a UserStore object that uses userContext', () => {
       const myStore = this.store({ useUserContext: true });
       myStore._useUserContext.should.be.true();
-      myStore._appMetadata.should.containDeep(this.appMetadata);
-      myStore._requestContext.should.containDeep(this.requestContext);
-    });
-
-    // DEPRECATED
-    it('should create a UserStore object that skips BL', () => {
-      const myStore = this.store({ skipBl: true });
-      myStore._skipBl.should.be.true();
       myStore._appMetadata.should.containDeep(this.appMetadata);
       myStore._requestContext.should.containDeep(this.requestContext);
     });
