@@ -111,18 +111,8 @@ describe('roleStore', () => {
       myStore.remove.name.should.eql('remove');
       myStore.listMembers.should.be.a.Function();
       myStore.listMembers.name.should.eql('listMembers');
-      myStore._useMasterSecret.should.be.true();                              // DEPRECATED
-      myStore._skipBl.should.be.true();                                       // DEPRECATED
       myStore._useUserContext.should.be.false();
       myStore._useBl.should.be.false();
-      myStore._appMetadata.should.containDeep(this.appMetadata);
-      myStore._requestContext.should.containDeep(this.requestContext);
-    });
-
-    // DEPRECATED
-    it('should create a RoleStore object that uses mastersecret', () => {
-      const myStore = this.store({ useMasterSecret: true });
-      myStore._useMasterSecret.should.be.true();
       myStore._appMetadata.should.containDeep(this.appMetadata);
       myStore._requestContext.should.containDeep(this.requestContext);
     });
@@ -130,14 +120,6 @@ describe('roleStore', () => {
     it('should create a RoleStore object that uses userContext', () => {
       const myStore = this.store({ useUserContext: true });
       myStore._useUserContext.should.be.true();
-      myStore._appMetadata.should.containDeep(this.appMetadata);
-      myStore._requestContext.should.containDeep(this.requestContext);
-    });
-
-    // DEPRECATED
-    it('should create a RoleStore object that skips BL', () => {
-      const myStore = this.store({ skipBl: true });
-      myStore._skipBl.should.be.true();
       myStore._appMetadata.should.containDeep(this.appMetadata);
       myStore._requestContext.should.containDeep(this.requestContext);
     });

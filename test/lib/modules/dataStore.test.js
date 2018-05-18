@@ -89,22 +89,8 @@ describe('dataStore', () => {
       should.exist(myStore.collection);
       myStore.collection.should.be.a.Function();
       myStore.collection.name.should.eql('collection');
-      myStore._useMasterSecret.should.be.true();
-      myStore._skipBl.should.be.true();
       myStore._useUserContext.should.be.false();
       myStore._useBl.should.be.false();
-      myStore._appMetadata.should.containDeep(this.appMetadata);
-      myStore._requestContext.should.containDeep(this.requestContext);
-    });
-
-    // DEPRECATED
-    it('should create a datastore object that uses mastersecret', () => {
-      const myStore = this.store({ useMasterSecret: true });
-      should.exist(myStore.collection);
-      myStore.collection.should.be.a.Function();
-      myStore.collection.name.should.eql('collection');
-      myStore._useUserContext.should.be.false();
-      myStore._useMasterSecret.should.be.true();
       myStore._appMetadata.should.containDeep(this.appMetadata);
       myStore._requestContext.should.containDeep(this.requestContext);
     });
@@ -115,19 +101,6 @@ describe('dataStore', () => {
       myStore.collection.should.be.a.Function();
       myStore.collection.name.should.eql('collection');
       myStore._useUserContext.should.be.true();
-      myStore._useMasterSecret.should.be.false();
-      myStore._appMetadata.should.containDeep(this.appMetadata);
-      myStore._requestContext.should.containDeep(this.requestContext);
-    });
-
-    // DEPRECATED
-    it('should create a datastore object that skips BL', () => {
-      const myStore = this.store({ skipBl: true });
-      should.exist(myStore.collection);
-      myStore.collection.should.be.a.Function();
-      myStore.collection.name.should.eql('collection');
-      myStore._skipBl.should.be.true();
-      myStore._useBl.should.be.false();
       myStore._appMetadata.should.containDeep(this.appMetadata);
       myStore._requestContext.should.containDeep(this.requestContext);
     });
@@ -137,7 +110,6 @@ describe('dataStore', () => {
       should.exist(myStore.collection);
       myStore.collection.should.be.a.Function();
       myStore.collection.name.should.eql('collection');
-      myStore._skipBl.should.be.false();
       myStore._useBl.should.be.true();
       myStore._appMetadata.should.containDeep(this.appMetadata);
       myStore._requestContext.should.containDeep(this.requestContext);

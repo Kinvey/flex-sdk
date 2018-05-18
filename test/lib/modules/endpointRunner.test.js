@@ -90,22 +90,8 @@ describe('endpointRunner', () => {
       should.exist(myRunner.endpoint);
       myRunner.endpoint.should.be.a.Function();
       myRunner.endpoint.name.should.eql('endpoint');
-      myRunner._useMasterSecret.should.be.true();
-      myRunner._skipBl.should.be.false();
       myRunner._useUserContext.should.be.false();
       myRunner._useBl.should.be.true();
-      myRunner._appMetadata.should.containDeep(this.appMetadata);
-      myRunner._requestContext.should.containDeep(this.requestContext);
-    });
-
-    // DEPRECATED
-    it('should create a datastore object that uses mastersecret', () => {
-      const myRunner = this.runner({ useMasterSecret: true });
-      should.exist(myRunner.endpoint);
-      myRunner.endpoint.should.be.a.Function();
-      myRunner.endpoint.name.should.eql('endpoint');
-      myRunner._useUserContext.should.be.false();
-      myRunner._useMasterSecret.should.be.true();
       myRunner._appMetadata.should.containDeep(this.appMetadata);
       myRunner._requestContext.should.containDeep(this.requestContext);
     });
@@ -116,7 +102,6 @@ describe('endpointRunner', () => {
       myRunner.endpoint.should.be.a.Function();
       myRunner.endpoint.name.should.eql('endpoint');
       myRunner._useUserContext.should.be.true();
-      myRunner._useMasterSecret.should.be.false();
       myRunner._appMetadata.should.containDeep(this.appMetadata);
       myRunner._requestContext.should.containDeep(this.requestContext);
     });
@@ -126,7 +111,6 @@ describe('endpointRunner', () => {
       should.exist(myRunner.endpoint);
       myRunner.endpoint.should.be.a.Function();
       myRunner.endpoint.name.should.eql('endpoint');
-      myRunner._skipBl.should.be.false();
       myRunner._useBl.should.be.true();
       myRunner._appMetadata.should.containDeep(this.appMetadata);
       myRunner._requestContext.should.containDeep(this.requestContext);

@@ -108,18 +108,8 @@ describe('groupStore', () => {
       myStore.findById.should.be.a.Function();
       myStore.findById.name.should.eql('findById');
       myStore.remove.name.should.eql('remove');
-      myStore._useMasterSecret.should.be.true();                              // DEPRECATED
-      myStore._skipBl.should.be.true();                                       // DEPRECATED
       myStore._useUserContext.should.be.false();
       myStore._useBl.should.be.false();
-      myStore._appMetadata.should.containDeep(this.appMetadata);
-      myStore._requestContext.should.containDeep(this.requestContext);
-    });
-
-    // DEPRECATED
-    it('should create a GroupStore object that uses mastersecret', () => {
-      const myStore = this.store({ useMasterSecret: true });
-      myStore._useMasterSecret.should.be.true();
       myStore._appMetadata.should.containDeep(this.appMetadata);
       myStore._requestContext.should.containDeep(this.requestContext);
     });
@@ -127,14 +117,6 @@ describe('groupStore', () => {
     it('should create a GroupStore object that uses userContext', () => {
       const myStore = this.store({ useUserContext: true });
       myStore._useUserContext.should.be.true();
-      myStore._appMetadata.should.containDeep(this.appMetadata);
-      myStore._requestContext.should.containDeep(this.requestContext);
-    });
-
-    // DEPRECATED
-    it('should create a GroupStore object that skips BL', () => {
-      const myStore = this.store({ skipBl: true });
-      myStore._skipBl.should.be.true();
       myStore._appMetadata.should.containDeep(this.appMetadata);
       myStore._requestContext.should.containDeep(this.requestContext);
     });
