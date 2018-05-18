@@ -17,17 +17,18 @@ const EventEmitter = require('events').EventEmitter;
 const sinon = require('sinon');
 const request = require('request');
 
+const FAKE_BAAS_URL = 'http://baas.baas';
+
 describe('modules / email', () => {
   let emailModule = null;
   let emailInstance = null;
   let requestStub = null;
   const emitter = new EventEmitter();
-  const fakeBaaSUrl = 'http://baas.baas';
   const appMetadata = {
     _id: 'kid_abcd1234',
     applicationId: 'abc123',
     mastersecret: '12345',
-    baasUrl: fakeBaaSUrl
+    baasUrl: FAKE_BAAS_URL
   };
   const taskMetadata = {
     taskId: 'abcd1234'
@@ -181,7 +182,7 @@ describe('modules / email', () => {
   it('POSTs to the server\'s send-email endpoint', (done) => {
     requestStub.post.callsArgWith(1, {});
     return emailInstance.send('from', 'to', 'subject', 'textBody', () => {
-      requestStub.post.args[0][0].url.should.eql(`${fakeBaaSUrl}/rpc/${appMetadata._id}/send-email`);
+      requestStub.post.args[0][0].url.should.eql(`${FAKE_BAAS_URL}/rpc/${appMetadata._id}/send-email`);
       return done();
     });
   });

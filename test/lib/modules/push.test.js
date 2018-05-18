@@ -17,6 +17,8 @@ const should = require('should');
 const sinon = require('sinon');
 const request = require('request');
 
+const FAKE_BAAS_URL = 'http://baas.baas';
+
 describe('modules / push', () => {
   let pushModule = null;
   let pushInstance = null;
@@ -34,12 +36,11 @@ describe('modules / push', () => {
     _id: 'id1'
   };
 
-  const fakeBaaSUrl = 'http://baas.baas';
   const appMetadata = {
     _id: 'kid_abcd1234',
     applicationId: 'abc123',
     mastersecret: '12345',
-    baasUrl: fakeBaaSUrl
+    baasUrl: FAKE_BAAS_URL
   };
 
   const taskMetadata = {
@@ -155,7 +156,7 @@ describe('modules / push', () => {
     it('POSTs to the server\'s /push/sendMessage URL', (done) => {
       requestStub.post.callsArgWith(1, {});
       return pushInstance.send(recipients, 'hello', () => {
-        requestStub.post.args[0][0].url.should.eql(`${fakeBaaSUrl}/push/${appMetadata._id}/sendMessage`);
+        requestStub.post.args[0][0].url.should.eql(`${FAKE_BAAS_URL}/push/${appMetadata._id}/sendMessage`);
         return done();
       });
     });
@@ -265,7 +266,7 @@ describe('modules / push', () => {
     it('POSTs to the server\'s /push/sendBroadcast URL', (done) => {
       requestStub.post.callsArgWith(1, {});
       return pushInstance.broadcast('hello', () => {
-        requestStub.post.args[0][0].url.should.eql(`${fakeBaaSUrl}/push/${appMetadata._id}/sendBroadcast`);
+        requestStub.post.args[0][0].url.should.eql(`${FAKE_BAAS_URL}/push/${appMetadata._id}/sendBroadcast`);
         return done();
       });
     });
@@ -364,7 +365,7 @@ describe('modules / push', () => {
     it('POSTs to the server\'s /push/sendMessage URL', (done) => {
       requestStub.post.callsArgWith(1, {});
       return pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload, () => {
-        requestStub.post.args[0][0].url.should.eql(`${fakeBaaSUrl}/push/${appMetadata._id}/sendMessage`);
+        requestStub.post.args[0][0].url.should.eql(`${FAKE_BAAS_URL}/push/${appMetadata._id}/sendMessage`);
         return done();
       });
     });
@@ -468,7 +469,7 @@ describe('modules / push', () => {
     it('POSTs to the server\'s /push/sendBroadcast URL', (done) => {
       requestStub.post.callsArgWith(1, {});
       return pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload, () => {
-        requestStub.post.args[0][0].url.should.eql(`${fakeBaaSUrl}/push/${appMetadata._id}/sendBroadcast`);
+        requestStub.post.args[0][0].url.should.eql(`${FAKE_BAAS_URL}/push/${appMetadata._id}/sendBroadcast`);
         return done();
       });
     });
