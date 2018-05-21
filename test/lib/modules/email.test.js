@@ -42,6 +42,7 @@ describe('modules / email', () => {
     };
     const requestDefaultsStub = sinon.stub();
     requestDefaultsStub.returns(requestStub);
+    delete require.cache[require.resolve('../../../lib/service/modules/email')];
     require.cache[require.resolve('request')].exports.defaults = requestDefaultsStub;
     emailModule = require('../../../lib/service/modules/email');
     emailInstance = emailModule(appMetadata, taskMetadata, requestMetadata, emitter);
