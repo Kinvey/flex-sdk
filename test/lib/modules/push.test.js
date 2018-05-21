@@ -57,6 +57,7 @@ describe('modules / push', () => {
     };
     const requestDefaultsStub = sinon.stub();
     requestDefaultsStub.returns(requestStub);
+    delete require.cache[require.resolve('../../../lib/service/modules/push')];
     require.cache[require.resolve('request')].exports.defaults = requestDefaultsStub;
     pushModule = require('../../../lib/service/modules/push');
     pushInstance = pushModule(appMetadata, taskMetadata, requestMetadata, emitter);

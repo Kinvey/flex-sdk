@@ -3,4 +3,4 @@
 --ui bdd
 --globals currentObject
 --bail
---require coffee-script/register
+--require should
