@@ -160,16 +160,16 @@ describe('modules / push', () => {
       });
     });
 
-    it('throws an error if no receipents are specified', (done) => {
+    it('rejects if no receipents are specified', (done) => {
       requestStub.post.callsArgWith(1, {});
-      (() => pushInstance.send(null, 'hello')).should.throw(/.*users.*/);
-      (() => pushInstance.send()).should.throw(/.*users.*/);
+      (pushInstance.send(null, 'hello')).should.be.rejected(/.*users.*/);
+      (pushInstance.send()).should.be.rejected(/.*users.*/);
       return done();
     });
 
-    it('throws an error if no message is specified', (done) => {
+    it('rejects if no message is specified', (done) => {
       requestStub.post.callsArgWith(1, {});
-      (() => pushInstance.send(recipients, null)).should.throw(/.*message.*/);
+      (pushInstance.send(recipients, null)).should.be.rejected(/.*message.*/);
       return done();
     });
 
@@ -268,10 +268,10 @@ describe('modules / push', () => {
       });
     });
 
-    it('throws an error if no message is specified', (done) => {
+    it('rejects if no message is specified', (done) => {
       requestStub.post.callsArgWith(1, {});
-      (() => pushInstance.broadcast()).should.throw(/.*message.*/);
-      (() => pushInstance.broadcast(null)).should.throw(/.*message.*/);
+      (pushInstance.broadcast()).should.be.rejected(/.*message.*/);
+      (pushInstance.broadcast(null)).should.be.rejected(/.*message.*/);
       return done();
     });
 
@@ -365,10 +365,10 @@ describe('modules / push', () => {
       });
     });
 
-    it('throws an error if no receipents are specified', (done) => {
+    it('rejects if no receipents are specified', (done) => {
       requestStub.post.callsArgWith(1, {});
-      (() => pushInstance.sendPayload(null, iOSAps, iOSExtras, androidPayload)).should.throw(/.*users.*/);
-      (() => pushInstance.sendPayload()).should.throw(/.*users.*/);
+      (pushInstance.sendPayload(null, iOSAps, iOSExtras, androidPayload)).should.be.rejected(/.*users.*/);
+      (pushInstance.sendPayload()).should.be.rejected(/.*users.*/);
       return done();
     });
 
