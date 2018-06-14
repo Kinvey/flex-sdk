@@ -82,14 +82,14 @@ describe('modules / email', () => {
     return done();
   });
 
-  it('throws if \'from\', \'to\', \'subject\' and \'textBody\' are not all specified', (done) => {
-    (() => emailInstance.send()).should.throw();
-    (() => emailInstance.send('from')).should.throw();
-    (() => emailInstance.send('from', 'to')).should.throw();
-    (() => emailInstance.send('from', 'to', 'subject')).should.throw();
-    (() => emailInstance.send(null, 'to', 'subject', 'textBody')).should.throw();
-    (() => emailInstance.send('from', null, 'subject', 'textBody')).should.throw();
-    (() => emailInstance.send('from', 'to', null, 'textBody')).should.throw();
+  it('rejects if \'from\', \'to\', \'subject\' and \'textBody\' are not all specified', (done) => {
+    (emailInstance.send()).should.be.rejected();
+    (emailInstance.send('from')).should.be.rejected();
+    (emailInstance.send('from', 'to')).should.be.rejected();
+    (emailInstance.send('from', 'to', 'subject')).should.be.rejected();
+    (emailInstance.send(null, 'to', 'subject', 'textBody')).should.be.rejected();
+    (emailInstance.send('from', null, 'subject', 'textBody')).should.be.rejected();
+    (emailInstance.send('from', 'to', null, 'textBody')).should.be.rejected();
     return done();
   });
 
