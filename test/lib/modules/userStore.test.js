@@ -2156,6 +2156,16 @@ describe('userStore', () => {
       });
     });
 
+    it('should return an error if an array of users is supplied', (done) => {
+      this.store().assignRole([1, 2, 3], 1234, (err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('Bulk role assignment is not currently supported.');
+        return done();
+      });
+    });
+
     it('should return an error if null userId', (done) => {
       this.store().assignRole(null, (err, result) => {
         should.not.exist(result);
@@ -2192,6 +2202,16 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('roleId is required');
+        return done();
+      });
+    });
+
+    it('should return an error if an array of roles is supplied', (done) => {
+      this.store().assignRole(1234, [1, 2, 3, 4], (err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('Bulk role assignment is not currently supported.');
         return done();
       });
     });
@@ -2398,6 +2418,16 @@ describe('userStore', () => {
       });
     });
 
+    it('should return an error if an array of users is supplied', (done) => {
+      this.store().revokeRole([1, 2, 3], 1234, (err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('Bulk role revocation is not currently supported.');
+        return done();
+      });
+    });
+
     it('should return an error if null userId', (done) => {
       this.store().revokeRole(null, (err, result) => {
         should.not.exist(result);
@@ -2434,6 +2464,16 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('roleId is required');
+        return done();
+      });
+    });
+
+    it('should return an error if an array of roles is supplied', (done) => {
+      this.store().revokeRole(1, [1, 2, 3, 4], (err, result) => {
+        should.not.exist(result);
+        err.message.should.eql('UserStoreError');
+        err.description.should.eql('Bad Request');
+        err.debug.should.eql('Bulk role revocation is not currently supported.');
         return done();
       });
     });
