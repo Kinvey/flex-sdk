@@ -2,6 +2,15 @@
 
 This is the SDK for code execution of Flex Microservices. The module provides a framework for building Kinvey-backed services using FlexData, FlexFunctions, and FlexAuth.
 
+## Upgrading from 2.x to 3.x
+
+Flex-sdk 3.x contains several breaking changes as well as new features.  To upgrade your service from Flex-sdk 2.x to 3.x:
+
+* All email and push methods now return a promise.  It is now required that you either handle the promise, or pass a callback.
+* For all stores (e.g. dataStore, userStore, etc), the deprecated options `skipBl` and `useMasterSecret` have been removed and no longer function.  Use `useBl` and `useUserContext` instead.
+* All asynchonous modules (dataStore, groupStore, roleStore, endpointRunner, userStore, email, and push) now return a promise or accept a callback.
+* For more information on what's new, see the [Changelog](CHANGELOG.md).
+
 ## [Official documentation](#docs)
 * [Kinvey FlexServices guide](http://devcenter.kinvey.com/nodejs/guides/flex-services)
 * [Developing and testing FlexServices locally](http://devcenter.kinvey.com/nodejs/guides/flex-services#runninglocally)
@@ -13,11 +22,6 @@ This is the SDK for code execution of Flex Microservices. The module provides a 
 To install this project, add `kinvey-flex-sdk` to your `package.json` file and install it via `npm`
 ```
 npm install kinvey-flex-sdk
-```
-
-Or install it with `yarn`:
-```
-yarn add kinvey-flex-sdk
 ```
 
 To use this module, require it in your project as such:
