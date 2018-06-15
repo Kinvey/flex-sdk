@@ -1,6 +1,7 @@
 ## Changelog
 
 ### 3.0.0
+* See README for migration guide
 * BREAKING CHANGE: email and push modules now require a callback or promise handlers.  They can no longer be executed as "fire and forget".   
 * FLEX-206 Added Promise support to Asynchronous flex-sdk modules
   * dataStore
