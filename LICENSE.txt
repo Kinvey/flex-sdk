@@ -1,4 +1,4 @@
-Copyright 2016 Kinvey, Inc.
+Copyright 2018 Kinvey, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -435,7 +435,7 @@ Apache License, V2.0 is applicable to the following component(s).
 
 >>> kinvey-code-task-runner-0.1.2 (https://github.com/kinvey/kinvey-task-receiver/blob/master/LICENSE.txt)
 
-Copyright 2016 Kinvey, Inc.
+Copyright 2018 Kinvey, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

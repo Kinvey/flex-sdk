@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016 Kinvey Inc.
+ * Copyright (c) 2018 Kinvey Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -12,19 +12,19 @@
  * the License.
  */
 
-const flexPackageJson = require('../../package.json');
+const flexPackageJson = require('../../../package.json');
 const should = require('should');
 const proxyquire = require('proxyquire');
 const sinon = require('sinon');
 const uuid = require('uuid');
-const sdkVersion = require('../../package.json').version;
+const sdkVersion = require('../../../package.json').version;
 
 const mockTaskReceiver = require('./mocks/mockTaskReceiver.js');
 
 describe('service creation', () => {
   let sdk = null;
   before((done) => {
-    sdk = proxyquire('../../lib/flex', { 'kinvey-code-task-runner': mockTaskReceiver });
+    sdk = proxyquire('../../../lib/flex', { 'kinvey-code-task-runner': mockTaskReceiver });
     return done();
   });
   it('can create a new service', (done) =>

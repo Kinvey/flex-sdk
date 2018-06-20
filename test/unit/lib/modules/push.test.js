@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016 Kinvey Inc.
+ * Copyright (c) 2018 Kinvey Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -57,9 +57,9 @@ describe('modules / push', () => {
     };
     const requestDefaultsStub = sinon.stub();
     requestDefaultsStub.returns(requestStub);
-    delete require.cache[require.resolve('../../../lib/service/modules/push')];
+    delete require.cache[require.resolve('../../../../lib/service/modules/push')];
     require.cache[require.resolve('request')].exports.defaults = requestDefaultsStub;
-    pushModule = require('../../../lib/service/modules/push');
+    pushModule = require('../../../../lib/service/modules/push');
     pushInstance = pushModule(appMetadata, taskMetadata, requestMetadata, emitter);
     return done();
   });

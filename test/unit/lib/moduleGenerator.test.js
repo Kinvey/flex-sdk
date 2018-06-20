@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016 Kinvey Inc.
+ * Copyright (c) 2018 Kinvey Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -68,7 +68,7 @@ const sampleTaskInfo = {
 describe('modules creation', () => {
   let moduleGenerator = null;
   before((done) => {
-    moduleGenerator = require('../../lib/service/moduleGenerator');
+    moduleGenerator = require('../../../lib/service/moduleGenerator');
     return done();
   });
   return it('can generate modules', (done) => {
