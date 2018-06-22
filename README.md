@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Kinvey/flex-sdk.svg?branch=master)](https://travis-ci.org/Kinvey/flex-sdk)
+
 # Kinvey Flex SDK (beta)
 
 This is the SDK for code execution of Flex Microservices. The module provides a framework for building Kinvey-backed services using FlexData, FlexFunctions, and FlexAuth.
