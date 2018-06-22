@@ -5,7 +5,7 @@ env:
 matrix:
   include:
     - language: node_js
-      env: JOB='LINT'
+      env: JOB='LINTING'
       node_js: ${NODEJS_VERSION}
       script: npm run lint
       
