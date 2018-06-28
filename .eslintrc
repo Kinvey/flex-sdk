@@ -17,6 +17,7 @@
     "no-unused-expressions": "off",
     "no-unused-vars": "warn",
     "no-useless-escape": "off",
+    "no-console": "off",
     "max-len": [ "warn", 120, 4 ],
     "consistent-return": "warn",
     "prefer-template": "warn",
