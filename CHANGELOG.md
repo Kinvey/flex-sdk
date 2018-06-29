@@ -2,18 +2,18 @@
 
 ### 3.1.0
 * FLEX-270 Added graceful shutdown
-  * Now on ctrl-c, SIGTERM, SIGINT, or SIGKILL, the sdk will attempt to wait for in-process tasks to finish. 
+  * Now on ctrl-c, SIGTERM, SIGINT, or SIGKILL, the sdk will attempt to wait for in-process tasks to finish.
  * Will time out and force-quit if all tasks aren't complete in 50 seconds
- * Pressing ctrl-c, or sending SIGINT/SIGTERM/SIGKILL a second time will terminate the process immediately.  
+ * Pressing ctrl-c, or sending SIGINT/SIGTERM/SIGKILL a second time will terminate the process immediately.
 * FLEX-291 Remove lodash as a dependency
 * FLEX-290 Changed destination property in body for sendPush to recipients
 * Removed CoffeeScript as a dependency
-* Updated code-task-receiver to 2.3.0
-* Updated kinvey-datalink-errors to 0.3.1 
+* Updated code-task-receiver to 2.3.1
+* Updated kinvey-datalink-errors to 0.3.2
 
 ### 3.0.0
 * See README for migration guide
-* BREAKING CHANGE: email and push modules now require a callback or promise handlers.  They can no longer be executed as "fire and forget".   
+* BREAKING CHANGE: email and push modules now require a callback or promise handlers.  They can no longer be executed as "fire and forget".
 * FLEX-206 Added Promise support to Asynchronous flex-sdk modules
   * dataStore
   * userStore
@@ -67,7 +67,7 @@
 
 ### 2.0.2
 * Fixed top-level errors to return JSON, fixing the bug where an invalid shared secret would generate the wrong error
-* Set maxSockets to 100 for both http and https agents 
+* Set maxSockets to 100 for both http and https agents
 
 ### 2.0.1
 * Fix stringification bug on some done() calls.
@@ -77,14 +77,14 @@
 * Change request to context
 * Fix completion handlers to properly handle pre/post step context
 * Added `setBody` and `setQuery` to data/function completion hanlder
-* Added `useBl` option to userStore and dataStore.  Set to `true` to enable business logic execution for a store request.  Defaults to false.  
+* Added `useBl` option to userStore and dataStore.  Set to `true` to enable business logic execution for a store request.  Defaults to false.
 * Added `useUserContext` option to userStore and dataStore. Set to `true` to execute the request under user's authentication context.  Defaults to false.
 * dataStore and authStore now default to using mastersecret credentials and not executing business logic
-* Circular requests to userStore/dataStore (e.g. saving back to the sae collection in a post hook) now must not execute BL and must be executed under masterSecret credentials.  
+* Circular requests to userStore/dataStore (e.g. saving back to the sae collection in a post hook) now must not execute BL and must be executed under masterSecret credentials.
 * Some internal refactoring
 * DEPRECATED:  Passing the entity directly in the `complete()` method.  Will be removed in future version.
-* DEPRECATED:  useMasterSecret argument for userStore and dataStore.  Stores now default to using master secret.  Use `useUserContext` to use the context of the current user for dataStore or userStore requests.  
-* DEPRECATED:  skipBl argument for userStore and dataStore.  Stores now default to not executing business logic hooks in response to store requests.  Use `useBl` to enable BL execution.  
+* DEPRECATED:  useMasterSecret argument for userStore and dataStore.  Stores now default to using master secret.  Use `useUserContext` to use the context of the current user for dataStore or userStore requests.
+* DEPRECATED:  skipBl argument for userStore and dataStore.  Stores now default to not executing business logic hooks in response to store requests.  Use `useBl` to enable BL execution.
 
 ### 1.2.0
 * Append flex SDK version to task response
@@ -116,7 +116,7 @@
 * Bumped code-task-runner to v0.3.0
 
 ### 0.5.0
-* Added `modules` accessible to all handler methods via third argument (e.g. onInsert(request, complete, modules: 
+* Added `modules` accessible to all handler methods via third argument (e.g. onInsert(request, complete, modules:
   * backendContext
   * dataStore (including access to Service Object backed data)
   * email
@@ -181,4 +181,4 @@
 * Set to use code-task-runner v0.1.1
 
 ### 0.1.0
-* Initial Release 
+* Initial Release
