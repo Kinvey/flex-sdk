@@ -2,5 +2,4 @@
 --reporter spec
 --ui bdd
 --globals currentObject
---bail
 --require should

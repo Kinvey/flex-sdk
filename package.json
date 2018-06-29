@@ -43,7 +43,10 @@
   },
   "scripts": {
     "pretest": "./node_modules/.bin/eslint lib test",
-    "test": "mocha test/lib/modules/* test/lib/*",
+    "lint": "npm run pretest",
+    "test": "npm run test-unit && npm run test-integration",
+    "test-unit": "mocha test/unit/*/*",
+    "test-integration": "echo \"No integration tests available for the moment\"",
     "test-core": "mocha test/lib/*",
     "test-flex": "mocha test/lib/flex.test.js",
     "test-data": "mocha test/lib/data.test.js",
@@ -60,6 +63,7 @@
     "test-query": "mocha test/lib/modules/query.test.js",
     "test-requestcontext": "mocha test/lib/modules/requestContext.test.js",
     "test-tempobjectstore": "mocha test/lib/modules/tempObjectStore.test.js",
-    "test-userStore": "mocha test/lib/modules/userStore.test.js"
+    "test-userStore": "mocha test/lib/modules/userStore.test.js",
+    "test-npm-security": "npm audit"
   }
 }

@@ -15,7 +15,7 @@
 const nock = require('nock');
 const should = require('should');
 const uuid = require('uuid');
-const endpointRunner = require('../../../lib/service/modules/endpointRunner');
+const endpointRunner = require('../../../../lib/service/modules/endpointRunner');
 
 const ENVIRONMENT_ID = 'kid1234';
 const APP_SECRET = '123456';

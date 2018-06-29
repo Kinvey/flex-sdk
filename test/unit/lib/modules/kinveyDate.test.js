@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2016 Kinvey Inc.
+ * Copyright (c) 2018 Kinvey Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -14,7 +14,7 @@
 
 const should = require('should');
 const moment = require('moment');
-const kinveyDate = require('../../../lib/service/modules/kinveyDate');
+const kinveyDate = require('../../../../lib/service/modules/kinveyDate');
 
 describe('date string conversion', () => {
   describe('to Kinvey (ISO) date string', () => {
