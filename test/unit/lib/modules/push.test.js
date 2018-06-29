@@ -177,7 +177,7 @@ describe('modules / push', () => {
       requestStub.post.callsArgWith(1, {});
       return pushInstance.send(recipients, 'hello', () => {
         const requestBody = requestStub.post.args[0][0].json;
-        requestBody.destination.should.eql(recipients);
+        requestBody.recipients.should.eql(recipients);
         requestBody.messageContent.should.eql('hello');
         return done();
       });
@@ -187,8 +187,8 @@ describe('modules / push', () => {
       requestStub.post.callsArgWith(1, {});
       return pushInstance.send(recipient, 'hello', () => {
         const requestBody = requestStub.post.args[0][0].json;
-        requestBody.destination.constructor.should.eql(Array);
-        requestBody.destination.should.eql([recipient]);
+        requestBody.recipients.constructor.should.eql(Array);
+        requestBody.recipients.should.eql([recipient]);
         requestBody.messageContent.should.eql('hello');
         return done();
       });
@@ -376,7 +376,7 @@ describe('modules / push', () => {
       requestStub.post.callsArgWith(1, {});
       return pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload, () => {
         const requestBody = requestStub.post.args[0][0].json;
-        requestBody.destination.should.eql(recipients);
+        requestBody.recipients.should.eql(recipients);
         requestBody.messageContent.should.eql({
           iOSAps,
           iOSExtras,
