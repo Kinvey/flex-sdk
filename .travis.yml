@@ -1,6 +1,9 @@
 env:
   global:
-    - NODEJS_VERSION='10.5.0'
+    - NODEJS_VERSION='6.11.1'
+
+before_install:
+  - npm i -g npm@^6.0.0
 
 matrix:
   include:
@@ -8,7 +11,7 @@ matrix:
       env: JOB='LINTING'
       node_js: ${NODEJS_VERSION}
       script: npm run lint
-      
+
     - language: node_js
       node_js: ${NODEJS_VERSION}
       env: JOB='UNIT'
