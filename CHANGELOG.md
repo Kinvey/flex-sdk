@@ -1,5 +1,16 @@
 ## Changelog
 
+### 3.1.0
+* FLEX-270 Added graceful shutdown
+  * Now on ctrl-c, SIGTERM, SIGINT, or SIGKILL, the sdk will attempt to wait for in-process tasks to finish. 
+ * Will time out and force-quit if all tasks aren't complete in 50 seconds
+ * Pressing ctrl-c, or sending SIGINT/SIGTERM/SIGKILL a second time will terminate the process immediately.  
+* FLEX-291 Remove lodash as a dependency
+* FLEX-290 Changed destination property in body for sendPush to recipients
+* Removed CoffeeScript as a dependency
+* Updated code-task-receiver to 2.3.0
+* Updated kinvey-datalink-errors to 0.3.1 
+
 ### 3.0.0
 * See README for migration guide
 * BREAKING CHANGE: email and push modules now require a callback or promise handlers.  They can no longer be executed as "fire and forget".   
