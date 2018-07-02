@@ -1,29 +1,3 @@
 {
-  "extends": "airbnb-base",
-  "env": {
-    "node": true,
-    "mocha": true
-  },
-  "rules": {
-    "arrow-body-style": ["warn", "as-needed"],
-    "comma-dangle": 0,
-    "global-require": "warn",
-    "import/no-unresolved": "off",
-    "no-param-reassign": 0,
-    "no-restricted-syntax": "off",
-    "no-return-assign": "warn",
-    "no-shadow": "off",
-    "no-underscore-dangle": "off",
-    "no-unused-expressions": "off",
-    "no-unused-vars": "warn",
-    "no-useless-escape": "off",
-    "no-console": "off",
-    "max-len": [ "warn", 120, 4 ],
-    "consistent-return": "warn",
-    "prefer-template": "warn",
-    "radix": "off",
-    "guard-for-in": "warn",
-    "spaced-comment":"off",
-    "newline-per-chained-call": "off"
-  }
+  "extends": "kinvey-platform"
 }
