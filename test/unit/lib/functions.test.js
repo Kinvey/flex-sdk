@@ -277,6 +277,9 @@ describe('FlexFunctions', () => {
         result.request.query.should.eql({
           foo: 'bar'
         });
+        result.request.params.should.eql({
+          foo: 'bar'
+        });
         return done();
       });
     });
