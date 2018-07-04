@@ -265,7 +265,7 @@ describe('FlexFunctions', () => {
         return done();
       });
     });
-    it.only('should explicitly set a query', (done) => {
+    it('should explicitly set a query', (done) => {
       const taskName = quickRandom();
       const task = samplePreTask(taskName);
       const query = { foo: 'bar' };
