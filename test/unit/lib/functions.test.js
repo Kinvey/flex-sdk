@@ -268,18 +268,16 @@ describe('FlexFunctions', () => {
     it('should explicitly set a query', (done) => {
       const taskName = quickRandom();
       const task = samplePreTask(taskName);
+      const query = { foo: 'bar' };
+      const sort = { foo: 1 };
       functions.register(taskName, (context, complete) => complete()
-        .setQuery({ foo: 'bar' })
+        .setQuery({ query, sort })
         .ok()
         .next());
       return functions.process(task, null, (err, result) => {
         result.response.statusCode.should.eql(200);
-        result.request.query.should.eql({
-          foo: 'bar'
-        });
-        result.request.params.should.eql({
-          foo: 'bar'
-        });
+        result.request.query.should.eql({ query: JSON.stringify(query), sort: JSON.stringify(sort) });
+        result.request.params.should.eql({ query: JSON.stringify(query), sort: JSON.stringify(sort) });
         return done();
       });
     });
