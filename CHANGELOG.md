@@ -1,5 +1,9 @@
 ## Changelog
 
+### 3.1.2
+* FLEX-286 Fixed setQuery to propagate on FSR prehook
+* Stringify query.query and query.sort if they are objects before returning
+
 ### 3.1.1
 * FLEX-293 Removed SIGKILL handler to prevent crash
 
