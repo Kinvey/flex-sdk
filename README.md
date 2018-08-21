@@ -19,7 +19,7 @@ Flex-sdk 3.x contains several breaking changes as well as new features.  To upgr
 * [FlexService Runtime information (for deploying FlexServices to Kinvey for use in production)](http://devcenter.kinvey.com/nodejs/guides/flexservice-runtime)
 * [External Flex Services](http://devcenter.kinvey.com/nodejs/guides/external-flex)
 
-## [Installation and usage](#installation)
+ ## [Installation and usage](#installation)
 
 To install this project, add `kinvey-flex-sdk` to your `package.json` file and install it via `npm`
 ```
