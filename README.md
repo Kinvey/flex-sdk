@@ -8,7 +8,7 @@ This is the SDK for code execution of Flex Microservices. The module provides a 
 
 Flex-sdk 3.x contains several breaking changes as well as new features.  To upgrade your service from Flex-sdk 2.x to 3.x:
 
-* All  email and push methods now return a promise.  It is now required that you either handle the promise, or pass a callback.
+* All email and push methods now return a promise.  It is now required that you either handle the promise, or pass a callback.
 * For all stores (e.g. dataStore, userStore, etc), the deprecated options `skipBl` and `useMasterSecret` have been removed and no longer function.  Use `useBl` and `useUserContext` instead.
 * All asynchonous modules (dataStore, groupStore, roleStore, endpointRunner, userStore, email, and push) now return a promise or accept a callback.
 * For more information on what's new, see the [Changelog](CHANGELOG.md).
