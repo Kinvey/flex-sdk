@@ -101,7 +101,7 @@ describe('FlexData', () => {
       const testName = 'testObj';
       data.serviceObject(testName);
       const discoveredServiceObjects = data.getServiceObjects();
-      discoveredServiceObjects.length.should.eql(1);
+      discoveredServiceObjects.length.should.eql(2);
       should.exist(discoveredServiceObjects[0]);
       discoveredServiceObjects[0].should.eql(testName);
       done();
