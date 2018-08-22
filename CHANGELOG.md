@@ -1,7 +1,7 @@
 ## Changelog
 
 ### 3.1.2
-* FLEX-286 Fixed setQuery to propagate on FSR prehook 
+* FLEX-286 Fixed setQuery to propagate on FSR prehook
 * Stringify query.query and query.sort if they are objects before returning
 
 ### 3.1.1
