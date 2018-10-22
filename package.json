@@ -37,7 +37,7 @@
   },
   "scripts": {
     "pretest": "npm run lint",
-    "lint": "./node_modules/.bin/eslint lib test *.js",
+    "lint": "./node_modules/.bin/eslint lib test *.js --color",
     "test": "npm run test-unit && npm run test-integration",
     "test-unit": "mocha test/unit/*/*",
     "test-integration": "echo \"No integration tests available for the moment\"",
