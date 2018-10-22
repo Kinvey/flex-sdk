@@ -1,5 +1,12 @@
 ## Changelog
 
+### 3.1.2
+* FLEX-286 Fixed setQuery to propagate on FSR prehook
+* Stringify query.query and query.sort if they are objects before returning
+
+### 3.1.1
+* FLEX-293 Removed SIGKILL handler to prevent crash
+
 ### 3.1.0
 * FLEX-270 Added graceful shutdown
   * Now on ctrl-c, SIGTERM, SIGINT, or SIGKILL, the sdk will attempt to wait for in-process tasks to finish.
