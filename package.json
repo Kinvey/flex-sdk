@@ -24,9 +24,9 @@
     "sift": "3.2.6"
   },
   "devDependencies": {
-    "eslint": "2.11.1",
-    "eslint-config-airbnb-base": "3.0.1",
-    "eslint-plugin-import": "1.8.1",
+    "eslint": "5.0.1",
+    "eslint-config-kinvey-platform": "kinvey/eslint-kinvey-platform#0.1.3",
+    "eslint-plugin-import": "2.13.0",
     "mocha": "5.1.1",
     "nock": "9.0.5",
     "proxyquire": "1.7.9",
@@ -36,8 +36,8 @@
     "uuid": "2.0.2"
   },
   "scripts": {
-    "pretest": "./node_modules/.bin/eslint lib test",
-    "lint": "npm run pretest",
+    "pretest": "npm run lint",
+    "lint": "./node_modules/.bin/eslint lib test *.js --color",
     "test": "npm run test-unit && npm run test-integration",
     "test-unit": "mocha test/unit/*/*",
     "test-integration": "echo \"No integration tests available for the moment\"",
