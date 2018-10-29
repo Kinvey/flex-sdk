@@ -12,8 +12,12 @@
  * the License.
  */
 
-const auth = require('../../../lib/service/auth');
 const should = require('should');
+const sinon = require('sinon');
+const proxyquire = require('proxyquire');
+const loggerMock = require('./mocks/loggerMock');
+
+const auth = proxyquire('../../../lib/service/auth', { './logger': loggerMock });
 
 function quickRandom() {
   return Math.floor((Math.random() * (1000 - 1)) + 1);
@@ -129,6 +133,7 @@ describe('FlexAuth', () => {
   });
   describe('completion handlers', () => {
     afterEach((done) => {
+      loggerMock.error.reset();
       auth.clearAll();
       return done();
     });
@@ -183,7 +188,6 @@ describe('FlexAuth', () => {
         return done();
       });
     });
-
     it('should return a 401 server_error', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
@@ -254,6 +258,34 @@ describe('FlexAuth', () => {
         result.response.body.should.eql({ token: { foo: 'bar' }, authenticated: true });
         result.response.continue = false;
         return done();
+      });
+    });
+    ['next', 'done'].forEach((method) => {
+      it(`should log a message when attempting to respond more than once, when calling ${method}()`, (done) => {
+        const taskName = quickRandom();
+        const task = sampleTask(taskName);
+
+        auth.register(taskName, (context, complete) => {
+          complete({ foo: 'bar' }).ok()[method]();
+          setTimeout(() => {
+            complete({ foo: 'not bar' }).ok()[method]();
+          }, 0);
+        });
+
+        const processCallbackSpy = sinon.spy((err, result) => {
+          should.not.exist(err);
+          result.response.statusCode.should.eql(200);
+          result.response.body.should.eql({ token: { foo: 'bar' }, authenticated: true });
+          result.response.continue.should.eql(false);
+        });
+
+        loggerMock.error = sinon.spy((message) => {
+          message.should.eql(`Attempted to respond more than once to the same flex auth request in handler "${taskName}"`);
+          processCallbackSpy.calledOnce.should.eql(true);
+          done();
+        });
+
+        auth.process(task, null, processCallbackSpy);
       });
     });
   });

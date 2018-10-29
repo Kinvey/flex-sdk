@@ -12,8 +12,13 @@
  * the License.
  */
 
-const functions = require('../../../lib/service/functions');
 const should = require('should');
+const sinon = require('sinon');
+const proxyquire = require('proxyquire');
+const loggerMock = require('./mocks/loggerMock');
+
+const completionHandler = proxyquire('../../../lib/service/kinveyCompletionHandler', { './logger': loggerMock });
+const functions = proxyquire('../../../lib/service/functions', { './kinveyCompletionHandler': completionHandler });
 
 const testTaskName = 'myTaskName';
 
@@ -209,6 +214,7 @@ describe('FlexFunctions', () => {
   });
   describe('completion handlers', () => {
     afterEach((done) => {
+      loggerMock.error.reset();
       functions.clearAll();
       return done();
     });
@@ -666,6 +672,34 @@ describe('FlexFunctions', () => {
         });
         result.response.continue = false;
         return done();
+      });
+    });
+    ['next', 'done'].forEach((method) => {
+      it(`should log a message when attempting to respond more than once, when calling ${method}()`, (done) => {
+        const taskName = quickRandom();
+        const task = sampleTask(taskName);
+
+        functions.register(taskName, (context, complete) => {
+          complete({ baz: 'bar' }).ok()[method]();
+          setTimeout(() => {
+            complete({ baz: 'not bar' }).ok()[method]();
+          }, 0);
+        });
+
+        const processCallbackSpy = sinon.spy((err, result) => {
+          should.not.exist(err);
+          result.response.statusCode.should.eql(200);
+          const expectedBody = method === 'next' ? result.request.body : result.response.body;
+          expectedBody.should.eql({ baz: 'bar' });
+          result.response.continue.should.eql(method === 'next');
+        });
+
+        loggerMock.error = sinon.spy((message) => {
+          message.should.eql(`Attempted to respond more than once to the same flex function request to "${task.taskName}"`);
+          done();
+        });
+
+        functions.process(task, null, processCallbackSpy);
       });
     });
   });
