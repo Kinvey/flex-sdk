@@ -133,7 +133,7 @@ describe('FlexAuth', () => {
   });
   describe('completion handlers', () => {
     afterEach((done) => {
-      loggerMock.error.reset();
+      loggerMock.error.resetHistory();
       auth.clearAll();
       return done();
     });
@@ -260,32 +260,34 @@ describe('FlexAuth', () => {
         return done();
       });
     });
-    ['next', 'done'].forEach((method) => {
-      it(`should log a message when attempting to respond more than once, when calling ${method}()`, (done) => {
-        const taskName = quickRandom();
-        const task = sampleTask(taskName);
+    ['next', 'done'].forEach((method1) => {
+      ['next', 'done'].forEach((method2) => {
+        it(`should log a message when attempting to respond more than once, by calling ${method1}() and then ${method2}()`, (done) => {
+          const taskName = quickRandom();
+          const task = sampleTask(taskName);
 
-        auth.register(taskName, (context, complete) => {
-          complete({ foo: 'bar' }).ok()[method]();
-          setTimeout(() => {
-            complete({ foo: 'not bar' }).ok()[method]();
-          }, 0);
+          auth.register(taskName, (context, complete) => {
+            complete({ foo: 'bar' }).ok()[method1]();
+            setTimeout(() => {
+              complete({ foo: 'not bar' }).ok()[method2]();
+            }, 0);
+          });
+
+          const processCallbackSpy = sinon.spy((err, result) => {
+            should.not.exist(err);
+            result.response.statusCode.should.eql(200);
+            result.response.body.should.eql({ token: { foo: 'bar' }, authenticated: true });
+            result.response.continue.should.eql(false);
+          });
+
+          loggerMock.error = sinon.spy((message) => {
+            message.should.eql(`Invoked done() or next() more than once to the same FlexAuth request in handler "${taskName}"`);
+            processCallbackSpy.calledOnce.should.eql(true);
+            done();
+          });
+
+          auth.process(task, null, processCallbackSpy);
         });
-
-        const processCallbackSpy = sinon.spy((err, result) => {
-          should.not.exist(err);
-          result.response.statusCode.should.eql(200);
-          result.response.body.should.eql({ token: { foo: 'bar' }, authenticated: true });
-          result.response.continue.should.eql(false);
-        });
-
-        loggerMock.error = sinon.spy((message) => {
-          message.should.eql(`Attempted to respond more than once to the same flex auth request in handler "${taskName}"`);
-          processCallbackSpy.calledOnce.should.eql(true);
-          done();
-        });
-
-        auth.process(task, null, processCallbackSpy);
       });
     });
   });

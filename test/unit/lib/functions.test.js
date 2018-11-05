@@ -214,7 +214,7 @@ describe('FlexFunctions', () => {
   });
   describe('completion handlers', () => {
     afterEach((done) => {
-      loggerMock.error.reset();
+      loggerMock.error.resetHistory();
       functions.clearAll();
       return done();
     });
@@ -674,32 +674,34 @@ describe('FlexFunctions', () => {
         return done();
       });
     });
-    ['next', 'done'].forEach((method) => {
-      it(`should log a message when attempting to respond more than once, when calling ${method}()`, (done) => {
-        const taskName = quickRandom();
-        const task = sampleTask(taskName);
+    ['next', 'done'].forEach((method1) => {
+      ['next', 'done'].forEach((method2) => {
+        it(`should log a message when attempting to respond more than once, by calling ${method1}() and then ${method2}()`, (done) => {
+          const taskName = quickRandom();
+          const task = sampleTask(taskName);
 
-        functions.register(taskName, (context, complete) => {
-          complete({ baz: 'bar' }).ok()[method]();
-          setTimeout(() => {
-            complete({ baz: 'not bar' }).ok()[method]();
-          }, 0);
+          functions.register(taskName, (context, complete) => {
+            complete({ baz: 'bar' }).ok()[method1]();
+            setTimeout(() => {
+              complete({ baz: 'not bar' }).ok()[method2]();
+            }, 0);
+          });
+
+          const processCallbackSpy = sinon.spy((err, result) => {
+            should.not.exist(err);
+            result.response.statusCode.should.eql(200);
+            const expectedBody = method1 === 'next' ? result.request.body : result.response.body;
+            expectedBody.should.eql({ baz: 'bar' });
+            result.response.continue.should.eql(method1 === 'next');
+          });
+
+          loggerMock.error = sinon.spy((message) => {
+            message.should.eql(`Invoked done() or next() more than once to the same Flex Functions request to "${task.taskName}"`);
+            done();
+          });
+
+          functions.process(task, null, processCallbackSpy);
         });
-
-        const processCallbackSpy = sinon.spy((err, result) => {
-          should.not.exist(err);
-          result.response.statusCode.should.eql(200);
-          const expectedBody = method === 'next' ? result.request.body : result.response.body;
-          expectedBody.should.eql({ baz: 'bar' });
-          result.response.continue.should.eql(method === 'next');
-        });
-
-        loggerMock.error = sinon.spy((message) => {
-          message.should.eql(`Attempted to respond more than once to the same flex function request to "${task.taskName}"`);
-          done();
-        });
-
-        functions.process(task, null, processCallbackSpy);
       });
     });
   });
