@@ -20,7 +20,7 @@
     "kinvey-code-task-runner": "2.3.1",
     "kinvey-datalink-errors": "0.3.2",
     "moment": "2.21.0",
-    "request": "2.86.0",
+    "request": "2.88.0",
     "sift": "3.2.6"
   },
   "devDependencies": {
