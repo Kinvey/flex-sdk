@@ -1,4 +1,4 @@
-/* eslint prefer-arrow-callback: 0 */                 // turning off because should.throws breaks with =>
+/* eslint prefer-arrow-callback: 0 */ // turning off because should.throws breaks with =>
 
 /**
  * Copyright (c) 2018 Kinvey Inc.
@@ -543,7 +543,8 @@ describe('Query', () => {
           const query = new Query();
           query.and(randomString(), null);
         }, function error(err) {
-          return err.toString() === 'Error: QueryError' && err.debug === 'query argument must be of type: Kinvey.Query[] or Object[].';
+          return err.toString() === 'Error: QueryError'
+            && err.debug === 'query argument must be of type: Kinvey.Query[] or Object[].';
         });
       });
 
@@ -600,7 +601,8 @@ describe('Query', () => {
           const query = new Query();
           query.nor(randomString(), null);
         }, function error(err) {
-          return err.toString() === 'Error: QueryError' && err.debug === 'query argument must be of type: Kinvey.Query[] or Object[].';
+          return err.toString() === 'Error: QueryError'
+            && err.debug === 'query argument must be of type: Kinvey.Query[] or Object[].';
         });
       });
 
@@ -657,7 +659,8 @@ describe('Query', () => {
           const query = new Query();
           query.or(randomString(), null);
         }, function error(err) {
-          return err.toString() === 'Error: QueryError' && err.debug === 'query argument must be of type: Kinvey.Query[] or Object[].';
+          return err.toString() === 'Error: QueryError'
+            && err.debug === 'query argument must be of type: Kinvey.Query[] or Object[].';
         });
       });
 

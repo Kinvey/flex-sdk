@@ -16,6 +16,7 @@ const nock = require('nock');
 const should = require('should');
 const uuid = require('uuid');
 const roleStore = require('../../../../lib/service/modules/roleStore');
+
 const environmentId = 'kid1234';
 const blFlags = {};
 const appsecret = '123456';
@@ -187,7 +188,7 @@ describe('roleStore', () => {
         })
         .reply(200, { _id: 1234, username: 'abc' });
 
-      (this.store().findById(1234)).should.be.a.Promise();    // eslint-disable-line new-cap
+      (this.store().findById(1234)).should.be.a.Promise(); // eslint-disable-line new-cap
       return done();
     });
 
@@ -265,7 +266,8 @@ describe('roleStore', () => {
         should.exist(err);
         err.message.should.eql('RoleStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the role store from the role store cannot use user credentials or use BL');
+        err.debug.should.eql(
+          'Recursive requests to the role store from the role store cannot use user credentials or use BL');
         return done();
       });
     });
@@ -276,7 +278,9 @@ describe('roleStore', () => {
         should.exist(err);
         err.message.should.eql('RoleStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the role store from the role store cannot use user credentials or use BL');
+        err.debug.should.eql(
+          'Recursive requests to the role store from the role store cannot use user credentials or use BL'
+        );
         return done();
       });
     });
@@ -287,7 +291,9 @@ describe('roleStore', () => {
         should.exist(err);
         err.message.should.eql('RoleStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the role store from the role store cannot use user credentials or use BL');
+        err.debug.should.eql(
+          'Recursive requests to the role store from the role store cannot use user credentials or use BL'
+        );
         return done();
       });
     });
@@ -357,7 +363,9 @@ describe('roleStore', () => {
           should.exist(err);
           err.message.should.eql('RoleStoreError');
           err.description.should.eql('Not Allowed');
-          err.debug.should.eql('Recursive requests to the role store from the role store cannot use user credentials or use BL');
+          err.debug.should.eql(
+            'Recursive requests to the role store from the role store cannot use user credentials or use BL'
+          );
           return done();
         });
     });
@@ -387,7 +395,7 @@ describe('roleStore', () => {
         })
         .reply(200, { _id: 1234, username: 'abc' });
 
-      (this.store().create({ username: 'abc' })).should.be.a.Promise();     // eslint-disable-line new-cap
+      (this.store().create({ username: 'abc' })).should.be.a.Promise(); // eslint-disable-line new-cap
       return done();
     });
 
@@ -477,7 +485,9 @@ describe('roleStore', () => {
         should.exist(err);
         err.message.should.eql('RoleStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the role store from the role store cannot use user credentials or use BL');
+        err.debug.should.eql(
+          'Recursive requests to the role store from the role store cannot use user credentials or use BL'
+        );
         return done();
       });
     });
@@ -488,7 +498,9 @@ describe('roleStore', () => {
         should.exist(err);
         err.message.should.eql('RoleStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the role store from the role store cannot use user credentials or use BL');
+        err.debug.should.eql(
+          'Recursive requests to the role store from the role store cannot use user credentials or use BL'
+        );
         return done();
       });
     });
@@ -499,7 +511,9 @@ describe('roleStore', () => {
         should.exist(err);
         err.message.should.eql('RoleStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the role store from the role store cannot use user credentials or use BL');
+        err.debug.should.eql(
+          'Recursive requests to the role store from the role store cannot use user credentials or use BL'
+        );
         return done();
       });
     });
@@ -551,7 +565,9 @@ describe('roleStore', () => {
           should.exist(err);
           err.message.should.eql('RoleStoreError');
           err.description.should.eql('Not Allowed');
-          err.debug.should.eql('Recursive requests to the role store from the role store cannot use user credentials or use BL');
+          err.debug.should.eql(
+            'Recursive requests to the role store from the role store cannot use user credentials or use BL'
+          );
           return done();
         });
     });
@@ -582,7 +598,7 @@ describe('roleStore', () => {
         })
         .reply(200, { _id: 1234, username: 'abc' });
 
-      (this.store().update({ _id: 1234, username: 'abc' })).should.be.a.Promise();    // eslint-disable-line new-cap
+      (this.store().update({ _id: 1234, username: 'abc' })).should.be.a.Promise(); // eslint-disable-line new-cap
       return done();
     });
 
@@ -676,7 +692,9 @@ describe('roleStore', () => {
         should.exist(err);
         err.message.should.eql('RoleStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the role store from the role store cannot use user credentials or use BL');
+        err.debug.should.eql(
+          'Recursive requests to the role store from the role store cannot use user credentials or use BL'
+        );
         return done();
       });
     });
@@ -687,20 +705,25 @@ describe('roleStore', () => {
         should.exist(err);
         err.message.should.eql('RoleStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the role store from the role store cannot use user credentials or use BL');
+        err.debug.should.eql(
+          'Recursive requests to the role store from the role store cannot use user credentials or use BL'
+        );
         return done();
       });
     });
 
     it('should prevent recursive requests to the same object that use user context and bl', (done) => {
-      this.storeUserRequest({ useUserContext: true, useBl: true }).update({ _id: 1234, username: 'abc' }, (err, result) => {
-        should.not.exist(result);
-        should.exist(err);
-        err.message.should.eql('RoleStoreError');
-        err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the role store from the role store cannot use user credentials or use BL');
-        return done();
-      });
+      this.storeUserRequest({ useUserContext: true, useBl: true }).update({ _id: 1234, username: 'abc' },
+        (err, result) => {
+          should.not.exist(result);
+          should.exist(err);
+          err.message.should.eql('RoleStoreError');
+          err.description.should.eql('Not Allowed');
+          err.debug.should.eql(
+            'Recursive requests to the role store from the role store cannot use user credentials or use BL'
+          );
+          return done();
+        });
     });
 
     it('should allow recursive requests to the same object that use mastersecret and skip bl', (done) => {
@@ -771,7 +794,9 @@ describe('roleStore', () => {
           should.exist(err);
           err.message.should.eql('RoleStoreError');
           err.description.should.eql('Not Allowed');
-          err.debug.should.eql('Recursive requests to the role store from the role store cannot use user credentials or use BL');
+          err.debug.should.eql(
+            'Recursive requests to the role store from the role store cannot use user credentials or use BL'
+          );
           return done();
         });
     });
@@ -799,7 +824,7 @@ describe('roleStore', () => {
         })
         .reply(200);
 
-      (this.store().remove(1234)).should.be.a.Promise();      // eslint-disable-line new-cap
+      (this.store().remove(1234)).should.be.a.Promise(); // eslint-disable-line new-cap
       return done();
     });
 
@@ -881,7 +906,9 @@ describe('roleStore', () => {
         should.exist(err);
         err.message.should.eql('RoleStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the role store from the role store cannot use user credentials or use BL');
+        err.debug.should.eql(
+          'Recursive requests to the role store from the role store cannot use user credentials or use BL'
+        );
         return done();
       });
     });
@@ -892,7 +919,9 @@ describe('roleStore', () => {
         should.exist(err);
         err.message.should.eql('RoleStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the role store from the role store cannot use user credentials or use BL');
+        err.debug.should.eql(
+          'Recursive requests to the role store from the role store cannot use user credentials or use BL'
+        );
         return done();
       });
     });
@@ -903,7 +932,9 @@ describe('roleStore', () => {
         should.exist(err);
         err.message.should.eql('RoleStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the role store from the role store cannot use user credentials or use BL');
+        err.debug.should.eql(
+          'Recursive requests to the role store from the role store cannot use user credentials or use BL'
+        );
         return done();
       });
     });
@@ -973,7 +1004,9 @@ describe('roleStore', () => {
           should.exist(err);
           err.message.should.eql('RoleStoreError');
           err.description.should.eql('Not Allowed');
-          err.debug.should.eql('Recursive requests to the role store from the role store cannot use user credentials or use BL');
+          err.debug.should.eql(
+            'Recursive requests to the role store from the role store cannot use user credentials or use BL'
+          );
           return done();
         });
     });
@@ -1001,7 +1034,7 @@ describe('roleStore', () => {
         })
         .reply(200, { _id: 1234, username: 'abc' });
 
-      (this.store().listMembers(1234)).should.be.a.Promise();    // eslint-disable-line new-cap
+      (this.store().listMembers(1234)).should.be.a.Promise(); // eslint-disable-line new-cap
       return done();
     });
 
@@ -1079,7 +1112,9 @@ describe('roleStore', () => {
         should.exist(err);
         err.message.should.eql('RoleStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the role store from the role store cannot use user credentials or use BL');
+        err.debug.should.eql(
+          'Recursive requests to the role store from the role store cannot use user credentials or use BL'
+        );
         return done();
       });
     });
@@ -1090,7 +1125,9 @@ describe('roleStore', () => {
         should.exist(err);
         err.message.should.eql('RoleStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the role store from the role store cannot use user credentials or use BL');
+        err.debug.should.eql(
+          'Recursive requests to the role store from the role store cannot use user credentials or use BL'
+        );
         return done();
       });
     });
@@ -1101,7 +1138,9 @@ describe('roleStore', () => {
         should.exist(err);
         err.message.should.eql('RoleStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the role store from the role store cannot use user credentials or use BL');
+        err.debug.should.eql(
+          'Recursive requests to the role store from the role store cannot use user credentials or use BL'
+        );
         return done();
       });
     });
@@ -1171,7 +1210,9 @@ describe('roleStore', () => {
           should.exist(err);
           err.message.should.eql('RoleStoreError');
           err.description.should.eql('Not Allowed');
-          err.debug.should.eql('Recursive requests to the role store from the role store cannot use user credentials or use BL');
+          err.debug.should.eql(
+            'Recursive requests to the role store from the role store cannot use user credentials or use BL'
+          );
           return done();
         });
     });

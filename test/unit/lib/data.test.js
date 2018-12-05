@@ -14,6 +14,7 @@
 
 const data = require('../../../lib/service/data');
 const should = require('should');
+
 const serviceObjectName = 'myServiceObject';
 
 function sampleTask() {
@@ -611,13 +612,15 @@ describe('FlexData', () => {
     });
     it('should return a 550 runtime error', (done) => {
       const task = sampleTask();
-      data.serviceObject(serviceObjectName).onInsert((context, complete) => complete('There was some error in the app!')
-        .runtimeError().next());
+      data.serviceObject(serviceObjectName).onInsert((context, complete) =>
+        complete('There was some error in the app!').runtimeError().next());
       return data.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(550);
         result.response.body.error.should.eql('FlexRuntimeError');
-        result.response.body.description.should.eql('The Flex Service had a runtime error.  See debug message for details');
+        result.response.body.description.should.eql(
+          'The Flex Service had a runtime error.  See debug message for details'
+        );
         result.response.body.debug.should.eql('There was some error in the app!');
         return done();
       });

@@ -15,7 +15,6 @@
 const should = require('should');
 const EventEmitter = require('events').EventEmitter;
 const sinon = require('sinon');
-const request = require('request');
 
 const FAKE_BAAS_URL = 'http://baas.baas';
 
@@ -44,7 +43,7 @@ describe('modules / email', () => {
     requestDefaultsStub.returns(requestStub);
     delete require.cache[require.resolve('../../../../lib/service/modules/email')];
     require.cache[require.resolve('request')].exports.defaults = requestDefaultsStub;
-    emailModule = require('../../../../lib/service/modules/email');
+    emailModule = require('../../../../lib/service/modules/email'); // eslint-disable-line global-require
     emailInstance = emailModule(appMetadata, taskMetadata, requestMetadata, emitter);
     return done();
   });
@@ -69,9 +68,7 @@ describe('modules / email', () => {
   it('should invoke the promise handlers if no callback specified', (done) => {
     requestStub.post.callsArg(1);
     const promise = emailInstance.send('from', 'to', 'subject', 'textBody');
-    promise.then((res) => {
-      done();
-    });
+    promise.then(() => done());
   });
 
   it('appends authorization header details to the request object', (done) => {
