@@ -159,14 +159,14 @@ describe('modules / push', () => {
 
     it('rejects if no receipents are specified', (done) => {
       requestStub.post.callsArgWith(1, {});
-      (pushInstance.send(null, 'hello')).should.be.rejected(/.*users.*/);
-      (pushInstance.send()).should.be.rejected(/.*users.*/);
+      (pushInstance.send(null, 'hello')).should.be.rejectedWith(/.*users.*/);
+      (pushInstance.send()).should.be.rejectedWith(/.*users.*/);
       return done();
     });
 
     it('rejects if no message is specified', (done) => {
       requestStub.post.callsArgWith(1, {});
-      (pushInstance.send(recipients, null)).should.be.rejected(/.*message.*/);
+      (pushInstance.send(recipients, null)).should.be.rejectedWith(/.*message.*/);
       return done();
     });
 
@@ -265,8 +265,8 @@ describe('modules / push', () => {
 
     it('rejects if no message is specified', (done) => {
       requestStub.post.callsArgWith(1, {});
-      (pushInstance.broadcast()).should.be.rejected(/.*message.*/);
-      (pushInstance.broadcast(null)).should.be.rejected(/.*message.*/);
+      (pushInstance.broadcast()).should.be.rejectedWith(/.*message.*/);
+      (pushInstance.broadcast(null)).should.be.rejectedWith(/.*message.*/);
       return done();
     });
 
@@ -361,8 +361,8 @@ describe('modules / push', () => {
 
     it('rejects if no receipents are specified', (done) => {
       requestStub.post.callsArgWith(1, {});
-      (pushInstance.sendPayload(null, iOSAps, iOSExtras, androidPayload)).should.be.rejected(/.*users.*/);
-      (pushInstance.sendPayload()).should.be.rejected(/.*users.*/);
+      (pushInstance.sendPayload(null, iOSAps, iOSExtras, androidPayload)).should.be.rejectedWith(/.*users.*/);
+      (pushInstance.sendPayload()).should.be.rejectedWith(/.*users.*/);
       return done();
     });
 

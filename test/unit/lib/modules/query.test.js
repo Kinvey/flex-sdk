@@ -1532,7 +1532,7 @@ describe('Query', () => {
       const query = new Query();
       query.limit = 10;
       const queryString = query.toQueryString();
-      queryString.should.containDeep({ limit: 10 });
+      queryString.should.containDeep({ limit: '10' });
     });
 
     it('should not have a limit property', () => {
@@ -1545,7 +1545,7 @@ describe('Query', () => {
       const query = new Query();
       query.skip = 10;
       const queryString = query.toQueryString();
-      queryString.should.containDeep({ skip: 10 });
+      queryString.should.containDeep({ skip: '10' });
     });
 
     it('should not have a skip property', () => {
