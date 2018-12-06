@@ -27,7 +27,7 @@ describe('service creation', () => {
     sdk = proxyquire('../../../lib/flex', { 'kinvey-code-task-runner': mockTaskReceiver });
     return done();
   });
-  it('can create a new service', (done) =>
+  it('can create a new service', done =>
     sdk.service((err, flex) => {
       should.not.exist(err);
       should.exist(flex.data);
@@ -80,7 +80,7 @@ describe('service creation', () => {
           _id: '12345',
           appsecret: 'appsecret',
           mastersecret: 'mastersecret',
-          pushService: void 0,
+          pushService: undefined,
           restrictions: {
             level: 'starter'
           },
@@ -103,7 +103,7 @@ describe('service creation', () => {
         done();
       });
 
-      mockTaskReceiver.taskReceived()(task, (err, result) => {
+      mockTaskReceiver.taskReceived()(task, () => {
       });
     });
   });
@@ -115,7 +115,7 @@ describe('service creation', () => {
           _id: '12345',
           appsecret: 'appsecret',
           mastersecret: 'mastersecret',
-          pushService: void 0,
+          pushService: undefined,
           restrictions: {
             level: 'starter'
           },
@@ -137,7 +137,7 @@ describe('service creation', () => {
 
       sdk.functions.register('foo', () => done());
 
-      mockTaskReceiver.taskReceived()(task, (err, result) => {
+      mockTaskReceiver.taskReceived()(task, () => {
       });
     });
   });
@@ -149,7 +149,7 @@ describe('service creation', () => {
           _id: '12345',
           appsecret: 'appsecret',
           mastersecret: 'mastersecret',
-          pushService: void 0,
+          pushService: undefined,
           restrictions: {
             level: 'starter'
           },
@@ -174,7 +174,7 @@ describe('service creation', () => {
 
       sdk.auth.register('foo', () => done());
 
-      mockTaskReceiver.taskReceived()(task, (err, result) => {
+      mockTaskReceiver.taskReceived()(task, () => {
       });
     });
   });
@@ -197,7 +197,7 @@ describe('service creation', () => {
   });
 
   it('should not call callback with an error when task result is an error', (done) => {
-    sdk.service((err, sdk) => {
+    sdk.service(() => {
       const task = {
         appMetadata: {
           _id: '12345',
@@ -228,7 +228,7 @@ describe('service creation', () => {
           _id: '12345',
           appsecret: 'appsecret',
           mastersecret: 'mastersecret',
-          pushService: void 0,
+          pushService: undefined,
           restrictions: {
             level: 'starter'
           },
@@ -254,7 +254,9 @@ describe('service creation', () => {
 
       mockTaskReceiver.taskReceived()(task, (err, result) => {
         result.response.body.error.should.eql('InvalidCredentials');
-        result.response.body.description.should.eql('Invalid credentials.  Please retry your request with correct credentials.');
+        result.response.body.description.should.eql(
+          'Invalid credentials.  Please retry your request with correct credentials.'
+        );
         result.response.statusCode.should.eql(401);
         result.response.body.debug.should.eql('The Authorization Key was not valid or missing.');
         result.sdkVersion.should.eql(sdkVersion);
@@ -272,7 +274,7 @@ describe('service creation', () => {
           _id: '12345',
           appsecret: 'appsecret',
           mastersecret: 'mastersecret',
-          pushService: void 0,
+          pushService: undefined,
           restrictions: {
             level: 'starter'
           },
@@ -299,7 +301,9 @@ describe('service creation', () => {
 
       mockTaskReceiver.taskReceived()(task, (err, result) => {
         result.response.body.error.should.eql('InvalidCredentials');
-        result.response.body.description.should.eql('Invalid credentials.  Please retry your request with correct credentials.');
+        result.response.body.description.should.eql(
+          'Invalid credentials.  Please retry your request with correct credentials.'
+        );
         result.response.statusCode.should.eql(401);
         result.response.body.debug.should.eql('The Authorization Key was not valid or missing.');
         should.not.exist(err);
@@ -343,7 +347,7 @@ describe('service creation', () => {
           _id: '12345',
           appsecret: 'appsecret',
           mastersecret: 'mastersecret',
-          pushService: void 0,
+          pushService: undefined,
           restrictions: {
             level: 'starter'
           },

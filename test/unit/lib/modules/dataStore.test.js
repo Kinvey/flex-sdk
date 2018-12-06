@@ -16,6 +16,8 @@ const nock = require('nock');
 const should = require('should');
 const dataStore = require('../../../../lib/service/modules/dataStore');
 const Query = require('../../../../lib/service/modules/query');
+const uuid = require('uuid');
+
 const environmentId = 'kid1234';
 const blFlags = {};
 const appsecret = '123456';
@@ -27,7 +29,6 @@ const apiVersion = 3;
 const authorization = 'Kinvey adfjkldsafjdsalkfjds90fd8sfd=';
 const clientAppVersion = {};
 const customRequestProperties = {};
-const uuid = require('uuid');
 
 function _generateAppMetadata() {
   return {
@@ -184,11 +185,9 @@ describe('dataStore', () => {
       myCollection.find.name.should.eql('find');
       myCollection.removeById.name.should.eql('removeById');
       myCollection.remove.name.should.eql('remove');
-      myCollection._useMasterSecret.should.be.true();
       myCollection._useUserContext.should.be.false();
       myCollection._appMetadata.should.containDeep(this.appMetadata);
       myCollection._requestContext.should.containDeep(this.requestContext);
-      myCollection._skipBl.should.be.true();
       myCollection._useBl.should.be.false();
     });
 
@@ -1006,7 +1005,7 @@ describe('dataStore', () => {
         .reply(200, { count: 30 });
 
       const collection = this.store().collection('myCollection');
-      (collection.remove()).should.be.a.Promise();    // eslint-disable-line new-cap
+      (collection.remove()).should.be.a.Promise(); // eslint-disable-line new-cap
       return done();
     });
 
@@ -1225,7 +1224,7 @@ describe('dataStore', () => {
         .reply(200, { count: 1 });
 
       const collection = this.store().collection('myCollection');
-      (collection.removeById(1234)).should.be.a.Promise();    // eslint-disable-line new-cap
+      (collection.removeById(1234)).should.be.a.Promise(); // eslint-disable-line new-cap
       return done();
     });
 
@@ -1440,7 +1439,7 @@ describe('dataStore', () => {
         .reply(200, { count: 30 });
 
       const collection = this.store().collection('myCollection');
-      (collection.count()).should.be.a.Promise();     // eslint-disable-line new-cap
+      (collection.count()).should.be.a.Promise(); // eslint-disable-line new-cap
       return done();
     });
 

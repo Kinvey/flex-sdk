@@ -15,7 +15,6 @@
 const EventEmitter = require('events').EventEmitter;
 const should = require('should');
 const sinon = require('sinon');
-const request = require('request');
 
 const FAKE_BAAS_URL = 'http://baas.baas';
 
@@ -59,7 +58,7 @@ describe('modules / push', () => {
     requestDefaultsStub.returns(requestStub);
     delete require.cache[require.resolve('../../../../lib/service/modules/push')];
     require.cache[require.resolve('request')].exports.defaults = requestDefaultsStub;
-    pushModule = require('../../../../lib/service/modules/push');
+    pushModule = require('../../../../lib/service/modules/push'); // eslint-disable-line global-require
     pushInstance = pushModule(appMetadata, taskMetadata, requestMetadata, emitter);
     return done();
   });
@@ -97,9 +96,7 @@ describe('modules / push', () => {
     it('should invoke the promise handlers if no callback specified', (done) => {
       requestStub.post.callsArg(1);
       const promise = pushInstance.send(recipients, 'hello');
-      promise.then((res) => {
-        done();
-      });
+      promise.then(() => done());
     });
 
     it('appends authorization header details to the request object', (done) => {
@@ -213,9 +210,7 @@ describe('modules / push', () => {
     it('should invoke the promise handlers if no callback specified', (done) => {
       requestStub.post.callsArg(1);
       const promise = pushInstance.broadcast('hello');
-      promise.then((res) => {
-        done();
-      });
+      promise.then(() => done());
     });
 
     it('calls back an error if one has occurred while communicating with the server', (done) => {
@@ -295,7 +290,8 @@ describe('modules / push', () => {
 
     it('should return a Promise', (done) => {
       requestStub.post.callsArg(1);
-      (pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload)).should.be.a.Promise(); // eslint-disable-line new-cap
+      // eslint-disable-next-line new-cap
+      (pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload)).should.be.a.Promise();
       return done();
     });
 
@@ -310,9 +306,7 @@ describe('modules / push', () => {
     it('should invoke the promise handlers if no callback specified', (done) => {
       requestStub.post.callsArg(1);
       const promise = pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload);
-      promise.then((res) => {
-        done();
-      });
+      promise.then(() => done());
     });
 
     it('calls back an error if one has occurred while communicating with the server', (done) => {
@@ -397,7 +391,8 @@ describe('modules / push', () => {
 
     it('should return a Promise', (done) => {
       requestStub.post.callsArg(1);
-      (pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload)).should.be.a.Promise(); // eslint-disable-line new-cap
+      // eslint-disable-next-line new-cap
+      (pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload)).should.be.a.Promise();
       return done();
     });
 
@@ -412,9 +407,7 @@ describe('modules / push', () => {
     it('should invoke the promise handlers if no callback specified', (done) => {
       requestStub.post.callsArg(1);
       const promise = pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload);
-      promise.then((res) => {
-        done();
-      });
+      promise.then(() => done());
     });
 
     it('calls back an error if one has occurred while communicating with the server', (done) => {

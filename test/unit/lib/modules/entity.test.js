@@ -14,6 +14,7 @@
 
 const should = require('should');
 const kinveyModule = require('../../../../lib/service/modules/kinveyEntity');
+
 const testEnvironmentId = 'test environment ID';
 
 describe('modules / kinvey', () => {
@@ -31,7 +32,7 @@ describe('modules / kinvey', () => {
       return done();
     });
     it('returns false when undefined is passed in', (done) => {
-      kinveyInstance.isKinveyEntity(void 0).should.be.false();
+      kinveyInstance.isKinveyEntity(undefined).should.be.false();
       return done();
     });
     it('returns false when an empty object is passed in', (done) => {
@@ -172,7 +173,7 @@ describe('modules / kinvey', () => {
         ];
       kinveyInstance.entity(testObject);
       const keys = Object.keys(testObject._acl);
-      for (let i = 0, len = aclFunctionSignatures.length; i < len; i++) {
+      for (let i = 0, len = aclFunctionSignatures.length; i < len; i++) { // eslint-disable-line no-plusplus
         const aclFunctionSignature = aclFunctionSignatures[i];
         (typeof testObject._acl[aclFunctionSignature]).should.eql('function');
         keys.indexOf(aclFunctionSignature).should.eql(-1);
@@ -1022,7 +1023,7 @@ describe('modules / kinvey', () => {
         return it('will return null when globally readable is undefined', (done) => {
           const ke = kinveyInstance.entity({
             _acl: {
-              gr: void 0
+              gr: undefined
             }
           });
           (ke._acl.getGloballyReadable() === null).should.be.true();
@@ -1056,7 +1057,7 @@ describe('modules / kinvey', () => {
         return it('will return null when undefined', (done) => {
           const ke = kinveyInstance.entity({
             _acl: {
-              gw: void 0
+              gw: undefined
             }
           });
           (ke._acl.getGloballyWritable() === null).should.be.true();

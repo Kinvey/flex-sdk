@@ -19,6 +19,4 @@ exports.start = (options, taskReceivedCallback, receiverStartedCallback) => {
   receiverStartedCallback();
 };
 
-exports.taskReceived = function () {
-  return taskReceived;
-};
+exports.taskReceived = () => taskReceived;

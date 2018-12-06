@@ -16,7 +16,7 @@ const auth = require('../../../lib/service/auth');
 const should = require('should');
 
 function quickRandom() {
-  return Math.floor(Math.random() * (1000 - 1) + 1);
+  return Math.floor((Math.random() * (1000 - 1)) + 1);
 }
 
 function sampleTask(taskName) {
@@ -211,7 +211,8 @@ describe('FlexAuth', () => {
     it('should return a 401 temporarily unavailable', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      auth.register(taskName, (context, complete) => complete('The auth server is temporarily unavailable!').temporarilyUnavailable().next());
+      auth.register(taskName, (context, complete) =>
+        complete('The auth server is temporarily unavailable!').temporarilyUnavailable().next());
       return auth.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(401);

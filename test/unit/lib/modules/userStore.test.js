@@ -17,6 +17,7 @@ const should = require('should');
 const uuid = require('uuid');
 const userStore = require('../../../../lib/service/modules/userStore');
 const Query = require('../../../../lib/service/modules/query');
+
 const environmentId = 'kid1234';
 const blFlags = {};
 const appsecret = '123456';
@@ -201,15 +202,15 @@ describe('userStore', () => {
         })
         .reply(200, [{ _id: 123, username: 'abc' }, { _id: 456, username: 'xyz' }]);
 
-      (this.store().find()).should.be.a.Promise();      // eslint-disable-line new-cap
+      (this.store().find()).should.be.a.Promise(); // eslint-disable-line new-cap
       return done();
     });
 
     it('should find all records', (done) => {
       nock('https://baas.kinvey.com')
-       .matchHeader('content-type', 'application/json')
-       .matchHeader('x-kinvey-api-version', '3')
-       .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
         .get(`/user/${environmentId}/`)
         .basicAuth({
           user: environmentId,
@@ -283,7 +284,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -294,7 +297,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -305,7 +310,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -335,7 +342,9 @@ describe('userStore', () => {
           should.exist(err);
           err.message.should.eql('UserStoreError');
           err.description.should.eql('Not Allowed');
-          err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+          err.debug.should.eql(
+            'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+          );
           return done();
         });
     });
@@ -409,7 +418,7 @@ describe('userStore', () => {
         })
         .reply(200, { _id: 1234, username: 'abc' });
 
-      (this.store().findById(1234)).should.be.a.Promise();     // eslint-disable-line new-cap
+      (this.store().findById(1234)).should.be.a.Promise(); // eslint-disable-line new-cap
       return done();
     });
 
@@ -487,7 +496,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -498,7 +509,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -509,7 +522,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -569,7 +584,9 @@ describe('userStore', () => {
           should.exist(err);
           err.message.should.eql('UserStoreError');
           err.description.should.eql('Not Allowed');
-          err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+          err.debug.should.eql(
+            'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+          );
           return done();
         });
     });
@@ -597,7 +614,7 @@ describe('userStore', () => {
         })
         .reply(200, { _id: `${authenticatedUserId}`, username: 'abc' });
 
-      (this.store().getCurrentUser()).should.be.a.Promise();    // eslint-disable-line new-cap
+      (this.store().getCurrentUser()).should.be.a.Promise(); // eslint-disable-line new-cap
       return done();
     });
 
@@ -659,7 +676,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -670,7 +689,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -681,7 +702,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -711,7 +734,9 @@ describe('userStore', () => {
           should.exist(err);
           err.message.should.eql('UserStoreError');
           err.description.should.eql('Not Allowed');
-          err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+          err.debug.should.eql(
+            'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+          );
           return done();
         });
     });
@@ -741,7 +766,7 @@ describe('userStore', () => {
         })
         .reply(200, { _id: 1234, username: 'abc' });
 
-      (this.store().create({ username: 'abc' })).should.be.a.Promise();   // eslint-disable-line new-cap
+      (this.store().create({ username: 'abc' })).should.be.a.Promise(); // eslint-disable-line new-cap
       return done();
     });
 
@@ -834,7 +859,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -845,7 +872,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -856,7 +885,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -908,7 +939,9 @@ describe('userStore', () => {
           should.exist(err);
           err.message.should.eql('UserStoreError');
           err.description.should.eql('Not Allowed');
-          err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+          err.debug.should.eql(
+            'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+          );
           return done();
         });
     });
@@ -939,7 +972,7 @@ describe('userStore', () => {
         })
         .reply(200, { _id: 1234, username: 'abc' });
 
-      (this.store().update({ _id: 1234, username: 'abc' })).should.be.a.Promise();    // eslint-disable-line new-cap
+      (this.store().update({ _id: 1234, username: 'abc' })).should.be.a.Promise(); // eslint-disable-line new-cap
       return done();
     });
 
@@ -1033,7 +1066,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -1044,20 +1079,25 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
 
     it('should prevent recursive requests to the same object that use user context and bl', (done) => {
-      this.storeUserRequest({ useUserContext: true, useBl: true }).update({ _id: 1234, username: 'abc' }, (err, result) => {
-        should.not.exist(result);
-        should.exist(err);
-        err.message.should.eql('UserStoreError');
-        err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
-        return done();
-      });
+      this.storeUserRequest({ useUserContext: true, useBl: true }).update({ _id: 1234, username: 'abc' },
+        (err, result) => {
+          should.not.exist(result);
+          should.exist(err);
+          err.message.should.eql('UserStoreError');
+          err.description.should.eql('Not Allowed');
+          err.debug.should.eql(
+            'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+          );
+          return done();
+        });
     });
 
     it('should allow recursive requests to the same object that use mastersecret and skip bl', (done) => {
@@ -1128,7 +1168,9 @@ describe('userStore', () => {
           should.exist(err);
           err.message.should.eql('UserStoreError');
           err.description.should.eql('Not Allowed');
-          err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+          err.debug.should.eql(
+            'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+          );
           return done();
         });
     });
@@ -1156,7 +1198,7 @@ describe('userStore', () => {
         })
         .reply(200);
 
-      (this.store().remove(1234)).should.be.a.Promise();    // eslint-disable-line new-cap
+      (this.store().remove(1234)).should.be.a.Promise(); // eslint-disable-line new-cap
       return done();
     });
 
@@ -1260,7 +1302,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -1271,7 +1315,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -1282,7 +1328,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -1352,7 +1400,9 @@ describe('userStore', () => {
           should.exist(err);
           err.message.should.eql('UserStoreError');
           err.description.should.eql('Not Allowed');
-          err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+          err.debug.should.eql(
+            'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+          );
           return done();
         });
     });
@@ -1380,7 +1430,7 @@ describe('userStore', () => {
         })
         .reply(200, { count: 30 });
 
-      (this.store().count()).should.be.a.Promise();   // eslint-disable-line new-cap
+      (this.store().count()).should.be.a.Promise(); // eslint-disable-line new-cap
       return done();
     });
 
@@ -1463,7 +1513,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -1474,7 +1526,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -1485,7 +1539,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -1515,7 +1571,9 @@ describe('userStore', () => {
           should.exist(err);
           err.message.should.eql('UserStoreError');
           err.description.should.eql('Not Allowed');
-          err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+          err.debug.should.eql(
+            'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+          );
           return done();
         });
     });
@@ -1589,7 +1647,7 @@ describe('userStore', () => {
         })
         .reply(200);
 
-      (this.store().suspend(1234)).should.be.a.Promise();         // eslint-disable-line new-cap
+      (this.store().suspend(1234)).should.be.a.Promise(); // eslint-disable-line new-cap
       return done();
     });
 
@@ -1693,7 +1751,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -1704,7 +1764,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -1715,7 +1777,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -1785,7 +1849,9 @@ describe('userStore', () => {
           should.exist(err);
           err.message.should.eql('UserStoreError');
           err.description.should.eql('Not Allowed');
-          err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+          err.debug.should.eql(
+            'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+          );
           return done();
         });
     });
@@ -1813,7 +1879,7 @@ describe('userStore', () => {
         })
         .reply(200);
 
-      (this.store().restore(1234)).should.be.a.Promise();     // eslint-disable-line new-cap
+      (this.store().restore(1234)).should.be.a.Promise(); // eslint-disable-line new-cap
       return done();
     });
 
@@ -1898,7 +1964,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -1909,7 +1977,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -1920,7 +1990,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -1990,7 +2062,9 @@ describe('userStore', () => {
           should.exist(err);
           err.message.should.eql('UserStoreError');
           err.description.should.eql('Not Allowed');
-          err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+          err.debug.should.eql(
+            'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+          );
           return done();
         });
     });
@@ -2018,7 +2092,7 @@ describe('userStore', () => {
         })
         .reply(200, { _id: 1234, username: 'abc' });
 
-      (this.store().assignRole(1234, 5678)).should.be.a.Promise();    // eslint-disable-line new-cap
+      (this.store().assignRole(1234, 5678)).should.be.a.Promise(); // eslint-disable-line new-cap
       return done();
     });
 
@@ -2100,7 +2174,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -2111,7 +2187,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -2122,7 +2200,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -2252,7 +2332,9 @@ describe('userStore', () => {
           should.exist(err);
           err.message.should.eql('UserStoreError');
           err.description.should.eql('Not Allowed');
-          err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+          err.debug.should.eql(
+            'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+          );
           return done();
         });
     });
@@ -2280,7 +2362,7 @@ describe('userStore', () => {
         })
         .reply(200);
 
-      (this.store().revokeRole(1234, 5678)).should.be.a.Promise();    // eslint-disable-line new-cap
+      (this.store().revokeRole(1234, 5678)).should.be.a.Promise(); // eslint-disable-line new-cap
       return done();
     });
 
@@ -2362,7 +2444,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -2373,7 +2457,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -2384,7 +2470,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -2514,7 +2602,9 @@ describe('userStore', () => {
           should.exist(err);
           err.message.should.eql('UserStoreError');
           err.description.should.eql('Not Allowed');
-          err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+          err.debug.should.eql(
+            'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+          );
           return done();
         });
     });
@@ -2542,7 +2632,7 @@ describe('userStore', () => {
         })
         .reply(200, { _id: 1234, username: 'abc' });
 
-      (this.store().listRoles(1234)).should.be.a.Promise();     // eslint-disable-line new-cap
+      (this.store().listRoles(1234)).should.be.a.Promise(); // eslint-disable-line new-cap
       return done();
     });
 
@@ -2620,7 +2710,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -2631,7 +2723,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -2642,7 +2736,9 @@ describe('userStore', () => {
         should.exist(err);
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -2712,7 +2808,9 @@ describe('userStore', () => {
           should.exist(err);
           err.message.should.eql('UserStoreError');
           err.description.should.eql('Not Allowed');
-          err.debug.should.eql('Recursive requests to the user store from the user store cannot use user credentials or use Bl');
+          err.debug.should.eql(
+            'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
+          );
           return done();
         });
     });

@@ -16,6 +16,7 @@ const nock = require('nock');
 const should = require('should');
 const uuid = require('uuid');
 const groupStore = require('../../../../lib/service/modules/groupStore');
+
 const environmentId = 'kid1234';
 const blFlags = {};
 const appsecret = '123456';
@@ -184,7 +185,7 @@ describe('groupStore', () => {
         })
         .reply(200, { _id: 1234, username: 'abc' });
 
-      (this.store().findById(1234)).should.be.a.Promise();    // eslint-disable-line new-cap
+      (this.store().findById(1234)).should.be.a.Promise(); // eslint-disable-line new-cap
       return done();
     });
 
@@ -262,7 +263,9 @@ describe('groupStore', () => {
         should.exist(err);
         err.message.should.eql('GroupStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the group store from the group store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the group store from the group store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -273,7 +276,9 @@ describe('groupStore', () => {
         should.exist(err);
         err.message.should.eql('GroupStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the group store from the group store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the group store from the group store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -284,7 +289,9 @@ describe('groupStore', () => {
         should.exist(err);
         err.message.should.eql('GroupStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the group store from the group store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the group store from the group store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -354,7 +361,9 @@ describe('groupStore', () => {
           should.exist(err);
           err.message.should.eql('GroupStoreError');
           err.description.should.eql('Not Allowed');
-          err.debug.should.eql('Recursive requests to the group store from the group store cannot use user credentials or use Bl');
+          err.debug.should.eql(
+            'Recursive requests to the group store from the group store cannot use user credentials or use Bl'
+          );
           return done();
         });
     });
@@ -384,7 +393,7 @@ describe('groupStore', () => {
         })
         .reply(200, { _id: 1234, username: 'abc' });
 
-      (this.store().create({ username: 'abc' })).should.be.a.Promise();     // eslint-disable-line new-cap
+      (this.store().create({ username: 'abc' })).should.be.a.Promise(); // eslint-disable-line new-cap
       return done();
     });
 
@@ -477,7 +486,9 @@ describe('groupStore', () => {
         should.exist(err);
         err.message.should.eql('GroupStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the group store from the group store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the group store from the group store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -488,7 +499,9 @@ describe('groupStore', () => {
         should.exist(err);
         err.message.should.eql('GroupStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the group store from the group store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the group store from the group store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -499,7 +512,9 @@ describe('groupStore', () => {
         should.exist(err);
         err.message.should.eql('GroupStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the group store from the group store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the group store from the group store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -551,7 +566,9 @@ describe('groupStore', () => {
           should.exist(err);
           err.message.should.eql('GroupStoreError');
           err.description.should.eql('Not Allowed');
-          err.debug.should.eql('Recursive requests to the group store from the group store cannot use user credentials or use Bl');
+          err.debug.should.eql(
+            'Recursive requests to the group store from the group store cannot use user credentials or use Bl'
+          );
           return done();
         });
     });
@@ -582,7 +599,7 @@ describe('groupStore', () => {
         })
         .reply(200, { _id: 1234, username: 'abc' });
 
-      (this.store().update({ _id: 1234, username: 'abc' })).should.be.a.Promise();    // eslint-disable-line new-cap
+      (this.store().update({ _id: 1234, username: 'abc' })).should.be.a.Promise(); // eslint-disable-line new-cap
       return done();
     });
 
@@ -676,7 +693,9 @@ describe('groupStore', () => {
         should.exist(err);
         err.message.should.eql('GroupStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the group store from the group store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the group store from the group store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -687,20 +706,25 @@ describe('groupStore', () => {
         should.exist(err);
         err.message.should.eql('GroupStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the group store from the group store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the group store from the group store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
 
     it('should prevent recursive requests to the same object that use user context and bl', (done) => {
-      this.storeUserRequest({ useUserContext: true, useBl: true }).update({ _id: 1234, username: 'abc' }, (err, result) => {
-        should.not.exist(result);
-        should.exist(err);
-        err.message.should.eql('GroupStoreError');
-        err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the group store from the group store cannot use user credentials or use Bl');
-        return done();
-      });
+      this.storeUserRequest({ useUserContext: true, useBl: true }).update({ _id: 1234, username: 'abc' },
+        (err, result) => {
+          should.not.exist(result);
+          should.exist(err);
+          err.message.should.eql('GroupStoreError');
+          err.description.should.eql('Not Allowed');
+          err.debug.should.eql(
+            'Recursive requests to the group store from the group store cannot use user credentials or use Bl'
+          );
+          return done();
+        });
     });
 
     it('should allow recursive requests to the same object that use mastersecret and skip bl', (done) => {
@@ -771,7 +795,9 @@ describe('groupStore', () => {
           should.exist(err);
           err.message.should.eql('GroupStoreError');
           err.description.should.eql('Not Allowed');
-          err.debug.should.eql('Recursive requests to the group store from the group store cannot use user credentials or use Bl');
+          err.debug.should.eql(
+            'Recursive requests to the group store from the group store cannot use user credentials or use Bl'
+          );
           return done();
         });
     });
@@ -799,7 +825,7 @@ describe('groupStore', () => {
         })
         .reply(200);
 
-      (this.store().remove(1234)).should.be.a.Promise();      // eslint-disable-line new-cap
+      (this.store().remove(1234)).should.be.a.Promise(); // eslint-disable-line new-cap
       return done();
     });
 
@@ -881,7 +907,9 @@ describe('groupStore', () => {
         should.exist(err);
         err.message.should.eql('GroupStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the group store from the group store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the group store from the group store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -892,7 +920,9 @@ describe('groupStore', () => {
         should.exist(err);
         err.message.should.eql('GroupStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the group store from the group store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the group store from the group store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -903,7 +933,9 @@ describe('groupStore', () => {
         should.exist(err);
         err.message.should.eql('GroupStoreError');
         err.description.should.eql('Not Allowed');
-        err.debug.should.eql('Recursive requests to the group store from the group store cannot use user credentials or use Bl');
+        err.debug.should.eql(
+          'Recursive requests to the group store from the group store cannot use user credentials or use Bl'
+        );
         return done();
       });
     });
@@ -973,7 +1005,9 @@ describe('groupStore', () => {
           should.exist(err);
           err.message.should.eql('GroupStoreError');
           err.description.should.eql('Not Allowed');
-          err.debug.should.eql('Recursive requests to the group store from the group store cannot use user credentials or use Bl');
+          err.debug.should.eql(
+            'Recursive requests to the group store from the group store cannot use user credentials or use Bl'
+          );
           return done();
         });
     });

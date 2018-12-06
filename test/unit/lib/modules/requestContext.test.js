@@ -52,12 +52,12 @@ describe('modules / requestContext', () => {
   describe('getCustomRequestProperty return value', () => {
     it('should be undefined when nothing is passed', (done) => {
       requestContext = requestContextModule(metadata);
-      (requestContext.getCustomRequestProperty() === void 0).should.be.true();
+      (requestContext.getCustomRequestProperty() === undefined).should.be.true();
       return done();
     });
     describe('when property does not exist', () =>
       it('returns undefined', (done) => {
-        (requestContext.getCustomRequestProperty('doesntexist') === void 0).should.be.true();
+        (requestContext.getCustomRequestProperty('doesntexist') === undefined).should.be.true();
         return done();
       }));
     describe('when getting a property whose value is an empty string', () =>
@@ -87,7 +87,7 @@ describe('modules / requestContext', () => {
     describe('when passing undefined as a value', () => {
       it('sets the value to undefined', (done) => {
         requestContext.setCustomRequestProperty('newprop');
-        (requestContext.getCustomRequestProperty('newprop') === void 0).should.be.true();
+        (requestContext.getCustomRequestProperty('newprop') === undefined).should.be.true();
         return done();
       });
     });
@@ -154,7 +154,7 @@ describe('modules / requestContext', () => {
         return done();
       });
       return it('should return null when metadata value is undefined', (done) => {
-        metadata.clientAppVersion = void 0;
+        metadata.clientAppVersion = undefined;
         requestContext = requestContextModule(metadata);
         (requestContext.clientAppVersion.stringValue() === null).should.be.true();
         return done();

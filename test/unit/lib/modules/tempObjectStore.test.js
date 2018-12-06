@@ -12,17 +12,16 @@
  * the License.
  */
 
-const _ = require('lodash');
-const testTempObjectStore = {};
 const objectStoreModule = require('../../../../lib/service/modules/tempObjectStore');
+
+const testTempObjectStore = {};
 const tempObjectStore = objectStoreModule(testTempObjectStore);
 
 describe('tempObjectStore', () => {
   describe('when passing in an object during initialization', () => {
     afterEach((done) => {
-      _.forOwn(testTempObjectStore, (value, key) => {
-        delete testTempObjectStore[key];
-      });
+      const keys = Object.keys(testTempObjectStore);
+      keys.forEach(key => delete testTempObjectStore[key]);
       return done();
     });
     it('can set values', (done) => {
