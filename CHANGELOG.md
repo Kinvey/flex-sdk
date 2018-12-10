@@ -1,5 +1,10 @@
 ## Changelog
 
+### 3.2.0
+* Validated support for node v6.x, node v8.x, and node v10.x
+* Updated dependencies
+* Adjusted Linitng and fixed linting issues
+
 ### 3.1.2
 * FLEX-286 Fixed setQuery to propagate on FSR prehook
 * Stringify query.query and query.sort if they are objects before returning
