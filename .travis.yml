@@ -1,32 +1,22 @@
-env:
-  global:
-    - NODEJS_VERSION='6.11.1'
+
+language: node_js
+
+node_js:
+  - "6"
+  - "8"
+  - "10"
 
 before_install:
   - npm i -g npm@^6.0.0
 
-matrix:
-  include:
-    - language: node_js
-      env: JOB='LINTING'
-      node_js: ${NODEJS_VERSION}
-      script: npm run lint
+env:
+  - BUILD_STAGE=lint
+  - BUILD_STAGE=test-unit
+  - BUILD_STAGE=test-integration
+  - BUILD_STAGE=test-npm-security
 
-    - language: node_js
-      node_js: ${NODEJS_VERSION}
-      env: JOB='UNIT'
-      script: npm run test-unit
-
-
-    - language: node_js
-      node_js: ${NODEJS_VERSION}
-      env: JOB='INTEGRATION'
-      script: npm run test-integration
-
-    - language: node_js
-      node_js: ${NODEJS_VERSION}
-      env: JOB='NPM SECURITY'
-      script: npm run test-npm-security
+script:
+  - npm run ${BUILD_STAGE}
 
 notifications:
   email:

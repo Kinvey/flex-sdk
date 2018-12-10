@@ -3,3 +3,4 @@
 --ui bdd
 --globals currentObject
 --require should
+--bail
