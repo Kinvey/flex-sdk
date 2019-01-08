@@ -1,6 +1,6 @@
 ## Changelog
 
-### 3.3.0
+### 3.2.1
 * When making requests to Kinvey, use original requests computed API version rather than relying on the header API Version.
 * Change default API version to 3 when making requests to Kinvey and no API version is present
 * Fix bug that prevented null values from being passed for the options object on flex initialization
