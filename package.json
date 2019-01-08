@@ -1,6 +1,6 @@
 {
   "name": "kinvey-flex-sdk",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "description": "SDK for creating Kinvey Flex Services",
   "engines": {
     "node": "= 6.x.x"
