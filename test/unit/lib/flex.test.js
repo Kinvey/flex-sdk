@@ -62,6 +62,16 @@ describe('service creation', () => {
     });
   });
 
+  it('should initialize the SDK with a null options', (done) => {
+    const spy = sinon.spy(mockTaskReceiver, 'start');
+    const host = 'localhost';
+    const port = '7777';
+    sdk.service(null, () => {
+      mockTaskReceiver.start.restore();
+      done();
+    });
+  });
+
   it('should set the type to tcp if the SDK_RECEIVER environment variable is set', (done) => {
     const spy = sinon.spy(mockTaskReceiver, 'start');
     process.env.SDK_RECEIVER = 'tcp';
