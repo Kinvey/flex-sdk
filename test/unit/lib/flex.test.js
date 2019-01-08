@@ -106,7 +106,9 @@ describe('service creation', () => {
           body: {},
           serviceObjectName: 'foo'
         },
-        response: {}
+        response: {
+          headers: {}
+        }
       };
 
       sdk.data.serviceObject('foo').onGetAll(() => {
@@ -142,7 +144,9 @@ describe('service creation', () => {
           headers: {},
           body: {}
         },
-        response: {}
+        response: {
+          headers: {}
+        }
       };
 
       sdk.functions.register('foo', () => done());
@@ -179,7 +183,9 @@ describe('service creation', () => {
             options: {}
           }
         },
-        response: {}
+        response: {
+          headers: {}
+        }
       };
 
       sdk.auth.register('foo', () => done());
@@ -220,7 +226,9 @@ describe('service creation', () => {
           headers: {},
           body: {}
         },
-        response: {}
+        response: {
+          headers: {}
+        }
       };
 
       mockTaskReceiver.taskReceived()(task, (err, result) => {
@@ -254,7 +262,9 @@ describe('service creation', () => {
           body: {},
           serviceObjectName: 'foo'
         },
-        response: {}
+        response: {
+          headers: {}
+        }
       };
 
       flex.data.serviceObject('foo').onGetAll((context, complete) => {
@@ -301,7 +311,9 @@ describe('service creation', () => {
           body: {},
           serviceObjectName: 'foo'
         },
-        response: {}
+        response: {
+          headers: {}
+        }
       };
 
       flex.data.serviceObject('foo').onGetAll((context, complete) => {
@@ -374,7 +386,9 @@ describe('service creation', () => {
           body: {},
           serviceObjectName: 'foo'
         },
-        response: {}
+        response: {
+          headers: {}
+        }
       };
 
       flex.data.serviceObject('foo').onGetAll((context, complete) => {
