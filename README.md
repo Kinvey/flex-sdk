@@ -2,7 +2,7 @@
 
 # Kinvey Flex SDK (beta)
 
-This is the SDK for code execution of Flex Microservices. The module provides a framework for building Kinvey-backed services using FlexData, FlexFunctions, and FlexAuth.
+This is the SDK for code execution of Flex Microservices. The module provides a framework for building Kinvey-backend services using FlexData, FlexFunctions, and FlexAuth.
 
 ## Upgrading from 2.x to 3.x
 
