@@ -1,5 +1,12 @@
 ## Changelog
 
+### 3.3.0
+* When making requests to Kinvey, use original requests computed API version rather than relying on the header API Version.
+* Change default API version to 3 when making requests to Kinvey and no API version is present
+* Fix bug that prevented null values from being passed for the options object on flex initialization
+* Fix spelling mistake in README (contributed by kumardinkar9)
+* Remove BETA tag from README
+
 ### 3.2.0
 * Validated support for node v6.x, node v8.x, and node v10.x
 * Updated dependencies
