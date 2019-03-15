@@ -12,8 +12,13 @@
  * the License.
  */
 
-const data = require('../../../lib/service/data');
 const should = require('should');
+const sinon = require('sinon');
+const proxyquire = require('proxyquire');
+const loggerMock = require('./mocks/loggerMock');
+
+const completionHandler = proxyquire('../../../lib/service/kinveyCompletionHandler', { './logger': loggerMock });
+const data = proxyquire('../../../lib/service/data', { './kinveyCompletionHandler': completionHandler });
 
 const serviceObjectName = 'myServiceObject';
 
@@ -38,6 +43,7 @@ function sampleTask() {
 
 describe('FlexData', () => {
   afterEach((done) => {
+    loggerMock.error.resetHistory();
     data.clearAll();
     return done();
   });
@@ -485,6 +491,9 @@ describe('FlexData', () => {
     });
   });
   describe('completion handlers', () => {
+    afterEach(() => {
+      loggerMock.error.resetHistory();
+    });
     it('should return a successful response', (done) => {
       const task = sampleTask();
       data.serviceObject(serviceObjectName).onInsert((context, complete) => complete().ok().next());
@@ -649,6 +658,37 @@ describe('FlexData', () => {
         });
         result.response.continue.should.eql(false);
         return done();
+      });
+    });
+    ['next', 'done'].forEach((method1) => {
+      ['next', 'done'].forEach((method2) => {
+        it(`should log a message when attempting to respond more than once, by calling ${method1}() and then ${method2}()`, (done) => {
+          const task = sampleTask();
+          data.serviceObject(serviceObjectName).onInsert((context, complete) => {
+            complete({ foo: 'bar' }).ok()[method1]();
+            setTimeout(() => {
+              complete({ foo: 'not bar' }).ok()[method2]();
+            }, 0);
+          });
+
+          const processCallbackSpy = sinon.spy((err, result) => {
+            should.not.exist(err);
+            result.response.statusCode.should.eql(200);
+            result.response.body.should.eql({
+              foo: 'bar'
+            });
+            result.response.continue.should.eql(method1 === 'next');
+          });
+
+          loggerMock.error = sinon.spy((message) => {
+            const { method, serviceObjectName } = task.request;
+            message.should.eql(`Invoked done() or next() more than once to the same Flex Data handler ${method} for ${serviceObjectName}`);
+            processCallbackSpy.calledOnce.should.eql(true);
+            done();
+          });
+
+          data.process(task, {}, processCallbackSpy);
+        });
       });
     });
   });
