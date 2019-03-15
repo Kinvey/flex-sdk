@@ -444,7 +444,9 @@ describe('service creation', () => {
           headers: {},
           body: {}
         },
-        response: {}
+        response: {
+          headers: {}
+        }
       };
 
       sdk.functions.register('foo', (context, complete) => {
@@ -488,7 +490,9 @@ describe('service creation', () => {
           headers: {},
           body: {}
         },
-        response: {}
+        response: {
+          headers: {}
+        }
       };
 
       sdk.functions.register('foo', (context, complete) => {
