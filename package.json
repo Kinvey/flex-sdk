@@ -31,7 +31,7 @@
     "nock": "10.0.3",
     "proxyquire": "2.1.0",
     "should": "13.2.3",
-    "sinon": "7.1.1",
+    "sinon": "7.2.7",
     "test-console": "1.1.0",
     "uuid": "3.3.2"
   },
