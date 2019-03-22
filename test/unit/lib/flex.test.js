@@ -23,11 +23,20 @@ const mockTaskReceiver = require('./mocks/mockTaskReceiver.js');
 
 describe('service creation', () => {
   let sdk = null;
-  before((done) => {
-    sdk = proxyquire('../../../lib/flex', { 'kinvey-code-task-runner': mockTaskReceiver });
-    return done();
+
+  before(() => {
+    this.loggerMock = { error: sinon.spy() };
+    sdk = proxyquire('../../../lib/flex', {
+      'kinvey-code-task-runner': mockTaskReceiver,
+      './service/logger': this.loggerMock
+    });
   });
-  it('can create a new service', done =>
+
+  beforeEach(() => {
+    this.loggerMock.error = sinon.spy();
+  });
+
+  it('can create a new service', (done) => {
     sdk.service((err, flex) => {
       should.not.exist(err);
       should.exist(flex.data);
@@ -37,8 +46,9 @@ describe('service creation', () => {
       should.exist(flex.version);
       should.exist(flex.auth);
       flex.version.should.eql(flexPackageJson.version);
-      return done();
-    }));
+      done();
+    });
+  });
 
   it('should set the type to http by default', (done) => {
     const spy = sinon.spy(mockTaskReceiver, 'start');
@@ -405,6 +415,98 @@ describe('service creation', () => {
         should.not.exist(result.response.body.debug);
         done();
       });
+    });
+  });
+
+  it('should log a timeout error, if receiver returns a client disconnect error', (done) => {
+    process.env.SDK_RECEIVER = 'tcp';
+    sdk.service((err, sdk) => {
+      const task = {
+        taskId: `some id ${Math.random()}`,
+        appMetadata: {
+          _id: '12345',
+          appsecret: 'appsecret',
+          mastersecret: 'mastersecret',
+          pushService: undefined,
+          restrictions: {
+            level: 'starter'
+          },
+          API_version: 3,
+          name: 'DevApp',
+          platform: null
+        },
+        taskType: 'functions',
+        taskName: 'foo',
+        hookType: 'customEndpoint',
+        method: 'GET',
+        request: {
+          method: 'GET',
+          headers: {},
+          body: {}
+        },
+        response: {
+          headers: {}
+        }
+      };
+
+      sdk.functions.register('foo', (context, complete) => {
+        complete().ok().done();
+      });
+
+      mockTaskReceiver.taskReceived()(task, (err, result) => {
+        return 'Connection ended by client.';
+      });
+
+      this.loggerMock.error.calledOnce.should.eql(true);
+      this.loggerMock.error.firstCall.args.length.should.eql(1);
+      this.loggerMock.error.firstCall.args[0].should.eql(`Unable to send response for taskId ${task.taskId}: Flex Service request timed out.`);
+      done();
+    });
+  });
+
+  it('should log an unknown network error, if receiver returns an error which isn\'t a client disconnect', (done) => {
+    process.env.SDK_RECEIVER = 'tcp';
+    sdk.service((err, sdk) => {
+      const task = {
+        taskId: `some id ${Math.random()}`,
+        appMetadata: {
+          _id: '12345',
+          appsecret: 'appsecret',
+          mastersecret: 'mastersecret',
+          pushService: undefined,
+          restrictions: {
+            level: 'starter'
+          },
+          API_version: 3,
+          name: 'DevApp',
+          platform: null
+        },
+        taskType: 'functions',
+        taskName: 'foo',
+        hookType: 'customEndpoint',
+        method: 'GET',
+        request: {
+          method: 'GET',
+          headers: {},
+          body: {}
+        },
+        response: {
+          headers: {}
+        }
+      };
+
+      sdk.functions.register('foo', (context, complete) => {
+        complete().ok().done();
+      });
+
+      mockTaskReceiver.taskReceived()(task, (err, result) => {
+        return `Any other message ${Math.random()}`;
+      });
+
+      this.loggerMock.error.calledOnce.should.eql(true);
+      this.loggerMock.error.firstCall.args.length.should.eql(1);
+      this.loggerMock.error.firstCall.args[0].should.eql(`Unable to send response for taskId ${task.taskId}: Unexpected network issue.`);
+      done();
     });
   });
 });
