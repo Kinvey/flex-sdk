@@ -53,6 +53,11 @@ describe('FlexData', () => {
       const fn = data.serviceObject(serviceObjectName).resolve('onInsert');
       return fn();
     });
+    it('can register insertMany ', (done) => {
+      data.serviceObject(serviceObjectName).onInsertMany(() => done());
+      const fn = data.serviceObject(serviceObjectName).resolve('onInsertMany');
+      return fn();
+    });
     it('can register a deleteAll', (done) => {
       data.serviceObject(serviceObjectName).onDeleteAll(() => done());
       const fn = data.serviceObject(serviceObjectName).resolve('onDeleteAll');
@@ -195,6 +200,19 @@ describe('FlexData', () => {
         done();
       });
     });
+    it('can explicitly set an array body', (done) => {
+      const task = sampleTask();
+      task.request.body = [];
+      data.serviceObject(serviceObjectName).onInsertMany((context, complete) => complete()
+        .setBody([{ foo: 'bar' }])
+        .ok()
+        .done());
+      return data.process(task, {}, (err, result) => {
+        should.not.exist(err);
+        result.response.body.should.eql([{ foo: 'bar' }]);
+        done();
+      });
+    });
     it('can process an insert', (done) => {
       const task = sampleTask();
       data.serviceObject(serviceObjectName).onInsert((context) => {
@@ -206,6 +224,26 @@ describe('FlexData', () => {
     it('can process an insert and include request, complete, and modules', (done) => {
       const task = sampleTask();
       data.serviceObject(serviceObjectName).onInsert((context, complete, modules) => {
+        context.should.be.an.Object();
+        complete.should.be.a.Function();
+        modules.should.be.an.Object();
+        return done();
+      });
+      return data.process(task, {}, () => {});
+    });
+    it('can process insertMany', (done) => {
+      const task = sampleTask();
+      task.request.body = [];
+      data.serviceObject(serviceObjectName).onInsertMany((context) => {
+        context.entityId = task.request.entityId;
+        return done();
+      });
+      return data.process(task, {}, () => {});
+    });
+    it('can process insertMany and include request, complete, and modules', (done) => {
+      const task = sampleTask();
+      task.request.body = [];
+      data.serviceObject(serviceObjectName).onInsertMany((context, complete, modules) => {
         context.should.be.an.Object();
         complete.should.be.a.Function();
         modules.should.be.an.Object();
