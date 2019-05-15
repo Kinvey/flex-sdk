@@ -231,11 +231,20 @@ describe('FlexData', () => {
       });
       return data.process(task, {}, () => {});
     });
-    it('can process insertMany', (done) => {
+    it('can process insertMany with an empty array body', (done) => {
       const task = sampleTask();
       task.request.body = [];
       data.serviceObject(serviceObjectName).onInsertMany((context) => {
-        context.entityId = task.request.entityId;
+        context.body.should.eql([]);
+        return done();
+      });
+      return data.process(task, {}, () => {});
+    });
+    it('can process insertMany with an array body', (done) => {
+      const task = sampleTask();
+      task.request.body = [{ foo: 'bar' }, { foo2: 'bar2' }];
+      data.serviceObject(serviceObjectName).onInsertMany((context) => {
+        context.body.should.eql(task.request.body);
         return done();
       });
       return data.process(task, {}, () => {});
