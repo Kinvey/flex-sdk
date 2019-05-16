@@ -1,5 +1,9 @@
 ## Changelog
 
+### 3.3.0
+* Added new onInsertMulti data event for handling insertion of Arrays
+* Added support for arrays in dataStore.save() 
+
 ### 3.2.1
 * When making requests to Kinvey, use original requests computed API version rather than relying on the header API Version.
 * Change default API version to 3 when making requests to Kinvey and no API version is present
