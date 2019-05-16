@@ -682,6 +682,35 @@ describe('dataStore', () => {
       });
     });
 
+    it('should save multiple entities', (done) => {
+      const entities = [{
+        someData: 'abc'
+      }, {
+        someData: 'xyz'
+      }];
+
+      const expectedResponse = {
+        entities,
+        errors: []
+      };
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .post(`/appdata/${environmentId}/myCollection/`, entities)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(207, expectedResponse);
+
+      const collection = this.store().collection('myCollection');
+      collection.save(entities, (err, result) => {
+        should.not.exist(err);
+        result.should.deepEqual(expectedResponse);
+        return done();
+      });
+    });
+
     it('should resolve if a callback isn\'t passed', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
