@@ -94,6 +94,7 @@ describe('endpointRunner', () => {
       myRunner._useBl.should.be.true();
       myRunner._appMetadata.should.containDeep(this.appMetadata);
       myRunner._requestContext.should.containDeep(this.requestContext);
+      myRunner._apiVersion.should.eql(myRunner._requestContext.apiVersion);
     });
 
     it('should create a datastore object that uses userContext', () => {
@@ -114,6 +115,20 @@ describe('endpointRunner', () => {
       myRunner._useBl.should.be.true();
       myRunner._appMetadata.should.containDeep(this.appMetadata);
       myRunner._requestContext.should.containDeep(this.requestContext);
+    });
+
+    it('should be able to override the API version', () => {
+      const API_VERSION = 5;
+
+      const myRunner = this.runner({ apiVersion: API_VERSION });
+      should.exist(myRunner.endpoint);
+      myRunner.endpoint.should.be.a.Function();
+      myRunner.endpoint.name.should.eql('endpoint');
+      myRunner._useBl.should.be.true();
+      myRunner._appMetadata.should.containDeep(this.appMetadata);
+      myRunner._requestContext.should.containDeep(this.requestContext);
+      myRunner._apiVersion.should.not.eql(myRunner._requestContext.apiVersion);
+      myRunner._apiVersion.should.eql(API_VERSION);
     });
 
     it('should be able to create two endpointRunner objects with different settings', () => {
@@ -321,6 +336,27 @@ describe('endpointRunner', () => {
         .reply(200, this.payload);
 
       const endpoint = this.runner({ useUserContext: true }).endpoint('myEndpoint');
+      endpoint.execute({}, (err, result) => {
+        should.not.exist(err);
+        result.should.containDeep(this.payload);
+        return done();
+      });
+    });
+
+    it('should execute with overriden API Version', (done) => {
+      const API_VERSION = 5;
+
+      nock(BAAS_URL)
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', `${API_VERSION}`)
+        .post(`/rpc/${ENVIRONMENT_ID}/custom/myEndpoint`)
+        .basicAuth({
+          user: ENVIRONMENT_ID,
+          pass: MASTER_SECRET
+        })
+        .reply(200, this.payload);
+
+      const endpoint = this.runner({ apiVersion: API_VERSION }).endpoint('myEndpoint');
       endpoint.execute({}, (err, result) => {
         should.not.exist(err);
         result.should.containDeep(this.payload);

@@ -94,6 +94,7 @@ describe('dataStore', () => {
       myStore._useBl.should.be.false();
       myStore._appMetadata.should.containDeep(this.appMetadata);
       myStore._requestContext.should.containDeep(this.requestContext);
+      myStore._apiVersion.should.eql(this.requestContext.apiVersion);
     });
 
     it('should create a datastore object that uses userContext', () => {
@@ -114,6 +115,19 @@ describe('dataStore', () => {
       myStore._useBl.should.be.true();
       myStore._appMetadata.should.containDeep(this.appMetadata);
       myStore._requestContext.should.containDeep(this.requestContext);
+    });
+
+    it('should create a datastore object that overrides the apiVersion', () => {
+      const API_VERSION = 5;
+
+      const myStore = this.store({ apiVersion: API_VERSION });
+      should.exist(myStore.collection);
+      myStore.collection.should.be.a.Function();
+      myStore.collection.name.should.eql('collection');
+      myStore._appMetadata.should.containDeep(this.appMetadata);
+      myStore._requestContext.should.containDeep(this.requestContext);
+      myStore._apiVersion.should.not.eql(this.requestContext.apiVersion);
+      myStore._apiVersion.should.eql(API_VERSION);
     });
 
     it('should be able to create two datastore objects with different settings', () => {
@@ -294,6 +308,27 @@ describe('dataStore', () => {
         .reply(200, [{ _id: 123, someData: 'abc' }, { _id: 456, someData: 'xyz' }]);
 
       const collection = this.store({ useBl: true }).collection('myCollection');
+      collection.find((err, result) => {
+        should.not.exist(err);
+        result.should.containDeep([{ _id: 123, someData: 'abc' }, { _id: 456, someData: 'xyz' }]);
+        return done();
+      });
+    });
+
+    it('should find all records with overriden API version', (done) => {
+      const API_VERSION = 5;
+
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', `${API_VERSION}`)
+        .get(`/appdata/${environmentId}/myCollection/`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, [{ _id: 123, someData: 'abc' }, { _id: 456, someData: 'xyz' }]);
+
+      const collection = this.store({ apiVersion: API_VERSION }).collection('myCollection');
       collection.find((err, result) => {
         should.not.exist(err);
         result.should.containDeep([{ _id: 123, someData: 'abc' }, { _id: 456, someData: 'xyz' }]);
@@ -513,6 +548,27 @@ describe('dataStore', () => {
         .reply(200, { _id: 1234, someData: 'abc' });
 
       const collection = this.store({ useBl: true }).collection('myCollection');
+      collection.findById('1234', (err, result) => {
+        should.not.exist(err);
+        result.should.containDeep({ _id: 1234, someData: 'abc' });
+        return done();
+      });
+    });
+
+    it('should find a single entity with overriden API version', (done) => {
+      const API_VERSION = 5;
+
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', `${API_VERSION}`)
+        .get(`/appdata/${environmentId}/myCollection/1234`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { _id: 1234, someData: 'abc' });
+
+      const collection = this.store({ apiVersion: API_VERSION }).collection('myCollection');
       collection.findById('1234', (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
@@ -773,6 +829,29 @@ describe('dataStore', () => {
       });
     });
 
+    it('should save a new entity with overriden API version', (done) => {
+      const API_VERSION = 5;
+
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', `${API_VERSION}`)
+        .post(`/appdata/${environmentId}/myCollection/`, {
+          someData: 'abc'
+        })
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { _id: 1234, someData: 'abc' });
+
+      const collection = this.store({ apiVersion: API_VERSION }).collection('myCollection');
+      collection.save({ someData: 'abc' }, (err, result) => {
+        should.not.exist(err);
+        result.should.containDeep({ _id: 1234, someData: 'abc' });
+        return done();
+      });
+    });
+
     it('should prevent recursive requests to the same object that use bl', (done) => {
       const collection = this.store({ useBl: true }).collection(this.taskMetadata.objectName);
       collection.save({ someData: 'abc' }, (err, result) => {
@@ -952,6 +1031,30 @@ describe('dataStore', () => {
       });
     });
 
+    it('should save an existing entity with overriden API version', (done) => {
+      const API_VERSION = 5;
+
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', `${API_VERSION}`)
+        .put(`/appdata/${environmentId}/myCollection/1234`, {
+          _id: 1234,
+          someData: 'abc'
+        })
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { _id: 1234, someData: 'abc' });
+
+      const collection = this.store({ apiVersion: API_VERSION }).collection('myCollection');
+      collection.save({ _id: 1234, someData: 'abc' }, (err, result) => {
+        should.not.exist(err);
+        result.should.containDeep({ _id: 1234, someData: 'abc' });
+        return done();
+      });
+    });
+
     it('should prevent recursive requests to the same object that use bl', (done) => {
       const collection = this.store({ useBl: true }).collection(this.taskMetadata.objectName);
       collection.save({ _id: 1234, someData: 'abc' }, (err, result) => {
@@ -1107,6 +1210,27 @@ describe('dataStore', () => {
         .reply(200, { count: 30 });
 
       const collection = this.store({ useBl: true }).collection('myCollection');
+      collection.remove((err, result) => {
+        should.not.exist(err);
+        result.should.containDeep({ count: 30 });
+        return done();
+      });
+    });
+
+    it('should remove all records with overriden API version', (done) => {
+      const API_VERSION = 5;
+
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', `${API_VERSION}`)
+        .delete(`/appdata/${environmentId}/myCollection/`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { count: 30 });
+
+      const collection = this.store({ apiVersion: API_VERSION }).collection('myCollection');
       collection.remove((err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 30 });
@@ -1333,6 +1457,27 @@ describe('dataStore', () => {
       });
     });
 
+    it('should remove a single entity with overriden API version', (done) => {
+      const API_VERSION = 5;
+
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', `${API_VERSION}`)
+        .delete(`/appdata/${environmentId}/myCollection/1234`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { count: 1 });
+
+      const collection = this.store({ apiVersion: API_VERSION }).collection('myCollection');
+      collection.removeById('1234', (err, result) => {
+        should.not.exist(err);
+        result.should.containDeep({ count: 1 });
+        return done();
+      });
+    });
+
     it('should prevent recursive requests to the same object that use bl', (done) => {
       const collection = this.store({ useBl: true }).collection(this.taskMetadata.objectName);
       collection.removeById(1234, (err, result) => {
@@ -1541,6 +1686,27 @@ describe('dataStore', () => {
         .reply(200, { count: 30 });
 
       const collection = this.store({ useBl: true }).collection('myCollection');
+      collection.count((err, result) => {
+        should.not.exist(err);
+        result.should.containDeep({ count: 30 });
+        return done();
+      });
+    });
+
+    it('should get a count of all records with overriden API version', (done) => {
+      const API_VERSION = 5;
+
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', `${API_VERSION}`)
+        .get(`/appdata/${environmentId}/myCollection/_count/`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { count: 30 });
+
+      const collection = this.store({ apiVersion: API_VERSION }).collection('myCollection');
       collection.count((err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 30 });

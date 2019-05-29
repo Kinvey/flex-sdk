@@ -116,6 +116,7 @@ describe('roleStore', () => {
       myStore._useBl.should.be.false();
       myStore._appMetadata.should.containDeep(this.appMetadata);
       myStore._requestContext.should.containDeep(this.requestContext);
+      myStore._apiVersion.should.eql(myStore._requestContext.apiVersion);
     });
 
     it('should create a RoleStore object that uses userContext', () => {
@@ -130,6 +131,16 @@ describe('roleStore', () => {
       myStore._useBl.should.be.true();
       myStore._appMetadata.should.containDeep(this.appMetadata);
       myStore._requestContext.should.containDeep(this.requestContext);
+    });
+
+    it('should create a RoleStore object that overrides the API version', () => {
+      const API_VERSION = 5;
+
+      const myStore = this.store({ apiVersion: API_VERSION });
+      myStore._appMetadata.should.containDeep(this.appMetadata);
+      myStore._requestContext.should.containDeep(this.requestContext);
+      myStore._apiVersion.should.not.eql(myStore._requestContext.apiVersion);
+      myStore._apiVersion.should.eql(API_VERSION);
     });
 
     it('should be able to create two RoleStore objects with different settings', () => {
@@ -251,9 +262,33 @@ describe('roleStore', () => {
         .matchHeader('content-type', 'application/json')
         .matchHeader('x-kinvey-api-version', '3')
         .get(`/roles/${environmentId}/1234`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
         .reply(200, { _id: 1234, someData: 'abc' });
 
       this.store({ useBl: true }).findById('1234', (err, result) => {
+        should.not.exist(err);
+        result.should.containDeep({ _id: 1234, someData: 'abc' });
+        return done();
+      });
+    });
+
+    it('should find a single role and override the API Version', (done) => {
+      const API_VERSION = 5;
+
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', `${API_VERSION}`)
+        .get(`/roles/${environmentId}/1234`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { _id: 1234, someData: 'abc' });
+
+      this.store({ apiVersion: API_VERSION }).findById('1234', (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
         return done();
@@ -479,6 +514,28 @@ describe('roleStore', () => {
       });
     });
 
+    it('should create a new entity and override the API Version', (done) => {
+      const API_VERSION = 5;
+
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', `${API_VERSION}`)
+        .post(`/roles/${environmentId}/`, {
+          username: 'abc'
+        })
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { _id: 1234, username: 'abc' });
+
+      this.store({ apiVersion: API_VERSION }).create({ username: 'abc' }, (err, result) => {
+        should.not.exist(err);
+        result.should.containDeep({ _id: 1234, username: 'abc' });
+        return done();
+      });
+    });
+
     it('should prevent recursive requests to the same object that use bl', (done) => {
       this.storeUserRequest({ useBl: true }).create({ username: 'abc' }, (err, result) => {
         should.not.exist(result);
@@ -680,6 +737,29 @@ describe('roleStore', () => {
         .reply(200, { _id: 1234, username: 'abc' });
 
       this.store({ useBl: true }).update({ _id: 1234, username: 'abc' }, (err, result) => {
+        should.not.exist(err);
+        result.should.containDeep({ _id: 1234, username: 'abc' });
+        return done();
+      });
+    });
+
+    it('should update an existing role and override the API Version', (done) => {
+      const API_VERSION = 5;
+
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', `${API_VERSION}`)
+        .put(`/roles/${environmentId}/1234`, {
+          _id: 1234,
+          username: 'abc'
+        })
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { _id: 1234, username: 'abc' });
+
+      this.store({ apiVersion: API_VERSION }).update({ _id: 1234, username: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
         return done();
@@ -900,6 +980,26 @@ describe('roleStore', () => {
       });
     });
 
+    it('should remove a single role and override the API Version', (done) => {
+      const API_VERSION = 5;
+
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', `${API_VERSION}`)
+        .delete(`/roles/${environmentId}/1234`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200);
+
+      this.store({ apiVersion: API_VERSION }).remove('1234', (err, result) => {
+        should.not.exist(err);
+        should.not.exist(result);
+        return done();
+      });
+    });
+
     it('should prevent recursive requests to the same object that use bl', (done) => {
       this.storeUserRequest({ useBl: true }).remove('1234', (err, result) => {
         should.not.exist(result);
@@ -1097,9 +1197,33 @@ describe('roleStore', () => {
         .matchHeader('content-type', 'application/json')
         .matchHeader('x-kinvey-api-version', '3')
         .get(`/roles/${environmentId}/1234/membership`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
         .reply(200, { _id: 1234, someData: 'abc' });
 
       this.store({ useBl: true }).listMembers('1234', (err, result) => {
+        should.not.exist(err);
+        result.should.containDeep({ _id: 1234, someData: 'abc' });
+        return done();
+      });
+    });
+
+    it('should list role members and override the API Version', (done) => {
+      const API_VERSION = 5;
+
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', `${API_VERSION}`)
+        .get(`/roles/${environmentId}/1234/membership`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { _id: 1234, someData: 'abc' });
+
+      this.store({ apiVersion: API_VERSION }).listMembers('1234', (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
         return done();
