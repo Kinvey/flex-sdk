@@ -113,6 +113,7 @@ describe('groupStore', () => {
       myStore._useBl.should.be.false();
       myStore._appMetadata.should.containDeep(this.appMetadata);
       myStore._requestContext.should.containDeep(this.requestContext);
+      myStore._apiVersion.should.eql(myStore._requestContext.apiVersion);
     });
 
     it('should create a GroupStore object that uses userContext', () => {
@@ -127,6 +128,16 @@ describe('groupStore', () => {
       myStore._useBl.should.be.true();
       myStore._appMetadata.should.containDeep(this.appMetadata);
       myStore._requestContext.should.containDeep(this.requestContext);
+    });
+
+    it('should create a GroupStore object that overrides the API Version', () => {
+      const API_VERSION = 5;
+
+      const myStore = this.store({ apiVersion: API_VERSION });
+      myStore._appMetadata.should.containDeep(this.appMetadata);
+      myStore._requestContext.should.containDeep(this.requestContext);
+      myStore._apiVersion.should.not.eql(myStore._requestContext.apiVersion);
+      myStore._apiVersion.should.eql(API_VERSION);
     });
 
     it('should be able to create two GroupStore objects with different settings', () => {
@@ -251,6 +262,22 @@ describe('groupStore', () => {
         .reply(200, { _id: 1234, someData: 'abc' });
 
       this.store({ useBl: true }).findById('1234', (err, result) => {
+        should.not.exist(err);
+        result.should.containDeep({ _id: 1234, someData: 'abc' });
+        return done();
+      });
+    });
+
+    it('should find a single group and override the API Version', (done) => {
+      const API_VERSION = 5;
+
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', `${API_VERSION}`)
+        .get(`/group/${environmentId}/1234`)
+        .reply(200, { _id: 1234, someData: 'abc' });
+
+      this.store({ apiVersion: API_VERSION }).findById('1234', (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
         return done();
@@ -480,6 +507,28 @@ describe('groupStore', () => {
       });
     });
 
+    it('should create a new  group and override the API Version', (done) => {
+      const API_VERSION = 5;
+
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', `${API_VERSION}`)
+        .post(`/group/${environmentId}/`, {
+          username: 'abc'
+        })
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { _id: 1234, username: 'abc' });
+
+      this.store({ apiVersion: 5 }).create({ username: 'abc' }, (err, result) => {
+        should.not.exist(err);
+        result.should.containDeep({ _id: 1234, username: 'abc' });
+        return done();
+      });
+    });
+
     it('should prevent recursive requests to the same object that use bl', (done) => {
       this.storeUserRequest({ useBl: true }).create({ username: 'abc' }, (err, result) => {
         should.not.exist(result);
@@ -681,6 +730,29 @@ describe('groupStore', () => {
         .reply(200, { _id: 1234, username: 'abc' });
 
       this.store({ useBl: true }).update({ _id: 1234, username: 'abc' }, (err, result) => {
+        should.not.exist(err);
+        result.should.containDeep({ _id: 1234, username: 'abc' });
+        return done();
+      });
+    });
+
+    it('should update an existing group and override the API Version', (done) => {
+      const API_VERSION = 5;
+
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', `${API_VERSION}`)
+        .put(`/group/${environmentId}/1234`, {
+          _id: 1234,
+          username: 'abc'
+        })
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200, { _id: 1234, username: 'abc' });
+
+      this.store({ apiVersion: 5 }).update({ _id: 1234, username: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
         return done();
@@ -895,6 +967,26 @@ describe('groupStore', () => {
         .reply(200);
 
       this.store({ useBl: true }).remove('1234', (err, result) => {
+        should.not.exist(err);
+        should.not.exist(result);
+        return done();
+      });
+    });
+
+    it('should remove an existing group and override the API Version', (done) => {
+      const API_VERSION = 5;
+
+      nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', `${API_VERSION}`)
+        .delete(`/group/${environmentId}/1234`)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(200);
+
+      this.store({ apiVersion: 5 }).remove('1234', (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
         return done();
