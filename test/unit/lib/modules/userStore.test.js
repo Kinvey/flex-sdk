@@ -292,7 +292,7 @@ describe('userStore', () => {
         })
         .reply(200, [{ _id: 123, username: 'abc' }, { _id: 456, username: 'xyz' }]);
 
-      this.store({ apiVersion: 5 }).find((err, result) => {
+      this.store({ apiVersion: API_VERSION }).find((err, result) => {
         should.not.exist(err);
         result.should.containDeep([{ _id: 123, username: 'abc' }, { _id: 456, username: 'xyz' }]);
         return done();
@@ -524,7 +524,7 @@ describe('userStore', () => {
         })
         .reply(200, { _id: 1234, someData: 'abc' });
 
-      this.store({ apiVersion: 5 }).findById('1234', (err, result) => {
+      this.store({ apiVersion: API_VERSION }).findById('1234', (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
         return done();
@@ -724,7 +724,7 @@ describe('userStore', () => {
         })
         .reply(200, { _id: 1234, someData: 'abc' });
 
-      this.store({ apiVersion: 5 }).getCurrentUser((err, result) => {
+      this.store({ apiVersion: API_VERSION }).getCurrentUser((err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
         return done();
@@ -929,7 +929,7 @@ describe('userStore', () => {
         })
         .reply(200, { _id: 1234, username: 'abc' });
 
-      this.store({ apiVersion: 5 }).create({ username: 'abc' }, (err, result) => {
+      this.store({ apiVersion: API_VERSION }).create({ username: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
         return done();
@@ -1159,7 +1159,7 @@ describe('userStore', () => {
         })
         .reply(200, { _id: 1234, username: 'abc' });
 
-      this.store({ apiVersion: 5 }).update({ _id: 1234, username: 'abc' }, (err, result) => {
+      this.store({ apiVersion: API_VERSION }).update({ _id: 1234, username: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
         return done();
@@ -1415,7 +1415,7 @@ describe('userStore', () => {
         })
         .reply(200);
 
-      this.store({ apiVersion: 5 }).remove('1234', (err, result) => {
+      this.store({ apiVersion: API_VERSION }).remove('1234', (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
         return done();
@@ -1646,7 +1646,7 @@ describe('userStore', () => {
         })
         .reply(200, { count: 30 });
 
-      this.store({ apiVersion: 5 }).count((err, result) => {
+      this.store({ apiVersion: API_VERSION }).count((err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 30 });
         return done();
@@ -1904,7 +1904,7 @@ describe('userStore', () => {
         })
         .reply(200);
 
-      this.store({ apiVersion: 5 }).suspend('1234', (err, result) => {
+      this.store({ apiVersion: API_VERSION }).suspend('1234', (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
         return done();
@@ -2137,7 +2137,7 @@ describe('userStore', () => {
         })
         .reply(200);
 
-      this.store({ apiVersion: 5 }).restore('1234', (err, result) => {
+      this.store({ apiVersion: API_VERSION }).restore('1234', (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
         return done();
@@ -2367,7 +2367,7 @@ describe('userStore', () => {
         })
         .reply(200, { _id: 1234, username: 'abc' });
 
-      this.store({ apiVersion: 5 }).assignRole(1234, 5678, (err, result) => {
+      this.store({ apiVersion: API_VERSION }).assignRole(1234, 5678, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
         return done();
@@ -2657,7 +2657,7 @@ describe('userStore', () => {
         })
         .reply(200);
 
-      this.store({ apiVersion: 5 }).revokeRole(1234, 5678, (err, result) => {
+      this.store({ apiVersion: API_VERSION }).revokeRole(1234, 5678, (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
         return done();
@@ -2943,7 +2943,7 @@ describe('userStore', () => {
         })
         .reply(200, { _id: 1234, someData: 'abc' });
 
-      this.store({ apiVersion: 5 }).listRoles('1234', (err, result) => {
+      this.store({ apiVersion: API_VERSION }).listRoles('1234', (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
         return done();

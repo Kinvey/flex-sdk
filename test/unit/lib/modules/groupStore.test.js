@@ -507,7 +507,7 @@ describe('groupStore', () => {
       });
     });
 
-    it('should create a new  group and override the API Version', (done) => {
+    it('should create a new group and override the API Version', (done) => {
       const API_VERSION = 5;
 
       nock('https://baas.kinvey.com')
@@ -522,7 +522,7 @@ describe('groupStore', () => {
         })
         .reply(200, { _id: 1234, username: 'abc' });
 
-      this.store({ apiVersion: 5 }).create({ username: 'abc' }, (err, result) => {
+      this.store({ apiVersion: API_VERSION }).create({ username: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
         return done();
@@ -752,7 +752,7 @@ describe('groupStore', () => {
         })
         .reply(200, { _id: 1234, username: 'abc' });
 
-      this.store({ apiVersion: 5 }).update({ _id: 1234, username: 'abc' }, (err, result) => {
+      this.store({ apiVersion: API_VERSION }).update({ _id: 1234, username: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
         return done();
@@ -986,7 +986,7 @@ describe('groupStore', () => {
         })
         .reply(200);
 
-      this.store({ apiVersion: 5 }).remove('1234', (err, result) => {
+      this.store({ apiVersion: API_VERSION }).remove('1234', (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
         return done();
