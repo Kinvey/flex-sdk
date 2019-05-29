@@ -2,7 +2,8 @@
 
 ### 3.3.0
 * Added new onInsertMulti data event for handling insertion of Arrays
-* Added support for arrays in dataStore.save() 
+* Added support for arrays in dataStore.save()
+* Add option to override API version in dataStore requests 
 
 ### 3.2.1
 * When making requests to Kinvey, use original requests computed API version rather than relying on the header API Version.
