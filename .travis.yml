@@ -14,6 +14,7 @@ env:
   - BUILD_STAGE=test-unit
   - BUILD_STAGE=test-integration
   - BUILD_STAGE=test-npm-security
+  - BUILD_STAGE=test-code-clone  
 
 script:
   - npm run ${BUILD_STAGE}
