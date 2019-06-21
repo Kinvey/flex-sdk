@@ -25,8 +25,9 @@
   },
   "devDependencies": {
     "eslint": "5.9.0",
-    "eslint-config-kinvey-platform": "kinvey/eslint-kinvey-platform#0.1.3",
+    "eslint-config-kinvey-platform": "0.1.6",
     "eslint-plugin-import": "2.14.0",
+    "jscpd": "2.0.15",
     "mocha": "5.2.0",
     "nock": "10.0.3",
     "proxyquire": "2.1.0",
@@ -39,6 +40,7 @@
     "pretest": "npm run lint",
     "lint": "./node_modules/.bin/eslint lib test *.js --color",
     "test": "npm run test-unit && npm run test-integration",
+    "test-code-clone": "jscpd lib -f javascript -r time,consoleFull,console",
     "test-unit": "mocha test/unit/*/*",
     "test-integration": "echo \"No integration tests available for the moment\"",
     "test-core": "mocha test/lib/*",
