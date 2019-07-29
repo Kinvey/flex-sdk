@@ -1115,6 +1115,196 @@ describe('dataStore', () => {
     });
   });
 
+  describe('batch save', () => {
+    const entities = [];
+    before('entities', () => {
+      // create 250 entities
+      for (let i = 0; i < 250; i += 1) {
+        entities.push({ index: i, name: uuid.v4() });
+      }
+    });
+
+    beforeEach(() => {
+      this.store = dataStore(this.appMetadata, this.requestContext, this.taskMetadata);
+    });
+
+    afterEach(() => {
+      nock.cleanAll();
+    });
+
+    it('should save entities in batches of 100', (done) => {
+      const firstBatch = entities.slice(0, 100);
+      const secondBatch = entities.slice(100, 200);
+      const thirdBatch = entities.slice(200, 250);
+
+      const firstBatchResponse = {
+        entities: firstBatch,
+        errors: []
+      };
+      const secondBatchResponse = {
+        entities: secondBatch,
+        errors: []
+      };
+      const thirdBatchResponse = {
+        entities: thirdBatch,
+        errors: []
+      };
+
+      const expectedFinalResponse = {
+        entities,
+        errors: []
+      };
+
+      const scope = nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .post(`/appdata/${environmentId}/myCollection/`, firstBatch)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(207, firstBatchResponse)
+        .post(`/appdata/${environmentId}/myCollection/`, secondBatch)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(207, secondBatchResponse)
+        .post(`/appdata/${environmentId}/myCollection/`, thirdBatch)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(207, thirdBatchResponse);
+
+      const collection = this.store().collection('myCollection');
+      collection.save(entities, (err, result) => {
+        should.not.exist(err);
+        result.should.have.keys('entities', 'errors');
+        result.should.deepEqual(expectedFinalResponse);
+        scope.isDone().should.be.true;
+        return done();
+      });
+    });
+
+    it('should resolve if a callback is not passed', (done) => {
+      const firstBatch = entities.slice(0, 100);
+      const secondBatch = entities.slice(100, 200);
+      const thirdBatch = entities.slice(200, 250);
+
+      const firstBatchResponse = {
+        entities: firstBatch,
+        errors: []
+      };
+      const secondBatchResponse = {
+        entities: secondBatch,
+        errors: []
+      };
+      const thirdBatchResponse = {
+        entities: thirdBatch,
+        errors: []
+      };
+
+      const expectedFinalResponse = {
+        entities,
+        errors: []
+      };
+
+      const scope = nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .post(`/appdata/${environmentId}/myCollection/`, firstBatch)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(207, firstBatchResponse)
+        .post(`/appdata/${environmentId}/myCollection/`, secondBatch)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(207, secondBatchResponse)
+        .post(`/appdata/${environmentId}/myCollection/`, thirdBatch)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(207, thirdBatchResponse);
+
+      const collection = this.store().collection('myCollection');
+      collection.save(entities)
+        .then((result) => {
+          result.should.deepEqual(expectedFinalResponse);
+          scope.isDone().should.be.true;
+          return done();
+        });
+    });
+
+    it('should set error index correctly when saving in batches', (done) => {
+      const firstBatch = entities.slice(0, 100);
+      const secondBatch = entities.slice(100, 200);
+      const thirdBatch = entities.slice(200, 250);
+
+      // first batch has one failure: entity with index = 5
+      const firstBatchResponse = {
+        entities: firstBatch,
+        errors: [{ index: 5 }]
+      };
+
+      // second batch has one failure too
+      const secondBatchResponse = {
+        entities: secondBatch,
+        errors: [{ index: 6 }]
+      };
+
+      // third batch has 2 failures
+      const thirdBatchResponse = {
+        entities: thirdBatch,
+        errors: [{ index: 25 }, { index: 40 }]
+      };
+
+      // final response should have index matching original request
+      const expectedFinalResponse = {
+        entities,
+        errors: [{ index: 5 }, { index: 106 }, { index: 225 }, { index: 240 }]
+      };
+
+      const scope = nock('https://baas.kinvey.com')
+        .matchHeader('content-type', 'application/json')
+        .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .post(`/appdata/${environmentId}/myCollection/`, firstBatch)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(207, firstBatchResponse)
+        .post(`/appdata/${environmentId}/myCollection/`, secondBatch)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(207, secondBatchResponse)
+        .post(`/appdata/${environmentId}/myCollection/`, thirdBatch)
+        .basicAuth({
+          user: environmentId,
+          pass: mastersecret
+        })
+        .reply(207, thirdBatchResponse);
+
+      const collection = this.store().collection('myCollection');
+      collection.save(entities, (err, result) => {
+        should.not.exist(err);
+        result.should.have.keys('entities', 'errors');
+        result.entities.should.eql(entities);
+        result.errors.should.eql(expectedFinalResponse.errors);
+        scope.isDone().should.be.true;
+        return done();
+      });
+    });
+  });
+
   describe('remove', () => {
     beforeEach(() => {
       this.store = dataStore(this.appMetadata, this.requestContext, this.taskMetadata);
