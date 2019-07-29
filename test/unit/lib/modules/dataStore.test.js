@@ -1209,7 +1209,7 @@ describe('dataStore', () => {
         entities,
         errors: []
       };
-    
+
       const scope = nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
         .matchHeader('x-kinvey-api-version', '3')
