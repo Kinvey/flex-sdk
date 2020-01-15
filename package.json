@@ -59,6 +59,6 @@
     "test-requestcontext": "mocha test/lib/modules/requestContext.test.js",
     "test-tempobjectstore": "mocha test/lib/modules/tempObjectStore.test.js",
     "test-userStore": "mocha test/lib/modules/userStore.test.js",
-    "test-npm-security": "npm audit"
+    "test-npm-security": "npm audit --production --audit-level=high"
   }
 }
