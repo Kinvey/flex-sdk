@@ -1,5 +1,8 @@
 ## Changelog
 
+### 3.3.1
+* Fixed several security vulnerabilities
+
 ### 3.3.0
 * Added new onInsertMulti data event for handling insertion of Arrays
 * Added support for arrays in dataStore.save()
