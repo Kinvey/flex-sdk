@@ -29,6 +29,10 @@ const apiVersion = 3;
 const authorization = 'Kinvey adfjkldsafjdsalkfjds90fd8sfd=';
 const clientAppVersion = {};
 const customRequestProperties = {};
+const auth = {
+  user: environmentId,
+  pass: mastersecret
+};
 
 function _generateAppMetadata() {
   return {
@@ -688,6 +692,7 @@ describe('dataStore', () => {
         });
     });
   });
+
   describe('save', () => {
     beforeEach(() => {
       this.store = dataStore(this.appMetadata, this.requestContext, this.taskMetadata);
@@ -1116,12 +1121,53 @@ describe('dataStore', () => {
   });
 
   describe('batch save', () => {
-    const entities = [];
-    before('entities', () => {
+    let entities = [];
+    let firstBatch = null;
+    let secondBatch = null;
+    let thirdBatch = null;
+    let firstBatchResponse = null;
+    let secondBatchResponse = null;
+    let thirdBatchResponse = null;
+    let expectedFinalResponse = null;
+
+    beforeEach('entities', () => {
       // create 250 entities
+      entities = [];
       for (let i = 0; i < 250; i += 1) {
         entities.push({ index: i, name: uuid.v4() });
       }
+
+      // set _id on random entities, so they are updated and not inserted
+      entities[13]._id = uuid.v4();
+      entities[26]._id = uuid.v4();
+      entities[27]._id = uuid.v4();
+      entities[205]._id = uuid.v4();
+
+      firstBatch = entities.slice(0, 103);
+      secondBatch = entities.slice(103, 203);
+      thirdBatch = entities.slice(203, 250);
+
+      // Remove objects for update
+      firstBatch.splice(26, 2);
+      firstBatch.splice(13, 1);
+      thirdBatch.splice(2, 1);
+
+      firstBatchResponse = {
+        entities: firstBatch,
+        errors: []
+      };
+      secondBatchResponse = {
+        entities: secondBatch,
+        errors: []
+      };
+      thirdBatchResponse = {
+        entities: thirdBatch,
+        errors: []
+      };
+      expectedFinalResponse = {
+        entities,
+        errors: []
+      };
     });
 
     beforeEach(() => {
@@ -1133,48 +1179,29 @@ describe('dataStore', () => {
     });
 
     it('should save entities in batches of 100', (done) => {
-      const firstBatch = entities.slice(0, 100);
-      const secondBatch = entities.slice(100, 200);
-      const thirdBatch = entities.slice(200, 250);
-
-      const firstBatchResponse = {
-        entities: firstBatch,
-        errors: []
-      };
-      const secondBatchResponse = {
-        entities: secondBatch,
-        errors: []
-      };
-      const thirdBatchResponse = {
-        entities: thirdBatch,
-        errors: []
-      };
-
-      const expectedFinalResponse = {
-        entities,
-        errors: []
-      };
-
       const scope = nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .put(`/appdata/${environmentId}/myCollection/${entities[13]._id}`, entities[13])
+        .basicAuth(auth)
+        .reply(200, entities[13])
+        .put(`/appdata/${environmentId}/myCollection/${entities[26]._id}`, entities[26])
+        .basicAuth(auth)
+        .reply(200, entities[26])
+        .put(`/appdata/${environmentId}/myCollection/${entities[27]._id}`, entities[27])
+        .basicAuth(auth)
+        .reply(200, entities[27])
+        .put(`/appdata/${environmentId}/myCollection/${entities[205]._id}`, entities[205])
+        .basicAuth(auth)
+        .reply(200, entities[205])
         .post(`/appdata/${environmentId}/myCollection/`, firstBatch)
-        .basicAuth({
-          user: environmentId,
-          pass: mastersecret
-        })
+        .basicAuth(auth)
         .reply(207, firstBatchResponse)
         .post(`/appdata/${environmentId}/myCollection/`, secondBatch)
-        .basicAuth({
-          user: environmentId,
-          pass: mastersecret
-        })
+        .basicAuth(auth)
         .reply(207, secondBatchResponse)
         .post(`/appdata/${environmentId}/myCollection/`, thirdBatch)
-        .basicAuth({
-          user: environmentId,
-          pass: mastersecret
-        })
+        .basicAuth(auth)
         .reply(207, thirdBatchResponse);
 
       const collection = this.store().collection('myCollection');
@@ -1188,49 +1215,30 @@ describe('dataStore', () => {
     });
 
     it('should resolve if a callback is not passed', (done) => {
-      const firstBatch = entities.slice(0, 100);
-      const secondBatch = entities.slice(100, 200);
-      const thirdBatch = entities.slice(200, 250);
-
-      const firstBatchResponse = {
-        entities: firstBatch,
-        errors: []
-      };
-      const secondBatchResponse = {
-        entities: secondBatch,
-        errors: []
-      };
-      const thirdBatchResponse = {
-        entities: thirdBatch,
-        errors: []
-      };
-
-      const expectedFinalResponse = {
-        entities,
-        errors: []
-      };
-
       const scope = nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
         .matchHeader('x-kinvey-api-version', '3')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .put(`/appdata/${environmentId}/myCollection/${entities[13]._id}`, entities[13])
+        .basicAuth(auth)
+        .reply(200, entities[13])
+        .put(`/appdata/${environmentId}/myCollection/${entities[26]._id}`, entities[26])
+        .basicAuth(auth)
+        .reply(200, entities[26])
+        .put(`/appdata/${environmentId}/myCollection/${entities[27]._id}`, entities[27])
+        .basicAuth(auth)
+        .reply(200, entities[27])
+        .put(`/appdata/${environmentId}/myCollection/${entities[205]._id}`, entities[205])
+        .basicAuth(auth)
+        .reply(200, entities[205])
         .post(`/appdata/${environmentId}/myCollection/`, firstBatch)
-        .basicAuth({
-          user: environmentId,
-          pass: mastersecret
-        })
+        .basicAuth(auth)
         .reply(207, firstBatchResponse)
         .post(`/appdata/${environmentId}/myCollection/`, secondBatch)
-        .basicAuth({
-          user: environmentId,
-          pass: mastersecret
-        })
+        .basicAuth(auth)
         .reply(207, secondBatchResponse)
         .post(`/appdata/${environmentId}/myCollection/`, thirdBatch)
-        .basicAuth({
-          user: environmentId,
-          pass: mastersecret
-        })
+        .basicAuth(auth)
         .reply(207, thirdBatchResponse);
 
       const collection = this.store().collection('myCollection');
@@ -1243,62 +1251,88 @@ describe('dataStore', () => {
     });
 
     it('should set error index correctly when saving in batches', (done) => {
-      const firstBatch = entities.slice(0, 100);
-      const secondBatch = entities.slice(100, 200);
-      const thirdBatch = entities.slice(200, 250);
-
       // first batch has one failure: entity with index = 5
-      const firstBatchResponse = {
-        entities: firstBatch,
+      firstBatchResponse = {
+        entities: Array.from(firstBatch),
         errors: [{ index: 5 }]
       };
+      firstBatchResponse.entities[5] = null;
 
       // second batch has one failure too
-      const secondBatchResponse = {
-        entities: secondBatch,
+      secondBatchResponse = {
+        entities: Array.from(secondBatch),
         errors: [{ index: 6 }]
       };
+      secondBatchResponse.entities[6] = null;
 
       // third batch has 2 failures
-      const thirdBatchResponse = {
-        entities: thirdBatch,
+      thirdBatchResponse = {
+        entities: Array.from(thirdBatch),
         errors: [{ index: 25 }, { index: 40 }]
       };
+      thirdBatchResponse.entities[25] = null;
+      thirdBatchResponse.entities[40] = null;
 
-      // final response should have index matching original request
-      const expectedFinalResponse = {
-        entities,
-        errors: [{ index: 5 }, { index: 106 }, { index: 225 }, { index: 240 }]
-      };
+      // simulate update failure of entities at indexes 26 and 205
+      const updateError26 = new Error('RandomError');
+      updateError26.description = 'description 26';
+      updateError26.debug = 'debug 26';
+      updateError26.index = 26;
+
+      const updateError205 = new Error('RandomError');
+      updateError205.description = 'description 205';
+      updateError205.debug = 'debug 205';
+      updateError205.index = 205;
 
       const scope = nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
+        .put(`/appdata/${environmentId}/myCollection/${entities[13]._id}`, entities[13])
+        .basicAuth(auth)
+        .reply(200, entities[13])
+        .put(`/appdata/${environmentId}/myCollection/${entities[26]._id}`, entities[26])
+        .basicAuth(auth)
+        .reply(400, { error: updateError26.message, description: updateError26.description, debug: updateError26.debug })
+        .put(`/appdata/${environmentId}/myCollection/${entities[27]._id}`, entities[27])
+        .basicAuth(auth)
+        .reply(200, entities[27])
+        .put(`/appdata/${environmentId}/myCollection/${entities[205]._id}`, entities[205])
+        .basicAuth(auth)
+        .reply(400, { error: updateError205.message, description: updateError205.description, debug: updateError205.debug })
         .post(`/appdata/${environmentId}/myCollection/`, firstBatch)
-        .basicAuth({
-          user: environmentId,
-          pass: mastersecret
-        })
+        .basicAuth(auth)
         .reply(207, firstBatchResponse)
         .post(`/appdata/${environmentId}/myCollection/`, secondBatch)
-        .basicAuth({
-          user: environmentId,
-          pass: mastersecret
-        })
+        .basicAuth(auth)
         .reply(207, secondBatchResponse)
         .post(`/appdata/${environmentId}/myCollection/`, thirdBatch)
-        .basicAuth({
-          user: environmentId,
-          pass: mastersecret
-        })
+        .basicAuth(auth)
         .reply(207, thirdBatchResponse);
 
       const collection = this.store().collection('myCollection');
       collection.save(entities, (err, result) => {
         should.not.exist(err);
         result.should.have.keys('entities', 'errors');
+
+        // entities failed to insert should be null
+        // entities failed to update should be returned in the state before the update
+        entities[5] = null;
+        entities[109] = null;
+        entities[229] = null;
+        entities[244] = null;
         result.entities.should.eql(entities);
-        result.errors.should.eql(expectedFinalResponse.errors);
+
+        // final response should have indexes matching original request
+        // first insert batch indexes are bumped with 3, the third batch indexes - with 4
+        const expectedErrors = [
+          { index: 5 },
+          updateError26,
+          { index: 109 },
+          updateError205,
+          { index: 229 },
+          { index: 244 }
+        ];
+        result.errors.should.eql(expectedErrors);
         scope.isDone().should.be.true;
         return done();
       });
