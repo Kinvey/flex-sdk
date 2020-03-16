@@ -1,11 +1,15 @@
 ## Changelog
 
+### 3.4.0
+* BREAKING CHANGE: Method `dataStore.save()` no longer supports arrays (was introduced in `3.3.0` for early access)
+* New `dataStore.create()` method added to support batched insert of multiple entities
+
 ### 3.3.1
 * Fixed several security vulnerabilities
 
 ### 3.3.0
 * Added new onInsertMulti data event for handling insertion of Arrays
-* Added support for arrays in dataStore.save()
+* Added support for arrays in `dataStore.save()` (early access version)
 * Add option to override API version in dataStore requests 
 
 ### 3.2.1
