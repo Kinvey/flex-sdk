@@ -1,6 +1,6 @@
 {
   "name": "kinvey-flex-sdk",
-  "version": "3.3.1",
+  "version": "3.4.0",
   "description": "SDK for creating Kinvey Flex Services",
   "engines": {
     "node": "= 6.x.x"
@@ -42,23 +42,6 @@
     "test": "npm run test-unit && npm run test-integration",
     "test-unit": "mocha test/unit/*/*",
     "test-integration": "echo \"No integration tests available for the moment\"",
-    "test-core": "mocha test/lib/*",
-    "test-flex": "mocha test/lib/flex.test.js",
-    "test-data": "mocha test/lib/data.test.js",
-    "test-functions": "mocha test/lib/functions.test.js",
-    "test-moduleGenerator": "mocha test/lib/moduleGenerator.test.js",
-    "test-modules": "mocha test/lib/modules/*",
-    "test-backendcontext": "mocha test/lib/modules/backendContext.test.js",
-    "test-dataStore": "mocha test/lib/modules/dataStore.test.js",
-    "test-email": "mocha test/lib/modules/email.test.js",
-    "test-groupStore": "mocha test/lib/modules/groupStore.test.js",
-    "test-entity": "mocha test/lib/modules/entity.test.js",
-    "test-kinveydate": "mocha test/lib/modules/kinveyDate.test.js",
-    "test-push": "mocha test/lib/modules/push.test.js",
-    "test-query": "mocha test/lib/modules/query.test.js",
-    "test-requestcontext": "mocha test/lib/modules/requestContext.test.js",
-    "test-tempobjectstore": "mocha test/lib/modules/tempObjectStore.test.js",
-    "test-userStore": "mocha test/lib/modules/userStore.test.js",
     "test-npm-security": "npm audit --production --audit-level=high"
   }
 }

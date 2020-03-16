@@ -688,6 +688,7 @@ describe('dataStore', () => {
         });
     });
   });
+
   describe('save', () => {
     beforeEach(() => {
       this.store = dataStore(this.appMetadata, this.requestContext, this.taskMetadata);
@@ -738,31 +739,18 @@ describe('dataStore', () => {
       });
     });
 
-    it('should save multiple entities', (done) => {
+    it('should return an error for multiple entities', (done) => {
       const entities = [{
         someData: 'abc'
       }, {
         someData: 'xyz'
       }];
 
-      const expectedResponse = {
-        entities,
-        errors: []
-      };
-      nock('https://baas.kinvey.com')
-        .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-skip-business-logic', 'true')
-        .post(`/appdata/${environmentId}/myCollection/`, entities)
-        .basicAuth({
-          user: environmentId,
-          pass: mastersecret
-        })
-        .reply(207, expectedResponse);
-
       const collection = this.store().collection('myCollection');
       collection.save(entities, (err, result) => {
-        should.not.exist(err);
-        result.should.deepEqual(expectedResponse);
+        err.should.have.property('message', 'DataStoreError');
+        err.should.have.property('description', 'Unable to save an array of entities. To insert multiple entities use "create" function.');
+        should.not.exist(result);
         return done();
       });
     });
@@ -1115,7 +1103,7 @@ describe('dataStore', () => {
     });
   });
 
-  describe('batch save', () => {
+  describe('create', () => {
     const entities = [];
     before('entities', () => {
       // create 250 entities
@@ -1132,7 +1120,7 @@ describe('dataStore', () => {
       nock.cleanAll();
     });
 
-    it('should save entities in batches of 100', (done) => {
+    it('should insert entities in batches of 100', (done) => {
       const firstBatch = entities.slice(0, 100);
       const secondBatch = entities.slice(100, 200);
       const thirdBatch = entities.slice(200, 250);
@@ -1178,7 +1166,7 @@ describe('dataStore', () => {
         .reply(207, thirdBatchResponse);
 
       const collection = this.store().collection('myCollection');
-      collection.save(entities, (err, result) => {
+      collection.create(entities, (err, result) => {
         should.not.exist(err);
         result.should.have.keys('entities', 'errors');
         result.should.deepEqual(expectedFinalResponse);
@@ -1234,7 +1222,7 @@ describe('dataStore', () => {
         .reply(207, thirdBatchResponse);
 
       const collection = this.store().collection('myCollection');
-      collection.save(entities)
+      collection.create(entities)
         .then((result) => {
           result.should.deepEqual(expectedFinalResponse);
           scope.isDone().should.be.true;
@@ -1294,7 +1282,7 @@ describe('dataStore', () => {
         .reply(207, thirdBatchResponse);
 
       const collection = this.store().collection('myCollection');
-      collection.save(entities, (err, result) => {
+      collection.create(entities, (err, result) => {
         should.not.exist(err);
         result.should.have.keys('entities', 'errors');
         result.entities.should.eql(entities);
