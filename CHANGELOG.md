@@ -1,5 +1,8 @@
 ## Changelog
 
+### 3.5.0
+* Update logged message on error from complete callback
+
 ### 3.4.0
 * BREAKING CHANGE: Method `dataStore.save()` no longer supports arrays (was introduced in `3.3.0` for early access)
 * New `dataStore.create()` method added to support batched insert of multiple entities
