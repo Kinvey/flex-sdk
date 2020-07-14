@@ -24,7 +24,7 @@ const mastersecret = '789012';
 const authenticatedUsername = 'test@test.com';
 const baasUrl = 'https://baas.kinvey.com';
 const authenticatedUserId = '1234abcd';
-const apiVersion = 3;
+const apiVersion = 5;
 const authorization = 'Kinvey adfjkldsafjdsalkfjds90fd8sfd=';
 const clientAppVersion = {};
 const customRequestProperties = {};
@@ -134,7 +134,7 @@ describe('roleStore', () => {
     });
 
     it('should create a RoleStore object that overrides the API version', () => {
-      const API_VERSION = 5;
+      const API_VERSION = 4;
 
       const myStore = this.store({ apiVersion: API_VERSION });
       myStore._appMetadata.should.containDeep(this.appMetadata);
@@ -190,7 +190,7 @@ describe('roleStore', () => {
     it('should return a Promise', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .get(`/roles/${environmentId}/1234`)
         .basicAuth({
@@ -206,7 +206,7 @@ describe('roleStore', () => {
     it('should find a single role', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .get(`/roles/${environmentId}/1234`)
         .basicAuth({
@@ -225,7 +225,7 @@ describe('roleStore', () => {
     it('should resolve a single role if a callback isn\'t passed', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .get(`/roles/${environmentId}/1234`)
         .basicAuth({
@@ -244,7 +244,7 @@ describe('roleStore', () => {
     it('should find a single role record using user context', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .matchHeader('authorization', authorization)
         .get(`/roles/${environmentId}/1234`)
@@ -260,7 +260,7 @@ describe('roleStore', () => {
     it('should find a single role and use bl', (done) => {
       nock('https://baas.kinvey.com', { badheaders: ['x-kinvey-skip-business-logic'] })
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .get(`/roles/${environmentId}/1234`)
         .basicAuth({
           user: environmentId,
@@ -276,7 +276,7 @@ describe('roleStore', () => {
     });
 
     it('should find a single role and override the API Version', (done) => {
-      const API_VERSION = 5;
+      const API_VERSION = 4;
 
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
@@ -336,7 +336,7 @@ describe('roleStore', () => {
     it('should allow recursive requests to the same object that use mastersecret and skip bl', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .get(`/roles/${environmentId}/1234`)
         .basicAuth({
@@ -419,7 +419,7 @@ describe('roleStore', () => {
     it('should return a Promise', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .post(`/roles/${environmentId}/`, {
           username: 'abc'
@@ -437,7 +437,7 @@ describe('roleStore', () => {
     it('should create a new role', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .post(`/roles/${environmentId}/`, {
           username: 'abc'
@@ -458,7 +458,7 @@ describe('roleStore', () => {
     it('should resolve if a callback isn\'t passed', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .post(`/roles/${environmentId}/`, {
           username: 'abc'
@@ -479,7 +479,7 @@ describe('roleStore', () => {
     it('should create a new entity using user context', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .matchHeader('authorization', authorization)
         .post(`/roles/${environmentId}/`, {
@@ -497,7 +497,7 @@ describe('roleStore', () => {
     it('should create a new entity and use bl', (done) => {
       nock('https://baas.kinvey.com', { badheaders: ['x-kinvey-skip-business-logic'] })
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .post(`/roles/${environmentId}/`, {
           username: 'abc'
         })
@@ -515,7 +515,7 @@ describe('roleStore', () => {
     });
 
     it('should create a new entity and override the API Version', (done) => {
-      const API_VERSION = 5;
+      const API_VERSION = 4;
 
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
@@ -578,7 +578,7 @@ describe('roleStore', () => {
     it('should allow recursive requests to the same object that use mastersecret and skip bl', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .post(`/roles/${environmentId}/`, {
           username: 'abc'
@@ -643,7 +643,7 @@ describe('roleStore', () => {
     it('should return a Promise', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .put(`/roles/${environmentId}/1234`, {
           _id: 1234,
@@ -662,7 +662,7 @@ describe('roleStore', () => {
     it('should update an existing role', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .put(`/roles/${environmentId}/1234`, {
           _id: 1234,
@@ -684,7 +684,7 @@ describe('roleStore', () => {
     it('should resolve on update of an existing role if a callback isn\'t passed', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .put(`/roles/${environmentId}/1234`, {
           _id: 1234,
@@ -706,7 +706,7 @@ describe('roleStore', () => {
     it('should update an existing role using user context', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .matchHeader('authorization', authorization)
         .put(`/roles/${environmentId}/1234`, {
@@ -724,7 +724,7 @@ describe('roleStore', () => {
 
     it('should update an existing role and use bl', (done) => {
       nock('https://baas.kinvey.com', { badheaders: ['x-kinvey-skip-business-logic'] })
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('content-type', 'application/json')
         .put(`/roles/${environmentId}/1234`, {
           _id: 1234,
@@ -744,7 +744,7 @@ describe('roleStore', () => {
     });
 
     it('should update an existing role and override the API Version', (done) => {
-      const API_VERSION = 5;
+      const API_VERSION = 4;
 
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
@@ -809,7 +809,7 @@ describe('roleStore', () => {
     it('should allow recursive requests to the same object that use mastersecret and skip bl', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .put(`/roles/${environmentId}/1234`, {
           _id: 1234,
@@ -895,7 +895,7 @@ describe('roleStore', () => {
     it('should return a Promise', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .delete(`/roles/${environmentId}/1234`)
         .basicAuth({
@@ -911,7 +911,7 @@ describe('roleStore', () => {
     it('should remove a single role', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .delete(`/roles/${environmentId}/1234`)
         .basicAuth({
@@ -930,7 +930,7 @@ describe('roleStore', () => {
     it('should resolve on remove if a callback isn\'t passed', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .delete(`/roles/${environmentId}/1234`)
         .basicAuth({
@@ -949,7 +949,7 @@ describe('roleStore', () => {
     it('should remove a single role record using user context', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .matchHeader('authorization', authorization)
         .delete(`/roles/${environmentId}/1234`)
@@ -965,7 +965,7 @@ describe('roleStore', () => {
     it('should remove a single entity and use bl', (done) => {
       nock('https://baas.kinvey.com', { badheaders: ['x-kinvey-skip-business-logic'] })
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .delete(`/roles/${environmentId}/1234`)
         .basicAuth({
           user: environmentId,
@@ -981,7 +981,7 @@ describe('roleStore', () => {
     });
 
     it('should remove a single role and override the API Version', (done) => {
-      const API_VERSION = 5;
+      const API_VERSION = 4;
 
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
@@ -1042,7 +1042,7 @@ describe('roleStore', () => {
     it('should allow recursive requests to the same object that use mastersecret and skip bl', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .delete(`/roles/${environmentId}/1234`)
         .basicAuth({
@@ -1125,7 +1125,7 @@ describe('roleStore', () => {
     it('should return a Promise', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .get(`/roles/${environmentId}/1234/membership`)
         .basicAuth({
@@ -1141,7 +1141,7 @@ describe('roleStore', () => {
     it('should list role members', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .get(`/roles/${environmentId}/1234/membership`)
         .basicAuth({
@@ -1160,7 +1160,7 @@ describe('roleStore', () => {
     it('should resolve role members if a callback isn\'t passed', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .get(`/roles/${environmentId}/1234/membership`)
         .basicAuth({
@@ -1179,7 +1179,7 @@ describe('roleStore', () => {
     it('should list role members using user context', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .matchHeader('authorization', authorization)
         .get(`/roles/${environmentId}/1234/membership`)
@@ -1195,7 +1195,7 @@ describe('roleStore', () => {
     it('should list role members and use bl', (done) => {
       nock('https://baas.kinvey.com', { badheaders: ['x-kinvey-skip-business-logic'] })
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .get(`/roles/${environmentId}/1234/membership`)
         .basicAuth({
           user: environmentId,
@@ -1211,7 +1211,7 @@ describe('roleStore', () => {
     });
 
     it('should list role members and override the API Version', (done) => {
-      const API_VERSION = 5;
+      const API_VERSION = 4;
 
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
@@ -1272,7 +1272,7 @@ describe('roleStore', () => {
     it('should allow recursive requests to the same object that use mastersecret and skip bl', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .get(`/roles/${environmentId}/1234/membership`)
         .basicAuth({

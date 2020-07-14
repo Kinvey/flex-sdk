@@ -25,7 +25,7 @@ const mastersecret = '789012';
 const authenticatedUsername = 'test@test.com';
 const baasUrl = 'https://baas.kinvey.com';
 const authenticatedUserId = '1234abcd';
-const apiVersion = 3;
+const apiVersion = 5;
 const authorization = 'Kinvey adfjkldsafjdsalkfjds90fd8sfd=';
 const clientAppVersion = {};
 const customRequestProperties = {};
@@ -118,7 +118,7 @@ describe('dataStore', () => {
     });
 
     it('should create a datastore object that overrides the apiVersion', () => {
-      const API_VERSION = 5;
+      const API_VERSION = 4;
 
       const myStore = this.store({ apiVersion: API_VERSION });
       should.exist(myStore.collection);
@@ -225,7 +225,7 @@ describe('dataStore', () => {
     it('should return a promise', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .get(`/appdata/${environmentId}/myCollection/`)
         .basicAuth({
@@ -242,7 +242,7 @@ describe('dataStore', () => {
     it('should find all records', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .get(`/appdata/${environmentId}/myCollection/`)
         .basicAuth({
@@ -262,7 +262,7 @@ describe('dataStore', () => {
     it('should resolve with all records if callback isn\'t passed', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .get(`/appdata/${environmentId}/myCollection/`)
         .basicAuth({
@@ -282,7 +282,7 @@ describe('dataStore', () => {
     it('should find all records using userContext', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .matchHeader('authorization', authorization)
         .get(`/appdata/${environmentId}/myCollection/`)
@@ -299,7 +299,7 @@ describe('dataStore', () => {
     it('should find all records and use bl', (done) => {
       nock('https://baas.kinvey.com', { badheaders: ['x-kinvey-skip-business-logic'] })
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .get(`/appdata/${environmentId}/myCollection/`)
         .basicAuth({
           user: environmentId,
@@ -316,7 +316,7 @@ describe('dataStore', () => {
     });
 
     it('should find all records with overriden API version', (done) => {
-      const API_VERSION = 5;
+      const API_VERSION = 4;
 
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
@@ -375,7 +375,7 @@ describe('dataStore', () => {
     it('should allow recursive requests to the same object that use mastersecret and skip bl', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .get(`/appdata/${environmentId}/${this.taskMetadata.objectName}/`)
         .basicAuth({
@@ -407,7 +407,7 @@ describe('dataStore', () => {
     it('should find records with a query object', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .get(`/appdata/${environmentId}/myCollection/`)
         .basicAuth({
@@ -431,7 +431,7 @@ describe('dataStore', () => {
     it('should resolve and return records with a query object', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .get(`/appdata/${environmentId}/myCollection/`)
         .basicAuth({
@@ -465,7 +465,7 @@ describe('dataStore', () => {
     it('should return a promise', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .get(`/appdata/${environmentId}/myCollection/1234`)
         .basicAuth({
@@ -482,7 +482,7 @@ describe('dataStore', () => {
     it('should find a single entity', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .get(`/appdata/${environmentId}/myCollection/1234`)
         .basicAuth({
@@ -502,7 +502,7 @@ describe('dataStore', () => {
     it('should resolve with a single entity if callback isn\'t passed', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .get(`/appdata/${environmentId}/myCollection/1234`)
         .basicAuth({
@@ -522,7 +522,7 @@ describe('dataStore', () => {
     it('should find a single entity record using user context', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .matchHeader('authorization', authorization)
         .get(`/appdata/${environmentId}/myCollection/1234`)
@@ -539,7 +539,7 @@ describe('dataStore', () => {
     it('should find a single entity and use bl', (done) => {
       nock('https://baas.kinvey.com', { badheaders: ['x-kinvey-skip-business-logic'] })
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .get(`/appdata/${environmentId}/myCollection/1234`)
         .basicAuth({
           user: environmentId,
@@ -556,7 +556,7 @@ describe('dataStore', () => {
     });
 
     it('should find a single entity with overriden API version', (done) => {
-      const API_VERSION = 5;
+      const API_VERSION = 4;
 
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
@@ -615,7 +615,7 @@ describe('dataStore', () => {
     it('should allow recursive requests to the same object that use mastersecret and skip bl', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .get(`/appdata/${environmentId}/${this.taskMetadata.objectName}/1234`)
         .basicAuth({
@@ -701,7 +701,7 @@ describe('dataStore', () => {
     it('should return a promise', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .post(`/appdata/${environmentId}/myCollection/`, {
           someData: 'abc'
@@ -720,7 +720,7 @@ describe('dataStore', () => {
     it('should save a new entity', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .post(`/appdata/${environmentId}/myCollection/`, {
           someData: 'abc'
@@ -758,7 +758,7 @@ describe('dataStore', () => {
     it('should resolve if a callback isn\'t passed', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .post(`/appdata/${environmentId}/myCollection/`, {
           someData: 'abc'
@@ -780,7 +780,7 @@ describe('dataStore', () => {
     it('should save a new entity using user context', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .matchHeader('authorization', authorization)
         .post(`/appdata/${environmentId}/myCollection/`, {
@@ -799,7 +799,7 @@ describe('dataStore', () => {
     it('should save a new entity and use bl', (done) => {
       nock('https://baas.kinvey.com', { badheaders: ['x-kinvey-skip-business-logic'] })
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .post(`/appdata/${environmentId}/myCollection/`, {
           someData: 'abc'
         })
@@ -818,7 +818,7 @@ describe('dataStore', () => {
     });
 
     it('should save a new entity with overriden API version', (done) => {
-      const API_VERSION = 5;
+      const API_VERSION = 4;
 
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
@@ -879,7 +879,7 @@ describe('dataStore', () => {
     it('should allow recursive requests to the same object that use mastersecret and skip bl', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .post(`/appdata/${environmentId}/${this.taskMetadata.objectName}/`, {
           someData: 'abc'
@@ -957,7 +957,7 @@ describe('dataStore', () => {
     it('should save an existing entity', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .put(`/appdata/${environmentId}/myCollection/1234`, {
           _id: 1234,
@@ -980,7 +980,7 @@ describe('dataStore', () => {
     it('should save an existing entity using user context', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .matchHeader('authorization', authorization)
         .put(`/appdata/${environmentId}/myCollection/1234`, {
@@ -1000,7 +1000,7 @@ describe('dataStore', () => {
     it('should save an existing entity and use bl', (done) => {
       nock('https://baas.kinvey.com', { badheaders: ['x-kinvey-skip-business-logic'] })
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .put(`/appdata/${environmentId}/myCollection/1234`, {
           _id: 1234,
           someData: 'abc'
@@ -1020,7 +1020,7 @@ describe('dataStore', () => {
     });
 
     it('should save an existing entity with overriden API version', (done) => {
-      const API_VERSION = 5;
+      const API_VERSION = 4;
 
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
@@ -1082,7 +1082,7 @@ describe('dataStore', () => {
     it('should allow recursive requests to the same object that use mastersecret and skip bl', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .put(`/appdata/${environmentId}/${this.taskMetadata.objectName}/1234`, {
           _id: 1234,
@@ -1200,7 +1200,7 @@ describe('dataStore', () => {
 
       const scope = nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .post(`/appdata/${environmentId}/myCollection/`, firstBatch)
         .basicAuth({
@@ -1305,7 +1305,7 @@ describe('dataStore', () => {
     it('should return a Promise', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .delete(`/appdata/${environmentId}/myCollection/`)
         .basicAuth({
@@ -1322,7 +1322,7 @@ describe('dataStore', () => {
     it('should remove all records', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .delete(`/appdata/${environmentId}/myCollection/`)
         .basicAuth({
@@ -1342,7 +1342,7 @@ describe('dataStore', () => {
     it('should resolve if a callback isn\'t passed', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .delete(`/appdata/${environmentId}/myCollection/`)
         .basicAuth({
@@ -1362,7 +1362,7 @@ describe('dataStore', () => {
     it('should remove all records using user context', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .matchHeader('authorization', authorization)
         .delete(`/appdata/${environmentId}/myCollection/`)
@@ -1379,7 +1379,7 @@ describe('dataStore', () => {
     it('should remove all records and skip bl', (done) => {
       nock('https://baas.kinvey.com', { badheaders: ['x-kinvey-skip-business-logic'] })
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .delete(`/appdata/${environmentId}/myCollection/`)
         .basicAuth({
           user: environmentId,
@@ -1396,7 +1396,7 @@ describe('dataStore', () => {
     });
 
     it('should remove all records with overriden API version', (done) => {
-      const API_VERSION = 5;
+      const API_VERSION = 4;
 
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
@@ -1455,7 +1455,7 @@ describe('dataStore', () => {
     it('should allow recursive requests to the same object that use mastersecret and skip bl', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .delete(`/appdata/${environmentId}/${this.taskMetadata.objectName}/`)
         .basicAuth({
@@ -1487,7 +1487,7 @@ describe('dataStore', () => {
     it('should remove records with a query object', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .delete(`/appdata/${environmentId}/myCollection/`)
         .basicAuth({
@@ -1511,7 +1511,7 @@ describe('dataStore', () => {
     it('should resolve with a query object', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .delete(`/appdata/${environmentId}/myCollection/`)
         .basicAuth({
@@ -1545,7 +1545,7 @@ describe('dataStore', () => {
     it('should return a Promise', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .delete(`/appdata/${environmentId}/myCollection/1234`)
         .basicAuth({
@@ -1562,7 +1562,7 @@ describe('dataStore', () => {
     it('should remove a single entity', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .delete(`/appdata/${environmentId}/myCollection/1234`)
         .basicAuth({
@@ -1582,7 +1582,7 @@ describe('dataStore', () => {
     it('should resolve if a callback isn\'t passed', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .delete(`/appdata/${environmentId}/myCollection/1234`)
         .basicAuth({
@@ -1602,7 +1602,7 @@ describe('dataStore', () => {
     it('should remove a single entity record using user context', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .matchHeader('authorization', authorization)
         .delete(`/appdata/${environmentId}/myCollection/1234`)
@@ -1619,7 +1619,7 @@ describe('dataStore', () => {
     it('should remove a single entity and use bl', (done) => {
       nock('https://baas.kinvey.com', { badheaders: ['x-kinvey-skip-business-logic'] })
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .delete(`/appdata/${environmentId}/myCollection/1234`)
         .basicAuth({
           user: environmentId,
@@ -1636,7 +1636,7 @@ describe('dataStore', () => {
     });
 
     it('should remove a single entity with overriden API version', (done) => {
-      const API_VERSION = 5;
+      const API_VERSION = 4;
 
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
@@ -1695,7 +1695,7 @@ describe('dataStore', () => {
     it('should allow recursive requests to the same object that use mastersecret and skip bl', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .delete(`/appdata/${environmentId}/${this.taskMetadata.objectName}/1234`)
         .basicAuth({
@@ -1782,7 +1782,7 @@ describe('dataStore', () => {
       nock('https://baas.kinvey.com')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .get(`/appdata/${environmentId}/myCollection/_count/`)
         .basicAuth({
           user: environmentId,
@@ -1799,7 +1799,7 @@ describe('dataStore', () => {
       nock('https://baas.kinvey.com')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .get(`/appdata/${environmentId}/myCollection/_count/`)
         .basicAuth({
           user: environmentId,
@@ -1819,7 +1819,7 @@ describe('dataStore', () => {
       nock('https://baas.kinvey.com')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .get(`/appdata/${environmentId}/myCollection/_count/`)
         .basicAuth({
           user: environmentId,
@@ -1840,7 +1840,7 @@ describe('dataStore', () => {
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .matchHeader('content-type', 'application/json')
         .matchHeader('authorization', authorization)
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .get(`/appdata/${environmentId}/myCollection/_count/`)
         .reply(200, { count: 30 });
 
@@ -1855,7 +1855,7 @@ describe('dataStore', () => {
     it('should get a count of all records and use bl', (done) => {
       nock('https://baas.kinvey.com', { badheaders: ['x-kinvey-skip-business-logic'] })
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .get(`/appdata/${environmentId}/myCollection/_count/`)
         .basicAuth({
           user: environmentId,
@@ -1872,7 +1872,7 @@ describe('dataStore', () => {
     });
 
     it('should get a count of all records with overriden API version', (done) => {
-      const API_VERSION = 5;
+      const API_VERSION = 4;
 
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
@@ -1931,7 +1931,7 @@ describe('dataStore', () => {
     it('should allow recursive requests to the same object that use mastersecret and skip bl', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .get(`/appdata/${environmentId}/${this.taskMetadata.objectName}/_count/`)
         .basicAuth({
@@ -1963,7 +1963,7 @@ describe('dataStore', () => {
     it('should get a count of records with a query object', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .get(`/appdata/${environmentId}/myCollection/_count/`)
         .basicAuth({
@@ -1987,7 +1987,7 @@ describe('dataStore', () => {
     it('should resolve with a query object if a callback isn\'t passed', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .get(`/appdata/${environmentId}/myCollection/_count/`)
         .basicAuth({
