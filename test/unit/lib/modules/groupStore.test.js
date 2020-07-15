@@ -24,7 +24,7 @@ const mastersecret = '789012';
 const authenticatedUsername = 'test@test.com';
 const baasUrl = 'https://baas.kinvey.com';
 const authenticatedUserId = '1234abcd';
-const apiVersion = 3;
+const apiVersion = 5;
 const authorization = 'Kinvey adfjkldsafjdsalkfjds90fd8sfd=';
 const clientAppVersion = {};
 const customRequestProperties = {};
@@ -131,7 +131,7 @@ describe('groupStore', () => {
     });
 
     it('should create a GroupStore object that overrides the API Version', () => {
-      const API_VERSION = 5;
+      const API_VERSION = 4;
 
       const myStore = this.store({ apiVersion: API_VERSION });
       myStore._appMetadata.should.containDeep(this.appMetadata);
@@ -187,7 +187,7 @@ describe('groupStore', () => {
     it('should return a Promise', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .get(`/group/${environmentId}/1234`)
         .basicAuth({
@@ -203,7 +203,7 @@ describe('groupStore', () => {
     it('should find a single group', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .get(`/group/${environmentId}/1234`)
         .basicAuth({
@@ -222,7 +222,7 @@ describe('groupStore', () => {
     it('should resolve a single group if a callback isn\'t passed', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .get(`/group/${environmentId}/1234`)
         .basicAuth({
@@ -241,7 +241,7 @@ describe('groupStore', () => {
     it('should find a single group record using user context', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .matchHeader('authorization', authorization)
         .get(`/group/${environmentId}/1234`)
@@ -257,7 +257,7 @@ describe('groupStore', () => {
     it('should find a single group and use bl', (done) => {
       nock('https://baas.kinvey.com', { badheaders: ['x-kinvey-skip-business-logic'] })
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .get(`/group/${environmentId}/1234`)
         .reply(200, { _id: 1234, someData: 'abc' });
 
@@ -269,7 +269,7 @@ describe('groupStore', () => {
     });
 
     it('should find a single group and override the API Version', (done) => {
-      const API_VERSION = 5;
+      const API_VERSION = 4;
 
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
@@ -326,7 +326,7 @@ describe('groupStore', () => {
     it('should allow recursive requests to the same object that use mastersecret and skip bl', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .get(`/group/${environmentId}/1234`)
         .basicAuth({
@@ -409,7 +409,7 @@ describe('groupStore', () => {
     it('should return a Promise', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .post(`/group/${environmentId}/`, {
           username: 'abc'
@@ -427,7 +427,7 @@ describe('groupStore', () => {
     it('should create a new entity', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .post(`/group/${environmentId}/`, {
           username: 'abc'
@@ -448,7 +448,7 @@ describe('groupStore', () => {
     it('should resolve if a callback isn\'t passed', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .post(`/group/${environmentId}/`, {
           username: 'abc'
@@ -469,7 +469,7 @@ describe('groupStore', () => {
     it('should create a new entity using appsecret', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .post(`/group/${environmentId}/`, {
           username: 'abc'
@@ -490,7 +490,7 @@ describe('groupStore', () => {
     it('should create a new entity and use bl', (done) => {
       nock('https://baas.kinvey.com', { badheaders: ['x-kinvey-skip-business-logic'] })
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .post(`/group/${environmentId}/`, {
           username: 'abc'
         })
@@ -508,7 +508,7 @@ describe('groupStore', () => {
     });
 
     it('should create a new group and override the API Version', (done) => {
-      const API_VERSION = 5;
+      const API_VERSION = 4;
 
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
@@ -571,7 +571,7 @@ describe('groupStore', () => {
     it('should allow recursive requests to the same object that use mastersecret and skip bl', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .post(`/group/${environmentId}/`, {
           username: 'abc'
@@ -636,7 +636,7 @@ describe('groupStore', () => {
     it('should return a Promise', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .put(`/group/${environmentId}/1234`, {
           _id: 1234,
@@ -655,7 +655,7 @@ describe('groupStore', () => {
     it('should update an existing group', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .put(`/group/${environmentId}/1234`, {
           _id: 1234,
@@ -677,7 +677,7 @@ describe('groupStore', () => {
     it('should resolve on update of an existing group if a callback isn\'t passed', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .put(`/group/${environmentId}/1234`, {
           _id: 1234,
@@ -699,7 +699,7 @@ describe('groupStore', () => {
     it('should update an existing group using user context', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .matchHeader('authorization', authorization)
         .put(`/group/${environmentId}/1234`, {
@@ -717,7 +717,7 @@ describe('groupStore', () => {
 
     it('should update an existing group and use bl', (done) => {
       nock('https://baas.kinvey.com', { badheaders: ['x-kinvey-skip-business-logic'] })
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('content-type', 'application/json')
         .put(`/group/${environmentId}/1234`, {
           _id: 1234,
@@ -737,7 +737,7 @@ describe('groupStore', () => {
     });
 
     it('should update an existing group and override the API Version', (done) => {
-      const API_VERSION = 5;
+      const API_VERSION = 4;
 
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
@@ -802,7 +802,7 @@ describe('groupStore', () => {
     it('should allow recursive requests to the same object that use mastersecret and skip bl', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .put(`/group/${environmentId}/1234`, {
           _id: 1234,
@@ -888,7 +888,7 @@ describe('groupStore', () => {
     it('should return a Promise', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .delete(`/group/${environmentId}/1234`)
         .basicAuth({
@@ -904,7 +904,7 @@ describe('groupStore', () => {
     it('should remove a single group', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .delete(`/group/${environmentId}/1234`)
         .basicAuth({
@@ -923,7 +923,7 @@ describe('groupStore', () => {
     it('should resolve on remove if a callback isn\'t passed', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .delete(`/group/${environmentId}/1234`)
         .basicAuth({
@@ -942,7 +942,7 @@ describe('groupStore', () => {
     it('should remove a single group record using user context', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .matchHeader('authorization', authorization)
         .delete(`/group/${environmentId}/1234`)
@@ -958,7 +958,7 @@ describe('groupStore', () => {
     it('should remove a single entity and use bl', (done) => {
       nock('https://baas.kinvey.com', { badheaders: ['x-kinvey-skip-business-logic'] })
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .delete(`/group/${environmentId}/1234`)
         .basicAuth({
           user: environmentId,
@@ -974,7 +974,7 @@ describe('groupStore', () => {
     });
 
     it('should remove an existing group and override the API Version', (done) => {
-      const API_VERSION = 5;
+      const API_VERSION = 4;
 
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
@@ -1035,7 +1035,7 @@ describe('groupStore', () => {
     it('should allow recursive requests to the same object that use mastersecret and skip bl', (done) => {
       nock('https://baas.kinvey.com')
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('x-kinvey-skip-business-logic', 'true')
         .delete(`/group/${environmentId}/1234`)
         .basicAuth({

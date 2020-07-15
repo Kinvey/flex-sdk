@@ -459,7 +459,7 @@ describe('service creation', () => {
 
       this.loggerMock.error.calledOnce.should.eql(true);
       this.loggerMock.error.firstCall.args.length.should.eql(1);
-      this.loggerMock.error.firstCall.args[0].should.eql(`Unable to send response for taskId ${task.taskId}: Flex Service request timed out.`);
+      this.loggerMock.error.firstCall.args[0].should.eql(`Unable to call complete() in ${task.hookType} "${task.taskName}" for request with id "${task.requestId}": Flex Service request timed out.`);
       done();
     });
   });
@@ -505,7 +505,7 @@ describe('service creation', () => {
 
       this.loggerMock.error.calledOnce.should.eql(true);
       this.loggerMock.error.firstCall.args.length.should.eql(1);
-      this.loggerMock.error.firstCall.args[0].should.eql(`Unable to send response for taskId ${task.taskId}: Unexpected network issue.`);
+      this.loggerMock.error.firstCall.args[0].should.eql(`Unable to call complete() in ${task.hookType} "${task.taskName}" for request with id "${task.requestId}": Unexpected network issue.`);
       done();
     });
   });

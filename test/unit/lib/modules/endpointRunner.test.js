@@ -23,7 +23,7 @@ const MASTER_SECRET = '789012';
 const AUTHENTICATED_USERNAME = 'test@test.com';
 const BAAS_URL = 'https://baas.kinvey.com';
 const AUTHENTICATED_USERID = '1234abcd';
-const API_VERSION = 3;
+const API_VERSION = 5;
 const AUTHORIZATION = 'Kinvey adfjkldsafjdsalkfjds90fd8sfd=';
 
 const clientAppVersion = {};
@@ -118,7 +118,7 @@ describe('endpointRunner', () => {
     });
 
     it('should be able to override the API version', () => {
-      const API_VERSION = 5;
+      const API_VERSION = 4;
 
       const myRunner = this.runner({ apiVersion: API_VERSION });
       should.exist(myRunner.endpoint);
@@ -219,7 +219,7 @@ describe('endpointRunner', () => {
     it('should return a promise', (done) => {
       nock(BAAS_URL)
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .post(`/rpc/${ENVIRONMENT_ID}/custom/myEndpoint`)
         .basicAuth({
           user: ENVIRONMENT_ID,
@@ -235,7 +235,7 @@ describe('endpointRunner', () => {
     it('should execute an endpoint', (done) => {
       nock(BAAS_URL)
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .post(`/rpc/${ENVIRONMENT_ID}/custom/myEndpoint`)
         .basicAuth({
           user: ENVIRONMENT_ID,
@@ -254,7 +254,7 @@ describe('endpointRunner', () => {
     it('should include a body', (done) => {
       nock(BAAS_URL)
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .post(`/rpc/${ENVIRONMENT_ID}/custom/myEndpoint`, { foo: 'bar' })
         .basicAuth({
           user: ENVIRONMENT_ID,
@@ -273,7 +273,7 @@ describe('endpointRunner', () => {
     it('should include empty object as body if null body passed', (done) => {
       nock(BAAS_URL)
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .post(`/rpc/${ENVIRONMENT_ID}/custom/myEndpoint`, {})
         .basicAuth({
           user: ENVIRONMENT_ID,
@@ -292,7 +292,7 @@ describe('endpointRunner', () => {
     it('should include empty object as body if no body passed', (done) => {
       nock(BAAS_URL)
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .post(`/rpc/${ENVIRONMENT_ID}/custom/myEndpoint`, {})
         .basicAuth({
           user: ENVIRONMENT_ID,
@@ -311,7 +311,7 @@ describe('endpointRunner', () => {
     it('should resolve endpoint if callback isn\'t passed', (done) => {
       nock(BAAS_URL)
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .post(`/rpc/${ENVIRONMENT_ID}/custom/myEndpoint`)
         .basicAuth({
           user: ENVIRONMENT_ID,
@@ -330,7 +330,7 @@ describe('endpointRunner', () => {
     it('should execute using userContext', (done) => {
       nock(BAAS_URL)
         .matchHeader('content-type', 'application/json')
-        .matchHeader('x-kinvey-api-version', '3')
+        .matchHeader('x-kinvey-api-version', '5')
         .matchHeader('AUTHORIZATION', AUTHORIZATION)
         .post(`/rpc/${ENVIRONMENT_ID}/custom/myEndpoint`)
         .reply(200, this.payload);
@@ -344,7 +344,7 @@ describe('endpointRunner', () => {
     });
 
     it('should execute with overriden API Version', (done) => {
-      const API_VERSION = 5;
+      const API_VERSION = 4;
 
       nock(BAAS_URL)
         .matchHeader('content-type', 'application/json')
