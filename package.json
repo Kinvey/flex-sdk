@@ -25,6 +25,7 @@
     "sift": "3.2.6"
   },
   "devDependencies": {
+    "@progresskinvey/eslint-config-kinvey-platform": "0.2.1",
     "eslint": "5.9.0",
     "eslint-config-kinvey-platform": "kinvey/eslint-kinvey-platform#0.1.3",
     "eslint-plugin-import": "2.14.0",
