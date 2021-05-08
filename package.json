@@ -17,7 +17,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "async": "3.1.0",
-    "bson": "0.4.23",
+    "bson": "1.1.4",
     "kinvey-code-task-runner": "2.4.0",
     "kinvey-datalink-errors": "0.3.2",
     "moment": "2.22.2",
