@@ -24,50 +24,50 @@ describe('modules / kinvey', () => {
   const stubEntityKMDProperties = ['lmt', 'ect'];
   before((done) => {
     kinveyInstance = kinveyModule(testEnvironmentId);
-    return done();
+    done();
   });
   describe('isKinveyEntity function', () => {
     it('returns false when null is passed in', (done) => {
       kinveyInstance.isKinveyEntity(null).should.be.false();
-      return done();
+      done();
     });
     it('returns false when undefined is passed in', (done) => {
       kinveyInstance.isKinveyEntity(undefined).should.be.false();
-      return done();
+      done();
     });
     it('returns false when an empty object is passed in', (done) => {
       kinveyInstance.isKinveyEntity({}).should.be.false();
-      return done();
+      done();
     });
     it('returns false when a populated object is passed in', (done) => {
       kinveyInstance.isKinveyEntity({ prop: 1 }).should.be.false();
-      return done();
+      done();
     });
     it('returns false when a string is passed in', (done) => {
       kinveyInstance.isKinveyEntity('hello').should.be.false();
-      return done();
+      done();
     });
     it('returns false when a number is passed in', (done) => {
       kinveyInstance.isKinveyEntity(1).should.be.false();
-      return done();
+      done();
     });
     it('returns false when a function is passed in', (done) => {
       kinveyInstance.isKinveyEntity(() => true).should.be.false();
-      return done();
+      done();
     });
     it('returns false when an error is passed in', (done) => {
       kinveyInstance.isKinveyEntity(new Error('error')).should.be.false();
-      return done();
+      done();
     });
     it('returns true when a kinvey entity is passed in', (done) => {
       kinveyInstance.isKinveyEntity(kinveyInstance.entity()).should.be.true();
-      return done();
+      done();
     });
-    return it('returns false if _acl methods are not available', (done) => {
+    it('returns false if _acl methods are not available', (done) => {
       const entity = kinveyInstance.entity();
       entity._acl = {};
       kinveyInstance.isKinveyEntity(entity).should.be.false();
-      return done();
+      done();
     });
   });
 
@@ -75,21 +75,21 @@ describe('modules / kinvey', () => {
     it('returns an kinveyized JS object of type Object', (done) => {
       const ke = kinveyInstance.entity();
       kinveyInstance.isKinveyEntity(ke).should.be.true();
-      return done();
+      done();
     });
     it('creates a stub kinvey entity when nothing is passed in', (done) => {
       const ke = kinveyInstance.entity();
       ke.should.have.properties(stubEntityProperties);
       ke._acl.should.have.properties(stubEntityACLProperties);
       ke._kmd.should.have.properties(stubEntityKMDProperties);
-      return done();
+      done();
     });
     it('creates a stub kinvey entity when an empty object is passed in', (done) => {
       const ke = kinveyInstance.entity({});
       ke.should.have.properties(stubEntityProperties);
       ke._acl.should.have.properties(stubEntityACLProperties);
       ke._kmd.should.have.properties(stubEntityKMDProperties);
-      return done();
+      done();
     });
     it('fills in missing kinvey metadata when object with _acl is passed in', (done) => {
       const ke = kinveyInstance.entity({
@@ -101,7 +101,7 @@ describe('modules / kinvey', () => {
       ke.should.have.properties(stubEntityProperties);
       ke._acl.should.have.properties(stubEntityACLProperties);
       ke._kmd.should.have.properties(stubEntityKMDProperties);
-      return done();
+      done();
     });
     it('adds KinveyEntity properties when object with values is passed in', (done) => {
       const ke = kinveyInstance.entity({
@@ -111,7 +111,7 @@ describe('modules / kinvey', () => {
       ke._acl.should.have.properties(stubEntityACLProperties);
       ke._kmd.should.have.properties(stubEntityKMDProperties);
       ke.key.should.eql('value');
-      return done();
+      done();
     });
     it('retains all existing kinvey metadata when a kinveyEntity is passed in', (done) => {
       const ke1 = kinveyInstance.entity({
@@ -119,7 +119,7 @@ describe('modules / kinvey', () => {
       });
       const ke2 = kinveyInstance.entity(ke1);
       ke1.should.eql(ke2);
-      return done();
+      done();
     });
     it('retains existing _id when a kinveyEntity with existing _id is passed in', (done) => {
       const existingId = 'existing_id';
@@ -129,7 +129,7 @@ describe('modules / kinvey', () => {
       };
       const ke = kinveyInstance.entity(testObject);
       ke._id.should.eql(existingId);
-      return done();
+      done();
     });
     it('returns the passed in object', (done) => {
       const testObject = {
@@ -137,7 +137,7 @@ describe('modules / kinvey', () => {
       };
       const ke = kinveyInstance.entity(testObject);
       should.strictEqual(ke, testObject);
-      return done();
+      done();
     });
     it('The _acl convenience functions are not enumerable', (done) => {
       const testObject = {
@@ -178,39 +178,39 @@ describe('modules / kinvey', () => {
         (typeof testObject._acl[aclFunctionSignature]).should.eql('function');
         keys.indexOf(aclFunctionSignature).should.eql(-1);
       }
-      return done();
+      done();
     });
     describe('ACL', () => {
       describe('getCreator', () => {
         it('returns envId for stub entity', (done) => {
           const ke = kinveyInstance.entity();
           ke._acl.getCreator().should.eql(testEnvironmentId);
-          return done();
+          done();
         });
-        return it('returns correct value when creator is set on creation of entity', (done) => {
+        it('returns correct value when creator is set on creation of entity', (done) => {
           const ke = kinveyInstance.entity({
             _acl: {
               creator: 'ME'
             }
           });
           ke._acl.getCreator().should.eql('ME');
-          return done();
+          done();
         });
       });
       describe('getReaders', () => {
         it('returns empty array for stub entity with no readers', (done) => {
           const ke = kinveyInstance.entity();
           ke._acl.getReaders().should.eql([]);
-          return done();
+          done();
         });
-        return it('returns correct value for entity with readers', (done) => {
+        it('returns correct value for entity with readers', (done) => {
           const ke = kinveyInstance.entity({
             _acl: {
               r: [1, 2, 3]
             }
           });
           ke._acl.getReaders().should.eql([1, 2, 3]);
-          return done();
+          done();
         });
       });
       describe('addReader', () => {
@@ -218,7 +218,7 @@ describe('modules / kinvey', () => {
           const ke = kinveyInstance.entity();
           ke._acl.addReader('12345');
           ke._acl.getReaders().should.eql(['12345']);
-          return done();
+          done();
         });
         it('adds a reader for stub entity with existing readers', (done) => {
           const ke = kinveyInstance.entity({
@@ -228,7 +228,7 @@ describe('modules / kinvey', () => {
           });
           ke._acl.addReader(12345);
           ke._acl.getReaders().should.eql([1, 2, 3, 12345]);
-          return done();
+          done();
         });
         it('wont add an existing reader id', (done) => {
           const ke = kinveyInstance.entity({
@@ -238,16 +238,16 @@ describe('modules / kinvey', () => {
           });
           ke._acl.addReader(1);
           ke._acl.getReaders().should.eql([1, 2, 3]);
-          return done();
+          done();
         });
-        return it('returns entity acls for method chaining', (done) => {
+        it('returns entity acls for method chaining', (done) => {
           const ke = kinveyInstance.entity({
             _acl: {
               r: [1, 2, 3]
             }
           });
           ke._acl.addReader(1).getReaders().should.eql([1, 2, 3]);
-          return done();
+          done();
         });
       });
       describe('removeReader', () => {
@@ -259,7 +259,7 @@ describe('modules / kinvey', () => {
           });
           ke._acl.removeReader(1);
           ke._acl.getReaders().should.eql([2, 3]);
-          return done();
+          done();
         });
         it('does nothing when a match is not found', (done) => {
           const ke = kinveyInstance.entity({
@@ -269,7 +269,7 @@ describe('modules / kinvey', () => {
           });
           ke._acl.removeReader(4);
           ke._acl.getReaders().should.eql([1, 2, 3]);
-          return done();
+          done();
         });
         it('will remove all instances of an id', (done) => {
           const ke = kinveyInstance.entity({
@@ -279,32 +279,32 @@ describe('modules / kinvey', () => {
           });
           ke._acl.removeReader(1);
           ke._acl.getReaders().should.eql([2, 3]);
-          return done();
+          done();
         });
-        return it('returns entity acls for method chaining', (done) => {
+        it('returns entity acls for method chaining', (done) => {
           const ke = kinveyInstance.entity({
             _acl: {
               r: [1, 2, 3, 1]
             }
           });
           ke._acl.removeReader(1).getReaders().should.eql([2, 3]);
-          return done();
+          done();
         });
       });
       describe('getWriters', () => {
         it('returns empty for stub entity with no writers', (done) => {
           const ke = kinveyInstance.entity();
           ke._acl.getWriters().should.eql([]);
-          return done();
+          done();
         });
-        return it('returns array for entity with readers', (done) => {
+        it('returns array for entity with readers', (done) => {
           const ke = kinveyInstance.entity({
             _acl: {
               w: [1, 2, 3]
             }
           });
           ke._acl.getWriters().should.eql([1, 2, 3]);
-          return done();
+          done();
         });
       });
       describe('addWriters', () => {
@@ -312,7 +312,7 @@ describe('modules / kinvey', () => {
           const ke = kinveyInstance.entity();
           ke._acl.addWriter('12345');
           ke._acl.getWriters().should.eql(['12345']);
-          return done();
+          done();
         });
         it('adds a reader for stub entity with existing readers', (done) => {
           const ke = kinveyInstance.entity({
@@ -322,7 +322,7 @@ describe('modules / kinvey', () => {
           });
           ke._acl.addWriter(12345);
           ke._acl.getWriters().should.eql([1, 2, 3, 12345]);
-          return done();
+          done();
         });
         it('wont add an existing reader id', (done) => {
           let ke = kinveyInstance.entity({
@@ -333,14 +333,14 @@ describe('modules / kinvey', () => {
           ke._acl.addReader(1);
           ke._acl.getReaders().should.eql([1, 2, 3]);
           done();
-          return it('returns entity acls for method chaining', (done) => {
+          it('returns entity acls for method chaining', (done) => {
             ke = kinveyInstance.entity({
               _acl: {
                 w: [1, 2, 3]
               }
             });
             ke._acl.addWriter(12345).getWriters().should.eql([1, 2, 3, 12345]);
-            return done();
+            done();
           });
         });
         describe('removeWriter', () => {
@@ -352,7 +352,7 @@ describe('modules / kinvey', () => {
             });
             ke._acl.removeWriter(1);
             ke._acl.getWriters().should.eql([2, 3]);
-            return done();
+            done();
           });
           it('does nothing when a match is not found', (done) => {
             const ke = kinveyInstance.entity({
@@ -362,7 +362,7 @@ describe('modules / kinvey', () => {
             });
             ke._acl.removeWriter(4);
             ke._acl.getWriters().should.eql([1, 2, 3]);
-            return done();
+            done();
           });
           it('will remove all instances of an id', (done) => {
             const ke = kinveyInstance.entity({
@@ -372,16 +372,16 @@ describe('modules / kinvey', () => {
             });
             ke._acl.removeWriter(1);
             ke._acl.getWriters().should.eql([2, 3]);
-            return done();
+            done();
           });
-          return it('returns entity acls for method chaining', (done) => {
+          it('returns entity acls for method chaining', (done) => {
             const ke = kinveyInstance.entity({
               _acl: {
                 w: [1, 2, 3, 1]
               }
             });
             ke._acl.removeWriter(1).getWriters().should.eql([2, 3]);
-            return done();
+            done();
           });
         });
       });
@@ -389,9 +389,9 @@ describe('modules / kinvey', () => {
         it('returns empty array when no group readers', (done) => {
           const ke = kinveyInstance.entity();
           ke._acl.getReaderGroups().should.eql([]);
-          return done();
+          done();
         });
-        return it('returns correct value for entity with readers', (done) => {
+        it('returns correct value for entity with readers', (done) => {
           const ke = kinveyInstance.entity({
             _acl: {
               groups: {
@@ -400,7 +400,7 @@ describe('modules / kinvey', () => {
             }
           });
           ke._acl.getReaderGroups().should.eql([1, 2, 3]);
-          return done();
+          done();
         });
       });
       describe('addReaderGroup', () => {
@@ -408,7 +408,7 @@ describe('modules / kinvey', () => {
           const ke = kinveyInstance.entity();
           ke._acl.addReaderGroup('1');
           ke._acl.getReaderGroups().should.eql(['1']);
-          return done();
+          done();
         });
         it('wont add an existing reader id', (done) => {
           const ke = kinveyInstance.entity({
@@ -420,7 +420,7 @@ describe('modules / kinvey', () => {
           });
           ke._acl.addReaderGroup(1);
           ke._acl.getReaderGroups().should.eql([1, 2, 3]);
-          return done();
+          done();
         });
         it('appends a group ID to existing list', (done) => {
           const ke = kinveyInstance.entity({
@@ -432,9 +432,9 @@ describe('modules / kinvey', () => {
           });
           ke._acl.addReaderGroup(4);
           ke._acl.getReaderGroups().should.eql([1, 2, 3, 4]);
-          return done();
+          done();
         });
-        return it('returns entity acls for method chaining', (done) => {
+        it('returns entity acls for method chaining', (done) => {
           const ke = kinveyInstance.entity({
             _acl: {
               groups: {
@@ -443,7 +443,7 @@ describe('modules / kinvey', () => {
             }
           });
           ke._acl.addReaderGroup(4).getReaderGroups().should.eql([1, 2, 3, 4]);
-          return done();
+          done();
         });
       });
       describe('removeReaderGroup', () => {
@@ -457,7 +457,7 @@ describe('modules / kinvey', () => {
           });
           ke._acl.removeReaderGroup(1);
           ke._acl.getReaderGroups().should.eql([2, 3]);
-          return done();
+          done();
         });
         it('does nothing when a match is not found', (done) => {
           const ke = kinveyInstance.entity({
@@ -469,7 +469,7 @@ describe('modules / kinvey', () => {
           });
           ke._acl.removeReaderGroup(4);
           ke._acl.getReaderGroups().should.eql([1, 2, 3]);
-          return done();
+          done();
         });
         it('does nothing when no reader groups are defined', (done) => {
           const ke = kinveyInstance.entity({
@@ -479,7 +479,7 @@ describe('modules / kinvey', () => {
           });
           ke._acl.removeReaderGroup(1);
           ke._acl.getReaderGroups().should.eql([]);
-          return done();
+          done();
         });
         it('will remove all instances of a group id', (done) => {
           const ke = kinveyInstance.entity({
@@ -491,9 +491,9 @@ describe('modules / kinvey', () => {
           });
           ke._acl.removeReaderGroup(1);
           ke._acl.getReaderGroups().should.eql([2, 3]);
-          return done();
+          done();
         });
-        return it('returns entity acls for method chaining', (done) => {
+        it('returns entity acls for method chaining', (done) => {
           const ke = kinveyInstance.entity({
             _acl: {
               groups: {
@@ -502,16 +502,16 @@ describe('modules / kinvey', () => {
             }
           });
           ke._acl.removeReaderGroup(1).getReaderGroups().should.eql([2, 3]);
-          return done();
+          done();
         });
       });
       describe('getWriterGroups', () => {
         it('returns empty array when no group writers', (done) => {
           const ke = kinveyInstance.entity();
           ke._acl.getWriterGroups().should.eql([]);
-          return done();
+          done();
         });
-        return it('returns correct value for entity with readers', (done) => {
+        it('returns correct value for entity with readers', (done) => {
           const ke = kinveyInstance.entity({
             _acl: {
               groups: {
@@ -520,7 +520,7 @@ describe('modules / kinvey', () => {
             }
           });
           ke._acl.getWriterGroups().should.eql([1, 2, 3]);
-          return done();
+          done();
         });
       });
       describe('addWriterGroup', () => {
@@ -528,7 +528,7 @@ describe('modules / kinvey', () => {
           const ke = kinveyInstance.entity();
           ke._acl.addWriterGroup('1');
           ke._acl.getWriterGroups().should.eql(['1']);
-          return done();
+          done();
         });
         it('wont add an existing reader id', (done) => {
           const ke = kinveyInstance.entity({
@@ -540,7 +540,7 @@ describe('modules / kinvey', () => {
           });
           ke._acl.addWriterGroup(1);
           ke._acl.getWriterGroups().should.eql([1, 2, 3]);
-          return done();
+          done();
         });
         it('appends a group ID to existing list', (done) => {
           const ke = kinveyInstance.entity({
@@ -552,9 +552,9 @@ describe('modules / kinvey', () => {
           });
           ke._acl.addWriterGroup(4);
           ke._acl.getWriterGroups().should.eql([1, 2, 3, 4]);
-          return done();
+          done();
         });
-        return it('returns entity acls for method chaining', (done) => {
+        it('returns entity acls for method chaining', (done) => {
           const ke = kinveyInstance.entity({
             _acl: {
               groups: {
@@ -563,7 +563,7 @@ describe('modules / kinvey', () => {
             }
           });
           ke._acl.addWriterGroup(4).getWriterGroups().should.eql([1, 2, 3, 4]);
-          return done();
+          done();
         });
       });
       describe('removeWriterGroup', () => {
@@ -576,7 +576,7 @@ describe('modules / kinvey', () => {
             }
           });
           ke._acl.removeWriterGroup(1).getWriterGroups().should.eql([2, 3]);
-          return done();
+          done();
         });
         it('removes a writer group when a match is found', (done) => {
           const ke = kinveyInstance.entity({
@@ -588,7 +588,7 @@ describe('modules / kinvey', () => {
           });
           ke._acl.removeWriterGroup(1);
           ke._acl.getWriterGroups().should.eql([2, 3]);
-          return done();
+          done();
         });
         it('does nothing when a match is not found', (done) => {
           const ke = kinveyInstance.entity({
@@ -600,7 +600,7 @@ describe('modules / kinvey', () => {
           });
           ke._acl.removeWriterGroup(4);
           ke._acl.getWriterGroups().should.eql([1, 2, 3]);
-          return done();
+          done();
         });
         it('does nothing when no writer groups are defined', (done) => {
           const ke = kinveyInstance.entity({
@@ -610,7 +610,7 @@ describe('modules / kinvey', () => {
           });
           ke._acl.removeWriterGroup(1);
           ke._acl.getWriterGroups().should.eql([]);
-          return done();
+          done();
         });
         it('will remove all instances of a group id', (done) => {
           const ke = kinveyInstance.entity({
@@ -622,7 +622,7 @@ describe('modules / kinvey', () => {
           });
           ke._acl.removeWriterGroup(1);
           ke._acl.getWriterGroups().should.eql([2, 3]);
-          return done();
+          done();
         });
         it('returns entity acls for method chaining', (done) => {
           const ke = kinveyInstance.entity({
@@ -633,16 +633,16 @@ describe('modules / kinvey', () => {
             }
           });
           ke._acl.removeWriterGroup(1).getWriterGroups().should.eql([2, 3]);
-          return done();
+          done();
         });
       });
       describe('getReaderRoles', () => {
         it('returns empty array when no role readers', (done) => {
           const ke = kinveyInstance.entity();
           ke._acl.getReaderRoles().should.eql([]);
-          return done();
+          done();
         });
-        return it('returns correct value for entity with readers', (done) => {
+        it('returns correct value for entity with readers', (done) => {
           const ke = kinveyInstance.entity({
             _acl: {
               roles: {
@@ -651,7 +651,7 @@ describe('modules / kinvey', () => {
             }
           });
           ke._acl.getReaderRoles().should.eql([1, 2, 3]);
-          return done();
+          done();
         });
       });
       describe('addReaderRole', () => {
@@ -659,7 +659,7 @@ describe('modules / kinvey', () => {
           const ke = kinveyInstance.entity();
           ke._acl.addReaderRole('1');
           ke._acl.getReaderRoles().should.eql(['1']);
-          return done();
+          done();
         });
         it('wont add an existing reader id', (done) => {
           const ke = kinveyInstance.entity({
@@ -671,7 +671,7 @@ describe('modules / kinvey', () => {
           });
           ke._acl.addReaderRole(1);
           ke._acl.getReaderRoles().should.eql([1, 2, 3]);
-          return done();
+          done();
         });
         it('appends a role ID to existing list', (done) => {
           const ke = kinveyInstance.entity({
@@ -683,9 +683,9 @@ describe('modules / kinvey', () => {
           });
           ke._acl.addReaderRole(4);
           ke._acl.getReaderRoles().should.eql([1, 2, 3, 4]);
-          return done();
+          done();
         });
-        return it('returns entity acls for method chaining', (done) => {
+        it('returns entity acls for method chaining', (done) => {
           const ke = kinveyInstance.entity({
             _acl: {
               roles: {
@@ -694,7 +694,7 @@ describe('modules / kinvey', () => {
             }
           });
           ke._acl.addReaderRole(4).getReaderRoles().should.eql([1, 2, 3, 4]);
-          return done();
+          done();
         });
       });
       describe('removeReaderRole', () => {
@@ -708,7 +708,7 @@ describe('modules / kinvey', () => {
           });
           ke._acl.removeReaderRole(1);
           ke._acl.getReaderRoles().should.eql([2, 3]);
-          return done();
+          done();
         });
         it('does nothing when a match is not found', (done) => {
           const ke = kinveyInstance.entity({
@@ -720,7 +720,7 @@ describe('modules / kinvey', () => {
           });
           ke._acl.removeReaderRole(4);
           ke._acl.getReaderRoles().should.eql([1, 2, 3]);
-          return done();
+          done();
         });
         it('does nothing when no reader roles are defined', (done) => {
           const ke = kinveyInstance.entity({
@@ -730,7 +730,7 @@ describe('modules / kinvey', () => {
           });
           ke._acl.removeReaderRole(1);
           ke._acl.getReaderRoles().should.eql([]);
-          return done();
+          done();
         });
         it('will remove all instances of a role id', (done) => {
           const ke = kinveyInstance.entity({
@@ -742,9 +742,9 @@ describe('modules / kinvey', () => {
           });
           ke._acl.removeReaderRole(1);
           ke._acl.getReaderRoles().should.eql([2, 3]);
-          return done();
+          done();
         });
-        return it('returns entity acls for method chaining', (done) => {
+        it('returns entity acls for method chaining', (done) => {
           const ke = kinveyInstance.entity({
             _acl: {
               roles: {
@@ -753,16 +753,16 @@ describe('modules / kinvey', () => {
             }
           });
           ke._acl.removeReaderRole(1).getReaderRoles().should.eql([2, 3]);
-          return done();
+          done();
         });
       });
       describe('getUpdateRoles', () => {
         it('returns empty array when no role updates', (done) => {
           const ke = kinveyInstance.entity();
           ke._acl.getUpdateRoles().should.eql([]);
-          return done();
+          done();
         });
-        return it('returns correct value for entity with updates', (done) => {
+        it('returns correct value for entity with updates', (done) => {
           const ke = kinveyInstance.entity({
             _acl: {
               roles: {
@@ -771,7 +771,7 @@ describe('modules / kinvey', () => {
             }
           });
           ke._acl.getUpdateRoles().should.eql([1, 2, 3]);
-          return done();
+          done();
         });
       });
       describe('addUpdateRole', () => {
@@ -779,7 +779,7 @@ describe('modules / kinvey', () => {
           const ke = kinveyInstance.entity();
           ke._acl.addUpdateRole('1');
           ke._acl.getUpdateRoles().should.eql(['1']);
-          return done();
+          done();
         });
         it('wont add an existing update id', (done) => {
           const ke = kinveyInstance.entity({
@@ -791,7 +791,7 @@ describe('modules / kinvey', () => {
           });
           ke._acl.addUpdateRole(1);
           ke._acl.getUpdateRoles().should.eql([1, 2, 3]);
-          return done();
+          done();
         });
         it('appends a role ID to existing list', (done) => {
           const ke = kinveyInstance.entity({
@@ -803,9 +803,9 @@ describe('modules / kinvey', () => {
           });
           ke._acl.addUpdateRole(4);
           ke._acl.getUpdateRoles().should.eql([1, 2, 3, 4]);
-          return done();
+          done();
         });
-        return it('returns entity acls for method chaining', (done) => {
+        it('returns entity acls for method chaining', (done) => {
           const ke = kinveyInstance.entity({
             _acl: {
               roles: {
@@ -814,7 +814,7 @@ describe('modules / kinvey', () => {
             }
           });
           ke._acl.addUpdateRole(4).getUpdateRoles().should.eql([1, 2, 3, 4]);
-          return done();
+          done();
         });
       });
       describe('removeUpdateRole', () => {
@@ -828,7 +828,7 @@ describe('modules / kinvey', () => {
           });
           ke._acl.removeUpdateRole(1);
           ke._acl.getUpdateRoles().should.eql([2, 3]);
-          return done();
+          done();
         });
         it('does nothing when a match is not found', (done) => {
           const ke = kinveyInstance.entity({
@@ -840,7 +840,7 @@ describe('modules / kinvey', () => {
           });
           ke._acl.removeUpdateRole(4);
           ke._acl.getUpdateRoles().should.eql([1, 2, 3]);
-          return done();
+          done();
         });
         it('does nothing when no update roles are defined', (done) => {
           const ke = kinveyInstance.entity({
@@ -850,7 +850,7 @@ describe('modules / kinvey', () => {
           });
           ke._acl.removeUpdateRole(1);
           ke._acl.getUpdateRoles().should.eql([]);
-          return done();
+          done();
         });
         it('will remove all instances of a role id', (done) => {
           const ke = kinveyInstance.entity({
@@ -862,9 +862,9 @@ describe('modules / kinvey', () => {
           });
           ke._acl.removeUpdateRole(1);
           ke._acl.getUpdateRoles().should.eql([2, 3]);
-          return done();
+          done();
         });
-        return it('returns entity acls for method chaining', (done) => {
+        it('returns entity acls for method chaining', (done) => {
           const ke = kinveyInstance.entity({
             _acl: {
               roles: {
@@ -873,16 +873,16 @@ describe('modules / kinvey', () => {
             }
           });
           ke._acl.removeUpdateRole(1).getUpdateRoles().should.eql([2, 3]);
-          return done();
+          done();
         });
       });
       describe('getDeleteRoles', () => {
         it('returns empty array when no role deletes', (done) => {
           const ke = kinveyInstance.entity();
           ke._acl.getDeleteRoles().should.eql([]);
-          return done();
+          done();
         });
-        return it('returns correct value for entity with deletes', (done) => {
+        it('returns correct value for entity with deletes', (done) => {
           const ke = kinveyInstance.entity({
             _acl: {
               roles: {
@@ -891,7 +891,7 @@ describe('modules / kinvey', () => {
             }
           });
           ke._acl.getDeleteRoles().should.eql([1, 2, 3]);
-          return done();
+          done();
         });
       });
       describe('addDeleteRole', () => {
@@ -899,7 +899,7 @@ describe('modules / kinvey', () => {
           const ke = kinveyInstance.entity();
           ke._acl.addDeleteRole('1');
           ke._acl.getDeleteRoles().should.eql(['1']);
-          return done();
+          done();
         });
         it('wont add an existing delete id', (done) => {
           const ke = kinveyInstance.entity({
@@ -911,7 +911,7 @@ describe('modules / kinvey', () => {
           });
           ke._acl.addDeleteRole(1);
           ke._acl.getDeleteRoles().should.eql([1, 2, 3]);
-          return done();
+          done();
         });
         it('appends a role ID to existing list', (done) => {
           const ke = kinveyInstance.entity({
@@ -923,9 +923,9 @@ describe('modules / kinvey', () => {
           });
           ke._acl.addDeleteRole(4);
           ke._acl.getDeleteRoles().should.eql([1, 2, 3, 4]);
-          return done();
+          done();
         });
-        return it('returns entity acls for method chaining', (done) => {
+        it('returns entity acls for method chaining', (done) => {
           const ke = kinveyInstance.entity({
             _acl: {
               roles: {
@@ -934,7 +934,7 @@ describe('modules / kinvey', () => {
             }
           });
           ke._acl.addDeleteRole(4).getDeleteRoles().should.eql([1, 2, 3, 4]);
-          return done();
+          done();
         });
       });
       describe('removeDeleteRole', () => {
@@ -948,7 +948,7 @@ describe('modules / kinvey', () => {
           });
           ke._acl.removeDeleteRole(1);
           ke._acl.getDeleteRoles().should.eql([2, 3]);
-          return done();
+          done();
         });
         it('does nothing when a match is not found', (done) => {
           const ke = kinveyInstance.entity({
@@ -960,7 +960,7 @@ describe('modules / kinvey', () => {
           });
           ke._acl.removeDeleteRole(4);
           ke._acl.getDeleteRoles().should.eql([1, 2, 3]);
-          return done();
+          done();
         });
         it('does nothing when no delete roles are defined', (done) => {
           const ke = kinveyInstance.entity({
@@ -970,7 +970,7 @@ describe('modules / kinvey', () => {
           });
           ke._acl.removeDeleteRole(1);
           ke._acl.getDeleteRoles().should.eql([]);
-          return done();
+          done();
         });
         it('will remove all instances of a role id', (done) => {
           const ke = kinveyInstance.entity({
@@ -982,9 +982,9 @@ describe('modules / kinvey', () => {
           });
           ke._acl.removeDeleteRole(1);
           ke._acl.getDeleteRoles().should.eql([2, 3]);
-          return done();
+          done();
         });
-        return it('returns entity acls for method chaining', (done) => {
+        it('returns entity acls for method chaining', (done) => {
           const ke = kinveyInstance.entity({
             _acl: {
               roles: {
@@ -993,14 +993,14 @@ describe('modules / kinvey', () => {
             }
           });
           ke._acl.removeDeleteRole(1).getDeleteRoles().should.eql([2, 3]);
-          return done();
+          done();
         });
       });
       describe('get global readability', () => {
         it('will return null when globally readable is not set', (done) => {
           const ke = kinveyInstance.entity();
           (ke._acl.getGloballyReadable() === null).should.be.true();
-          return done();
+          done();
         });
         it('will return true when globally readable is true', (done) => {
           const ke = kinveyInstance.entity({
@@ -1009,7 +1009,7 @@ describe('modules / kinvey', () => {
             }
           });
           ke._acl.getGloballyReadable().should.be.true();
-          return done();
+          done();
         });
         it('will return false when globally readable is false', (done) => {
           const ke = kinveyInstance.entity({
@@ -1018,23 +1018,23 @@ describe('modules / kinvey', () => {
             }
           });
           ke._acl.getGloballyReadable().should.be.false();
-          return done();
+          done();
         });
-        return it('will return null when globally readable is undefined', (done) => {
+        it('will return null when globally readable is undefined', (done) => {
           const ke = kinveyInstance.entity({
             _acl: {
               gr: undefined
             }
           });
           (ke._acl.getGloballyReadable() === null).should.be.true();
-          return done();
+          done();
         });
       });
       describe('get global writability', () => {
         it('will return null when not set', (done) => {
           const ke = kinveyInstance.entity();
           (ke._acl.getGloballyWritable() === null).should.be.true();
-          return done();
+          done();
         });
         it('will return true when true', (done) => {
           const ke = kinveyInstance.entity({
@@ -1043,7 +1043,7 @@ describe('modules / kinvey', () => {
             }
           });
           ke._acl.getGloballyWritable().should.be.true();
-          return done();
+          done();
         });
         it('will return false when false', (done) => {
           const ke = kinveyInstance.entity({
@@ -1052,16 +1052,16 @@ describe('modules / kinvey', () => {
             }
           });
           ke._acl.getGloballyWritable().should.be.false();
-          return done();
+          done();
         });
-        return it('will return null when undefined', (done) => {
+        it('will return null when undefined', (done) => {
           const ke = kinveyInstance.entity({
             _acl: {
               gw: undefined
             }
           });
           (ke._acl.getGloballyWritable() === null).should.be.true();
-          return done();
+          done();
         });
       });
       describe('set global readability', () => {
@@ -1069,37 +1069,37 @@ describe('modules / kinvey', () => {
           const ke = kinveyInstance.entity();
           ke._acl.setGloballyReadable(true);
           ke._acl.getGloballyReadable().should.be.true();
-          return done();
+          done();
         });
         it('will set to false when passed in', (done) => {
           const ke = kinveyInstance.entity();
           ke._acl.setGloballyReadable(false);
           ke._acl.getGloballyReadable().should.be.false();
-          return done();
+          done();
         });
-        return it('will return entity acls for method chaining', (done) => {
+        it('will return entity acls for method chaining', (done) => {
           const ke = kinveyInstance.entity();
           ke._acl.setGloballyReadable(true).getGloballyReadable().should.be.true();
-          return done();
+          done();
         });
       });
-      return describe('set global writability', () => {
+      describe('set global writability', () => {
         it('will set to true when passed in', (done) => {
           const ke = kinveyInstance.entity();
           ke._acl.setGloballyWritable(true);
           ke._acl.getGloballyWritable().should.be.true();
-          return done();
+          done();
         });
         it('will set to false when passed in', (done) => {
           const ke = kinveyInstance.entity();
           ke._acl.setGloballyWritable(false);
           ke._acl.getGloballyWritable().should.be.false();
-          return done();
+          done();
         });
-        return it('will return entity acls for method chaining', (done) => {
+        it('will return entity acls for method chaining', (done) => {
           const ke = kinveyInstance.entity();
           ke._acl.setGloballyWritable(true).getGloballyWritable().should.be.true();
-          return done();
+          done();
         });
       });
     });

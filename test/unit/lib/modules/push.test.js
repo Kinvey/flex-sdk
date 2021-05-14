@@ -60,29 +60,29 @@ describe('modules / push', () => {
     require.cache[require.resolve('request')].exports.defaults = requestDefaultsStub;
     pushModule = require('../../../../lib/service/modules/push'); // eslint-disable-line global-require
     pushInstance = pushModule(appMetadata, taskMetadata, requestMetadata, emitter);
-    return done();
+    done();
   });
 
   afterEach((done) => {
     requestStub.post.reset();
-    return done();
+    done();
   });
 
   it('\'send\' and \'sendMessage\' point to the same method', (done) => {
     pushInstance.send.should.eql(pushInstance.sendMessage);
-    return done();
+    done();
   });
 
   it('\'broadcast\' and \'broadcastMessage\' point to the same method', (done) => {
     pushInstance.broadcast.should.eql(pushInstance.broadcastMessage);
-    return done();
+    done();
   });
 
   describe('methods / send', () => {
     it('should return a Promise', (done) => {
       requestStub.post.callsArg(1);
       (pushInstance.send(recipients, 'hello')).should.be.a.Promise(); // eslint-disable-line new-cap
-      return done();
+      done();
     });
 
     it('should invoke the callback if specified', (done) => {
@@ -104,22 +104,22 @@ describe('modules / push', () => {
       (() => pushInstance.send(recipients, 'hello')).should.not.throw();
       requestStub.post.args[0][0].auth.user.should.eql(appMetadata._id);
       requestStub.post.args[0][0].auth.pass.should.eql(appMetadata.mastersecret);
-      return done();
+      done();
     });
 
     it('calls back an error if one has occurred while communicating with the server', (done) => {
       requestStub.post.callsArgWith(1, 'error!');
-      return pushInstance.send(recipients, 'hello', (err, result) => {
+      pushInstance.send(recipients, 'hello', (err, result) => {
         should.exist(err);
         err.should.eql('error!');
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
     it('invokes rejection handler if an error has occurred while communicating with the server', () => {
       requestStub.post.callsArgWith(1, 'error!');
-      return pushInstance.send(recipients, 'hello')
+      pushInstance.send(recipients, 'hello')
         .catch((err) => {
           should.exist(err);
           err.should.eql('error!');
@@ -130,11 +130,11 @@ describe('modules / push', () => {
       requestStub.post.callsArgWith(1, null, {
         statusCode: 401
       }, 'error!');
-      return pushInstance.send(recipients, 'hello', (err, result) => {
+      pushInstance.send(recipients, 'hello', (err, result) => {
         should.exist(err);
         err.should.eql('error!');
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
@@ -142,7 +142,7 @@ describe('modules / push', () => {
       requestStub.post.callsArgWith(1, null, {
         statusCode: 401
       }, 'error!');
-      return pushInstance.send(recipients, 'hello')
+      pushInstance.send(recipients, 'hello')
         .catch((err) => {
           should.exist(err);
           err.should.eql('error!');
@@ -151,9 +151,9 @@ describe('modules / push', () => {
 
     it('POSTs to the server\'s /push/sendMessage URL', (done) => {
       requestStub.post.callsArgWith(1, {});
-      return pushInstance.send(recipients, 'hello', () => {
+      pushInstance.send(recipients, 'hello', () => {
         requestStub.post.args[0][0].url.should.eql(`${FAKE_BAAS_URL}/push/${appMetadata._id}/sendMessage`);
-        return done();
+        done();
       });
     });
 
@@ -161,33 +161,33 @@ describe('modules / push', () => {
       requestStub.post.callsArgWith(1, {});
       (pushInstance.send(null, 'hello')).should.be.rejectedWith(/.*users.*/);
       (pushInstance.send()).should.be.rejectedWith(/.*users.*/);
-      return done();
+      done();
     });
 
     it('rejects if no message is specified', (done) => {
       requestStub.post.callsArgWith(1, {});
       (pushInstance.send(recipients, null)).should.be.rejectedWith(/.*message.*/);
-      return done();
+      done();
     });
 
     it('send the appropriate arguments to the server', (done) => {
       requestStub.post.callsArgWith(1, {});
-      return pushInstance.send(recipients, 'hello', () => {
+      pushInstance.send(recipients, 'hello', () => {
         const requestBody = requestStub.post.args[0][0].json;
         requestBody.recipients.should.eql(recipients);
         requestBody.messageContent.should.eql('hello');
-        return done();
+        done();
       });
     });
 
-    return it('converts a user single object to an array', (done) => {
+    it('converts a user single object to an array', (done) => {
       requestStub.post.callsArgWith(1, {});
-      return pushInstance.send(recipient, 'hello', () => {
+      pushInstance.send(recipient, 'hello', () => {
         const requestBody = requestStub.post.args[0][0].json;
         requestBody.recipients.constructor.should.eql(Array);
         requestBody.recipients.should.eql([recipient]);
         requestBody.messageContent.should.eql('hello');
-        return done();
+        done();
       });
     });
   });
@@ -196,7 +196,7 @@ describe('modules / push', () => {
     it('should return a Promise', (done) => {
       requestStub.post.callsArg(1);
       (pushInstance.broadcast('hello')).should.be.a.Promise(); // eslint-disable-line new-cap
-      return done();
+      done();
     });
 
     it('should invoke the callback if specified', (done) => {
@@ -215,17 +215,17 @@ describe('modules / push', () => {
 
     it('calls back an error if one has occurred while communicating with the server', (done) => {
       requestStub.post.callsArgWith(1, 'error!');
-      return pushInstance.broadcast('hello', (err, result) => {
+      pushInstance.broadcast('hello', (err, result) => {
         should.exist(err);
         err.should.eql('error!');
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
     it('invokes rejection handler if an error has occurred while communicating with the server', () => {
       requestStub.post.callsArgWith(1, 'error!');
-      return pushInstance.broadcast('hello')
+      pushInstance.broadcast('hello')
         .catch((err) => {
           should.exist(err);
           err.should.eql('error!');
@@ -236,11 +236,11 @@ describe('modules / push', () => {
       requestStub.post.callsArgWith(1, null, {
         statusCode: 401
       }, 'error!');
-      return pushInstance.broadcast('hello', (err, result) => {
+      pushInstance.broadcast('hello', (err, result) => {
         should.exist(err);
         err.should.eql('error!');
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
@@ -248,7 +248,7 @@ describe('modules / push', () => {
       requestStub.post.callsArgWith(1, null, {
         statusCode: 401
       }, 'error!');
-      return pushInstance.broadcast('hello')
+      pushInstance.broadcast('hello')
         .catch((err) => {
           should.exist(err);
           err.should.eql('error!');
@@ -257,9 +257,9 @@ describe('modules / push', () => {
 
     it('POSTs to the server\'s /push/sendBroadcast URL', (done) => {
       requestStub.post.callsArgWith(1, {});
-      return pushInstance.broadcast('hello', () => {
+      pushInstance.broadcast('hello', () => {
         requestStub.post.args[0][0].url.should.eql(`${FAKE_BAAS_URL}/push/${appMetadata._id}/sendBroadcast`);
-        return done();
+        done();
       });
     });
 
@@ -267,18 +267,18 @@ describe('modules / push', () => {
       requestStub.post.callsArgWith(1, {});
       (pushInstance.broadcast()).should.be.rejectedWith(/.*message.*/);
       (pushInstance.broadcast(null)).should.be.rejectedWith(/.*message.*/);
-      return done();
+      done();
     });
 
-    return it('sends the appropriate arguments to the server', (done) => {
+    it('sends the appropriate arguments to the server', (done) => {
       requestStub.post.callsArgWith(1, {});
-      return pushInstance.broadcast('hello', () => {
+      pushInstance.broadcast('hello', () => {
         const requestBody = requestStub.post.args[0][0].json;
         requestBody.messageContent.should.eql('hello');
         const outgoingRequestHeaders = requestStub.post.args[0][0].headers;
         outgoingRequestHeaders.should.have.property('x-kinvey-api-version');
         outgoingRequestHeaders['x-kinvey-api-version'].should.equal('3');
-        return done();
+        done();
       });
     });
   });
@@ -292,7 +292,7 @@ describe('modules / push', () => {
       requestStub.post.callsArg(1);
       // eslint-disable-next-line new-cap
       (pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload)).should.be.a.Promise();
-      return done();
+      done();
     });
 
     it('should invoke the callback if specified', (done) => {
@@ -311,17 +311,17 @@ describe('modules / push', () => {
 
     it('calls back an error if one has occurred while communicating with the server', (done) => {
       requestStub.post.callsArgWith(1, 'error!');
-      return pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload, (err, result) => {
+      pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload, (err, result) => {
         should.exist(err);
         err.should.eql('error!');
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
     it('invokes the rejection handler if an error has occurred while communicating with the server', () => {
       requestStub.post.callsArgWith(1, 'error!');
-      return pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload)
+      pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload)
         .catch((err) => {
           should.exist(err);
           err.should.eql('error!');
@@ -332,11 +332,11 @@ describe('modules / push', () => {
       requestStub.post.callsArgWith(1, null, {
         statusCode: 401
       }, 'error!');
-      return pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload, (err, result) => {
+      pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload, (err, result) => {
         should.exist(err);
         err.should.eql('error!');
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
@@ -344,7 +344,7 @@ describe('modules / push', () => {
       requestStub.post.callsArgWith(1, null, {
         statusCode: 401
       }, 'error!');
-      return pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload)
+      pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload)
         .catch((err) => {
           should.exist(err);
           err.should.eql('error!');
@@ -353,9 +353,9 @@ describe('modules / push', () => {
 
     it('POSTs to the server\'s /push/sendMessage URL', (done) => {
       requestStub.post.callsArgWith(1, {});
-      return pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload, () => {
+      pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload, () => {
         requestStub.post.args[0][0].url.should.eql(`${FAKE_BAAS_URL}/push/${appMetadata._id}/sendMessage`);
-        return done();
+        done();
       });
     });
 
@@ -363,12 +363,12 @@ describe('modules / push', () => {
       requestStub.post.callsArgWith(1, {});
       (pushInstance.sendPayload(null, iOSAps, iOSExtras, androidPayload)).should.be.rejectedWith(/.*users.*/);
       (pushInstance.sendPayload()).should.be.rejectedWith(/.*users.*/);
-      return done();
+      done();
     });
 
-    return it('sends the appropriate arguments to the server', (done) => {
+    it('sends the appropriate arguments to the server', (done) => {
       requestStub.post.callsArgWith(1, {});
-      return pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload, () => {
+      pushInstance.sendPayload(recipients, iOSAps, iOSExtras, androidPayload, () => {
         const requestBody = requestStub.post.args[0][0].json;
         requestBody.recipients.should.eql(recipients);
         requestBody.messageContent.should.eql({
@@ -379,12 +379,12 @@ describe('modules / push', () => {
         const outgoingRequestHeaders = requestStub.post.args[0][0].headers;
         outgoingRequestHeaders.should.have.property('x-kinvey-api-version');
         outgoingRequestHeaders['x-kinvey-api-version'].should.equal('3');
-        return done();
+        done();
       });
     });
   });
 
-  return describe('methods / broadcastPayload', () => {
+  describe('methods / broadcastPayload', () => {
     const iOSAps = 'iOS APs';
     const iOSExtras = 'iOS extras';
     const androidPayload = 'android payload';
@@ -393,7 +393,7 @@ describe('modules / push', () => {
       requestStub.post.callsArg(1);
       // eslint-disable-next-line new-cap
       (pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload)).should.be.a.Promise();
-      return done();
+      done();
     });
 
     it('should invoke the callback if specified', (done) => {
@@ -412,17 +412,17 @@ describe('modules / push', () => {
 
     it('calls back an error if one has occurred while communicating with the server', (done) => {
       requestStub.post.callsArgWith(1, 'error!');
-      return pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload, (err, result) => {
+      pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload, (err, result) => {
         should.exist(err);
         err.should.eql('error!');
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
     it('invokes the rejection handler if an error has occurred while communicating with the server', () => {
       requestStub.post.callsArgWith(1, 'error!');
-      return pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload)
+      pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload)
         .catch((err) => {
           should.exist(err);
           err.should.eql('error!');
@@ -433,11 +433,11 @@ describe('modules / push', () => {
       requestStub.post.callsArgWith(1, null, {
         statusCode: 401
       }, 'error!');
-      return pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload, (err, result) => {
+      pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload, (err, result) => {
         should.exist(err);
         err.should.eql('error!');
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
@@ -445,7 +445,7 @@ describe('modules / push', () => {
       requestStub.post.callsArgWith(1, null, {
         statusCode: 401
       }, 'error!');
-      return pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload)
+      pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload)
         .catch((err) => {
           should.exist(err);
           err.should.eql('error!');
@@ -454,15 +454,15 @@ describe('modules / push', () => {
 
     it('POSTs to the server\'s /push/sendBroadcast URL', (done) => {
       requestStub.post.callsArgWith(1, {});
-      return pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload, () => {
+      pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload, () => {
         requestStub.post.args[0][0].url.should.eql(`${FAKE_BAAS_URL}/push/${appMetadata._id}/sendBroadcast`);
-        return done();
+        done();
       });
     });
 
-    return it('sends the appropriate arguments to the server', (done) => {
+    it('sends the appropriate arguments to the server', (done) => {
       requestStub.post.callsArgWith(1, {});
-      return pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload, () => {
+      pushInstance.broadcastPayload(iOSAps, iOSExtras, androidPayload, () => {
         const requestBody = requestStub.post.args[0][0].json;
         requestBody.messageContent.should.eql({
           iOSAps,
@@ -472,7 +472,7 @@ describe('modules / push', () => {
         const outgoingRequestHeaders = requestStub.post.args[0][0].headers;
         outgoingRequestHeaders.should.have.property('x-kinvey-api-version');
         outgoingRequestHeaders['x-kinvey-api-version'].should.equal('3');
-        return done();
+        done();
       });
     });
   });

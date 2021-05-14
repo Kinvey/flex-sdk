@@ -74,9 +74,9 @@ describe('modules creation', () => {
   let moduleGenerator = null;
   before((done) => {
     moduleGenerator = require('../../../lib/service/moduleGenerator'); // eslint-disable-line global-require
-    return done();
+    done();
   });
-  return it('can generate modules', (done) => {
+  it('can generate modules', (done) => {
     const modules = moduleGenerator.generate(sampleTaskInfo);
     should.exist(modules.backendContext);
     should.exist(modules.email);
@@ -89,6 +89,6 @@ describe('modules creation', () => {
     should.exist(modules.Query);
     should.exist(modules.dataStore);
     should.exist(modules.userStore);
-    return done();
+    done();
   });
 });

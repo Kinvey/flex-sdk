@@ -236,7 +236,7 @@ describe('dataStore', () => {
 
       const collection = this.store().collection('myCollection');
       (collection.find()).should.be.a.Promise(); // eslint-disable-line new-cap
-      return done();
+      done();
     });
 
     it('should find all records', (done) => {
@@ -275,7 +275,7 @@ describe('dataStore', () => {
       collection.find()
         .then((result) => {
           result.should.containDeep([{ _id: 123, someData: 'abc' }, { _id: 456, someData: 'xyz' }]);
-          return done();
+          done();
         });
     });
 
@@ -400,7 +400,7 @@ describe('dataStore', () => {
           err.message.should.eql('DataStoreError');
           err.description.should.eql('Not Allowed');
           err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
-          return done();
+          done();
         });
     });
 
@@ -424,7 +424,7 @@ describe('dataStore', () => {
       collection.find(query, (err, result) => {
         should.not.exist(err);
         result.should.containDeep([{ _id: 123, someData: 'abc' }, { _id: 456, someData: 'xyz' }]);
-        return done();
+        done();
       });
     });
 
@@ -448,7 +448,7 @@ describe('dataStore', () => {
       collection.find(query)
         .then((result) => {
           result.should.containDeep([{ _id: 123, someData: 'abc' }, { _id: 456, someData: 'xyz' }]);
-          return done();
+          done();
         });
     });
   });
@@ -476,7 +476,7 @@ describe('dataStore', () => {
 
       const collection = this.store().collection('myCollection');
       (collection.findById(1234)).should.be.a.Promise(); // eslint-disable-line new-cap
-      return done();
+      done();
     });
 
     it('should find a single entity', (done) => {
@@ -495,7 +495,7 @@ describe('dataStore', () => {
       collection.findById(1234, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -515,7 +515,7 @@ describe('dataStore', () => {
       collection.findById(1234)
         .then((result) => {
           result.should.containDeep({ _id: 1234, someData: 'abc' });
-          return done();
+          done();
         });
     });
 
@@ -532,7 +532,7 @@ describe('dataStore', () => {
       collection.findById(1234, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -551,7 +551,7 @@ describe('dataStore', () => {
       collection.findById('1234', (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -572,7 +572,7 @@ describe('dataStore', () => {
       collection.findById('1234', (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -584,7 +584,7 @@ describe('dataStore', () => {
         err.message.should.eql('DataStoreError');
         err.description.should.eql('Not Allowed');
         err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
-        return done();
+        done();
       });
     });
 
@@ -596,7 +596,7 @@ describe('dataStore', () => {
         err.message.should.eql('DataStoreError');
         err.description.should.eql('Not Allowed');
         err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
-        return done();
+        done();
       });
     });
 
@@ -608,7 +608,7 @@ describe('dataStore', () => {
         err.message.should.eql('DataStoreError');
         err.description.should.eql('Not Allowed');
         err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
-        return done();
+        done();
       });
     });
 
@@ -628,7 +628,7 @@ describe('dataStore', () => {
       collection.findById(1234, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -639,7 +639,7 @@ describe('dataStore', () => {
         err.message.should.eql('DataStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('entityId is required');
-        return done();
+        done();
       });
     });
 
@@ -650,7 +650,7 @@ describe('dataStore', () => {
         err.message.should.eql('DataStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('entityId is required');
-        return done();
+        done();
       });
     });
 
@@ -661,7 +661,7 @@ describe('dataStore', () => {
         err.message.should.eql('DataStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('entityId is required');
-        return done();
+        done();
       });
     });
 
@@ -672,7 +672,7 @@ describe('dataStore', () => {
           err.message.should.eql('DataStoreError');
           err.description.should.eql('Bad Request');
           err.debug.should.eql('entityId is required');
-          return done();
+          done();
         });
     });
 
@@ -684,7 +684,7 @@ describe('dataStore', () => {
           err.message.should.eql('DataStoreError');
           err.description.should.eql('Not Allowed');
           err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
-          return done();
+          done();
         });
     });
   });
@@ -714,7 +714,7 @@ describe('dataStore', () => {
 
       const collection = this.store().collection('myCollection');
       (collection.save({ someData: 'abc' })).should.be.a.Promise(); // eslint-disable-line new-cap
-      return done();
+      done();
     });
 
     it('should save a new entity', (done) => {
@@ -735,7 +735,7 @@ describe('dataStore', () => {
       collection.save({ someData: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -751,7 +751,7 @@ describe('dataStore', () => {
         err.should.have.property('message', 'DataStoreError');
         err.should.have.property('description', 'Unable to save an array of entities. To insert multiple entities use "create" function.');
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
@@ -773,7 +773,7 @@ describe('dataStore', () => {
       collection.save({ someData: 'abc' })
         .then((result) => {
           result.should.containDeep({ _id: 1234, someData: 'abc' });
-          return done();
+          done();
         });
     });
 
@@ -792,7 +792,7 @@ describe('dataStore', () => {
       collection.save({ someData: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -813,7 +813,7 @@ describe('dataStore', () => {
       collection.save({ someData: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -836,7 +836,7 @@ describe('dataStore', () => {
       collection.save({ someData: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -848,7 +848,7 @@ describe('dataStore', () => {
         err.message.should.eql('DataStoreError');
         err.description.should.eql('Not Allowed');
         err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
-        return done();
+        done();
       });
     });
 
@@ -860,7 +860,7 @@ describe('dataStore', () => {
         err.message.should.eql('DataStoreError');
         err.description.should.eql('Not Allowed');
         err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
-        return done();
+        done();
       });
     });
 
@@ -872,7 +872,7 @@ describe('dataStore', () => {
         err.message.should.eql('DataStoreError');
         err.description.should.eql('Not Allowed');
         err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
-        return done();
+        done();
       });
     });
 
@@ -894,7 +894,7 @@ describe('dataStore', () => {
       collection.save({ someData: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -905,7 +905,7 @@ describe('dataStore', () => {
         err.message.should.eql('DataStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('entity is required');
-        return done();
+        done();
       });
     });
 
@@ -916,7 +916,7 @@ describe('dataStore', () => {
         err.message.should.eql('DataStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('entity is required');
-        return done();
+        done();
       });
     });
 
@@ -927,7 +927,7 @@ describe('dataStore', () => {
         err.message.should.eql('DataStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('entity is required');
-        return done();
+        done();
       });
     });
 
@@ -938,7 +938,7 @@ describe('dataStore', () => {
           err.message.should.eql('DataStoreError');
           err.description.should.eql('Bad Request');
           err.debug.should.eql('entity is required');
-          return done();
+          done();
         });
     });
 
@@ -950,7 +950,7 @@ describe('dataStore', () => {
           err.message.should.eql('DataStoreError');
           err.description.should.eql('Not Allowed');
           err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
-          return done();
+          done();
         });
     });
 
@@ -973,7 +973,7 @@ describe('dataStore', () => {
       collection.save({ _id: 1234, someData: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -993,7 +993,7 @@ describe('dataStore', () => {
       collection.save({ _id: 1234, someData: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -1015,7 +1015,7 @@ describe('dataStore', () => {
       collection.save({ _id: 1234, someData: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -1039,7 +1039,7 @@ describe('dataStore', () => {
       collection.save({ _id: 1234, someData: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -1051,7 +1051,7 @@ describe('dataStore', () => {
         err.message.should.eql('DataStoreError');
         err.description.should.eql('Not Allowed');
         err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
-        return done();
+        done();
       });
     });
 
@@ -1063,7 +1063,7 @@ describe('dataStore', () => {
         err.message.should.eql('DataStoreError');
         err.description.should.eql('Not Allowed');
         err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
-        return done();
+        done();
       });
     });
 
@@ -1075,7 +1075,7 @@ describe('dataStore', () => {
         err.message.should.eql('DataStoreError');
         err.description.should.eql('Not Allowed');
         err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
-        return done();
+        done();
       });
     });
 
@@ -1098,7 +1098,7 @@ describe('dataStore', () => {
       collection.save({ _id: 1234, someData: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
-        return done();
+        done();
       });
     });
   });
@@ -1171,7 +1171,7 @@ describe('dataStore', () => {
         result.should.have.keys('entities', 'errors');
         result.should.deepEqual(expectedFinalResponse);
         scope.isDone().should.be.true;
-        return done();
+        done();
       });
     });
 
@@ -1226,7 +1226,7 @@ describe('dataStore', () => {
         .then((result) => {
           result.should.deepEqual(expectedFinalResponse);
           scope.isDone().should.be.true;
-          return done();
+          done();
         });
     });
 
@@ -1288,7 +1288,7 @@ describe('dataStore', () => {
         result.entities.should.eql(entities);
         result.errors.should.eql(expectedFinalResponse.errors);
         scope.isDone().should.be.true;
-        return done();
+        done();
       });
     });
   });
@@ -1316,7 +1316,7 @@ describe('dataStore', () => {
 
       const collection = this.store().collection('myCollection');
       (collection.remove()).should.be.a.Promise(); // eslint-disable-line new-cap
-      return done();
+      done();
     });
 
     it('should remove all records', (done) => {
@@ -1335,7 +1335,7 @@ describe('dataStore', () => {
       collection.remove((err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 30 });
-        return done();
+        done();
       });
     });
 
@@ -1355,7 +1355,7 @@ describe('dataStore', () => {
       collection.remove()
         .then((result) => {
           result.should.containDeep({ count: 30 });
-          return done();
+          done();
         });
     });
 
@@ -1372,7 +1372,7 @@ describe('dataStore', () => {
       collection.remove((err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 30 });
-        return done();
+        done();
       });
     });
 
@@ -1391,7 +1391,7 @@ describe('dataStore', () => {
       collection.remove((err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 30 });
-        return done();
+        done();
       });
     });
 
@@ -1412,7 +1412,7 @@ describe('dataStore', () => {
       collection.remove((err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 30 });
-        return done();
+        done();
       });
     });
 
@@ -1424,7 +1424,7 @@ describe('dataStore', () => {
         err.message.should.eql('DataStoreError');
         err.description.should.eql('Not Allowed');
         err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
-        return done();
+        done();
       });
     });
 
@@ -1436,7 +1436,7 @@ describe('dataStore', () => {
         err.message.should.eql('DataStoreError');
         err.description.should.eql('Not Allowed');
         err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
-        return done();
+        done();
       });
     });
 
@@ -1448,7 +1448,7 @@ describe('dataStore', () => {
         err.message.should.eql('DataStoreError');
         err.description.should.eql('Not Allowed');
         err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
-        return done();
+        done();
       });
     });
 
@@ -1468,7 +1468,7 @@ describe('dataStore', () => {
       collection.remove((err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 30 });
-        return done();
+        done();
       });
     });
 
@@ -1480,7 +1480,7 @@ describe('dataStore', () => {
           err.message.should.eql('DataStoreError');
           err.description.should.eql('Not Allowed');
           err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
-          return done();
+          done();
         });
     });
 
@@ -1504,7 +1504,7 @@ describe('dataStore', () => {
       collection.remove(query, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 12 });
-        return done();
+        done();
       });
     });
 
@@ -1528,7 +1528,7 @@ describe('dataStore', () => {
       collection.remove(query)
         .then((result) => {
           result.should.containDeep({ count: 12 });
-          return done();
+          done();
         });
     });
   });
@@ -1556,7 +1556,7 @@ describe('dataStore', () => {
 
       const collection = this.store().collection('myCollection');
       (collection.removeById(1234)).should.be.a.Promise(); // eslint-disable-line new-cap
-      return done();
+      done();
     });
 
     it('should remove a single entity', (done) => {
@@ -1575,7 +1575,7 @@ describe('dataStore', () => {
       collection.removeById(1234, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 1 });
-        return done();
+        done();
       });
     });
 
@@ -1595,7 +1595,7 @@ describe('dataStore', () => {
       collection.removeById(1234)
         .then((result) => {
           result.should.containDeep({ count: 1 });
-          return done();
+          done();
         });
     });
 
@@ -1612,7 +1612,7 @@ describe('dataStore', () => {
       collection.removeById(1234, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 1 });
-        return done();
+        done();
       });
     });
 
@@ -1631,7 +1631,7 @@ describe('dataStore', () => {
       collection.removeById('1234', (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 1 });
-        return done();
+        done();
       });
     });
 
@@ -1652,7 +1652,7 @@ describe('dataStore', () => {
       collection.removeById('1234', (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 1 });
-        return done();
+        done();
       });
     });
 
@@ -1664,7 +1664,7 @@ describe('dataStore', () => {
         err.message.should.eql('DataStoreError');
         err.description.should.eql('Not Allowed');
         err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
-        return done();
+        done();
       });
     });
 
@@ -1676,7 +1676,7 @@ describe('dataStore', () => {
         err.message.should.eql('DataStoreError');
         err.description.should.eql('Not Allowed');
         err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
-        return done();
+        done();
       });
     });
 
@@ -1688,7 +1688,7 @@ describe('dataStore', () => {
         err.message.should.eql('DataStoreError');
         err.description.should.eql('Not Allowed');
         err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
-        return done();
+        done();
       });
     });
 
@@ -1708,7 +1708,7 @@ describe('dataStore', () => {
       collection.removeById(1234, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 1 });
-        return done();
+        done();
       });
     });
 
@@ -1719,7 +1719,7 @@ describe('dataStore', () => {
         err.message.should.eql('DataStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('entityId is required');
-        return done();
+        done();
       });
     });
 
@@ -1730,7 +1730,7 @@ describe('dataStore', () => {
         err.message.should.eql('DataStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('entityId is required');
-        return done();
+        done();
       });
     });
 
@@ -1741,7 +1741,7 @@ describe('dataStore', () => {
         err.message.should.eql('DataStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('entityId is required');
-        return done();
+        done();
       });
     });
 
@@ -1752,7 +1752,7 @@ describe('dataStore', () => {
           err.message.should.eql('DataStoreError');
           err.description.should.eql('Bad Request');
           err.debug.should.eql('entityId is required');
-          return done();
+          done();
         });
     });
 
@@ -1764,7 +1764,7 @@ describe('dataStore', () => {
           err.message.should.eql('DataStoreError');
           err.description.should.eql('Not Allowed');
           err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
-          return done();
+          done();
         });
     });
   });
@@ -1792,7 +1792,7 @@ describe('dataStore', () => {
 
       const collection = this.store().collection('myCollection');
       (collection.count()).should.be.a.Promise(); // eslint-disable-line new-cap
-      return done();
+      done();
     });
 
     it('should get a count of all records', (done) => {
@@ -1811,7 +1811,7 @@ describe('dataStore', () => {
       collection.count((err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 30 });
-        return done();
+        done();
       });
     });
 
@@ -1831,7 +1831,7 @@ describe('dataStore', () => {
       collection.count()
         .then((result) => {
           result.should.containDeep({ count: 30 });
-          return done();
+          done();
         });
     });
 
@@ -1848,7 +1848,7 @@ describe('dataStore', () => {
       collection.count((err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 30 });
-        return done();
+        done();
       });
     });
 
@@ -1867,7 +1867,7 @@ describe('dataStore', () => {
       collection.count((err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 30 });
-        return done();
+        done();
       });
     });
 
@@ -1888,7 +1888,7 @@ describe('dataStore', () => {
       collection.count((err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 30 });
-        return done();
+        done();
       });
     });
 
@@ -1900,7 +1900,7 @@ describe('dataStore', () => {
         err.message.should.eql('DataStoreError');
         err.description.should.eql('Not Allowed');
         err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
-        return done();
+        done();
       });
     });
 
@@ -1912,7 +1912,7 @@ describe('dataStore', () => {
         err.message.should.eql('DataStoreError');
         err.description.should.eql('Not Allowed');
         err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
-        return done();
+        done();
       });
     });
 
@@ -1924,7 +1924,7 @@ describe('dataStore', () => {
         err.message.should.eql('DataStoreError');
         err.description.should.eql('Not Allowed');
         err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
-        return done();
+        done();
       });
     });
 
@@ -1944,7 +1944,7 @@ describe('dataStore', () => {
       collection.count((err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 30 });
-        return done();
+        done();
       });
     });
 
@@ -1956,7 +1956,7 @@ describe('dataStore', () => {
           err.message.should.eql('DataStoreError');
           err.description.should.eql('Not Allowed');
           err.debug.should.eql('Recursive data operations to the same collection cannot use user context or use BL.');
-          return done();
+          done();
         });
     });
 
@@ -1980,7 +1980,7 @@ describe('dataStore', () => {
       collection.count(query, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 12 });
-        return done();
+        done();
       });
     });
 
@@ -2004,7 +2004,7 @@ describe('dataStore', () => {
       collection.count(query)
         .then((result) => {
           result.should.containDeep({ count: 12 });
-          return done();
+          done();
         });
     });
   });
