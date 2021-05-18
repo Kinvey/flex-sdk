@@ -22,20 +22,20 @@ describe('tempObjectStore', () => {
     afterEach((done) => {
       const keys = Object.keys(testTempObjectStore);
       keys.forEach(key => delete testTempObjectStore[key]);
-      return done();
+      done();
     });
     it('can set values', (done) => {
       tempObjectStore.set('test', 'testValue');
       testTempObjectStore.should.have.property('test');
       testTempObjectStore.test.should.eql('testValue');
-      return done();
+      done();
     });
     it('can retrieve values', (done) => {
       tempObjectStore.set('test', 'testValue');
       tempObjectStore.get('test').should.eql('testValue');
-      return done();
+      done();
     });
-    return it('can retrieve entire object store', (done) => {
+    it('can retrieve entire object store', (done) => {
       tempObjectStore.set('test', 'testValue');
       tempObjectStore.set('test2', 'testValue2');
       tempObjectStore.set('test3', 'testValue3');
@@ -44,25 +44,25 @@ describe('tempObjectStore', () => {
         test2: 'testValue2',
         test3: 'testValue3'
       });
-      return done();
+      done();
     });
   });
-  return describe('when no object is passed in during initialization', () => {
+  describe('when no object is passed in during initialization', () => {
     let undefinedTempObjectStore = null;
     beforeEach((done) => {
       undefinedTempObjectStore = objectStoreModule();
-      return done();
+      done();
     });
     afterEach((done) => {
       undefinedTempObjectStore = null;
-      return done();
+      done();
     });
     it('can set and retrieve values', (done) => {
       undefinedTempObjectStore.set('test', 'testValue');
       undefinedTempObjectStore.get('test').should.eql('testValue');
-      return done();
+      done();
     });
-    return it('can retrieve entire object store', (done) => {
+    it('can retrieve entire object store', (done) => {
       undefinedTempObjectStore.set('test', 'testValue');
       undefinedTempObjectStore.set('test2', 'testValue2');
       undefinedTempObjectStore.set('test3', 'testValue3');
@@ -71,7 +71,7 @@ describe('tempObjectStore', () => {
         test2: 'testValue2',
         test3: 'testValue3'
       });
-      return done();
+      done();
     });
   });
 });

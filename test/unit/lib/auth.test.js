@@ -61,19 +61,19 @@ describe('FlexAuth', () => {
   describe('auth registration', () => {
     afterEach((done) => {
       auth.clearAll();
-      return done();
+      done();
     });
     it('can register an auth handler', (done) => {
       auth.register('someHandler', () => done());
       const fn = auth.resolve('someHandler');
       fn.should.be.a.Function();
-      return fn();
+      fn();
     });
   });
   describe('discovery', () => {
     afterEach((done) => {
       auth.clearAll();
-      return done();
+      done();
     });
     it('returns an array of all registered auth handlers', (done) => {
       const testHandlerName = 'testUath';
@@ -95,7 +95,7 @@ describe('FlexAuth', () => {
   describe('auth processing', () => {
     afterEach((done) => {
       auth.clearAll();
-      return done();
+      done();
     });
     it('can process an auth task', (done) => {
       const taskName = quickRandom();
@@ -111,7 +111,7 @@ describe('FlexAuth', () => {
         context.should.be.an.Object();
         complete.should.be.a.Function();
         modules.should.be.an.Object();
-        return done();
+        done();
       });
       auth.process(task, {}, () => {});
     });
@@ -126,7 +126,7 @@ describe('FlexAuth', () => {
         context.body.username.should.eql('foo');
         context.body.password.should.eql('bar');
         context.body.options.foobar.should.eql('barfoo');
-        return done();
+        done();
       });
       auth.process(task, {}, () => {});
     });
@@ -135,44 +135,44 @@ describe('FlexAuth', () => {
     afterEach((done) => {
       loggerMock.error.resetHistory();
       auth.clearAll();
-      return done();
+      done();
     });
     it("should return a 'server_error' response with a null task name", (done) => {
       const task = sampleTask(null);
-      return auth.process(task, null, (err) => {
+      auth.process(task, null, (err) => {
         err.response.statusCode.should.eql(401);
         err.response.body.error_description.should.eql('No task name to execute');
-        return done();
+        done();
       });
     });
     it("should return a 'server_error' response with a non-JSON task", (done) => {
       const task = sampleBadTask(null);
-      return auth.process(task, null, (err) => {
+      auth.process(task, null, (err) => {
         err.response.statusCode.should.eql(401);
         err.response.body.error.should.eql('server_error');
         err.response.body.error_description.should.eql('Request body is not JSON');
-        return done();
+        done();
       });
     });
     it('should return a successful response', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
       auth.register(taskName, (context, complete) => complete().ok().done());
-      return auth.process(task, null, (err, result) => {
+      auth.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
         result.response.body.should.eql({ token: {}, authenticated: true });
-        return done();
+        done();
       });
     });
     it('should include a body with a minimum of token and authenticated properties', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
       auth.register(taskName, (context, complete) => complete({ foo: 'bar' }).ok().next());
-      return auth.process(task, null, (err, result) => {
+      auth.process(task, null, (err, result) => {
         result.response.statusCode.should.eql(200);
         result.response.body.should.eql({ token: { foo: 'bar' }, authenticated: true });
-        return done();
+        done();
       });
     });
     it('should allow for custom properties', (done) => {
@@ -182,34 +182,34 @@ describe('FlexAuth', () => {
         .addAttribute('attr', 'value')
         .ok()
         .next());
-      return auth.process(task, null, (err, result) => {
+      auth.process(task, null, (err, result) => {
         result.response.statusCode.should.eql(200);
         result.response.body.should.eql({ token: { foo: 'bar' }, authenticated: true, attr: 'value' });
-        return done();
+        done();
       });
     });
     it('should return a 401 server_error', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
       auth.register(taskName, (context, complete) => complete('This is a bad request').serverError().next());
-      return auth.process(task, null, (err, result) => {
+      auth.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(401);
         result.response.body.error.should.eql('server_error');
         result.response.body.error_description.should.eql('This is a bad request');
-        return done();
+        done();
       });
     });
     it('should return a 401 access denied', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
       auth.register(taskName, (context, complete) => complete('You are not authorized!').accessDenied().next());
-      return auth.process(task, null, (err, result) => {
+      auth.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(401);
         result.response.body.error.should.eql('access_denied');
         result.response.body.error_description.should.eql('You are not authorized!');
-        return done();
+        done();
       });
     });
     it('should return a 401 temporarily unavailable', (done) => {
@@ -217,47 +217,47 @@ describe('FlexAuth', () => {
       const task = sampleTask(taskName);
       auth.register(taskName, (context, complete) =>
         complete('The auth server is temporarily unavailable!').temporarilyUnavailable().next());
-      return auth.process(task, null, (err, result) => {
+      auth.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(401);
         result.response.body.error.should.eql('temporarily_unavailable');
         result.response.body.error_description.should.eql('The auth server is temporarily unavailable!');
-        return done();
+        done();
       });
     });
     it('should return a 401 not implemented', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
-      return auth.process(task, null, (err, result) => {
+      auth.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(401);
         result.response.body.error.should.eql('server_error');
         result.response.body.error_description.should.eql('The request invoked a method that is not implemented');
-        return done();
+        done();
       });
     });
     it('should process a next (continuation) handler', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
       auth.register(taskName, (context, complete) => complete({ foo: 'bar' }).ok().next());
-      return auth.process(task, null, (err, result) => {
+      auth.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
         result.response.body.should.eql({ token: { foo: 'bar' }, authenticated: true });
         result.response.continue = true;
-        return done();
+        done();
       });
     });
     it('should process a done (completion) handler', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
       auth.register(taskName, (context, complete) => complete({ foo: 'bar' }).ok().done());
-      return auth.process(task, null, (err, result) => {
+      auth.process(task, null, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
         result.response.body.should.eql({ token: { foo: 'bar' }, authenticated: true });
         result.response.continue = false;
-        return done();
+        done();
       });
     });
     ['next', 'done'].forEach((method1) => {

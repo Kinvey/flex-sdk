@@ -229,7 +229,7 @@ describe('endpointRunner', () => {
 
       const endpoint = this.runner().endpoint('myEndpoint');
       (endpoint.execute({})).should.be.a.Promise(); // eslint-disable-line new-cap
-      return done();
+      done();
     });
 
     it('should execute an endpoint', (done) => {
@@ -247,7 +247,7 @@ describe('endpointRunner', () => {
       endpoint.execute({}, (err, result) => {
         should.not.exist(err);
         result.should.containDeep(this.payload);
-        return done();
+        done();
       });
     });
 
@@ -266,7 +266,7 @@ describe('endpointRunner', () => {
       endpoint.execute({ foo: 'bar' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep(this.payload);
-        return done();
+        done();
       });
     });
 
@@ -285,7 +285,7 @@ describe('endpointRunner', () => {
       endpoint.execute(null, (err, result) => {
         should.not.exist(err);
         result.should.containDeep(this.payload);
-        return done();
+        done();
       });
     });
 
@@ -304,7 +304,7 @@ describe('endpointRunner', () => {
       endpoint.execute((err, result) => {
         should.not.exist(err);
         result.should.containDeep(this.payload);
-        return done();
+        done();
       });
     });
 
@@ -323,7 +323,7 @@ describe('endpointRunner', () => {
       endpoint.execute()
         .then((result) => {
           result.should.containDeep(this.payload);
-          return done();
+          done();
         });
     });
 
@@ -339,7 +339,7 @@ describe('endpointRunner', () => {
       endpoint.execute({}, (err, result) => {
         should.not.exist(err);
         result.should.containDeep(this.payload);
-        return done();
+        done();
       });
     });
 
@@ -360,7 +360,7 @@ describe('endpointRunner', () => {
       endpoint.execute({}, (err, result) => {
         should.not.exist(err);
         result.should.containDeep(this.payload);
-        return done();
+        done();
       });
     });
 
@@ -373,7 +373,7 @@ describe('endpointRunner', () => {
         err.message.should.eql('EndpointRunnerError');
         err.description.should.eql('Not Allowed');
         err.debug.should.eql('Recursive requests to the same endpoint are prohibited.');
-        return done();
+        done();
       });
     });
 
@@ -386,7 +386,7 @@ describe('endpointRunner', () => {
           err.message.should.eql('EndpointRunnerError');
           err.description.should.eql('Not Allowed');
           err.debug.should.eql('Recursive requests to the same endpoint are prohibited.');
-          return done();
+          done();
         });
     });
   });

@@ -204,7 +204,7 @@ describe('userStore', () => {
         .reply(200, [{ _id: 123, username: 'abc' }, { _id: 456, username: 'xyz' }]);
 
       (this.store().find()).should.be.a.Promise(); // eslint-disable-line new-cap
-      return done();
+      done();
     });
 
     it('should find all records', (done) => {
@@ -222,7 +222,7 @@ describe('userStore', () => {
       this.store().find((err, result) => {
         should.not.exist(err);
         result.should.containDeep([{ _id: 123, username: 'abc' }, { _id: 456, username: 'xyz' }]);
-        return done();
+        done();
       });
     });
 
@@ -241,7 +241,7 @@ describe('userStore', () => {
       this.store().find()
         .then((result) => {
           result.should.containDeep([{ _id: 123, username: 'abc' }, { _id: 456, username: 'xyz' }]);
-          return done();
+          done();
         });
     });
 
@@ -257,7 +257,7 @@ describe('userStore', () => {
       this.store({ useUserContext: true }).find((err, result) => {
         should.not.exist(err);
         result.should.containDeep([{ _id: 123, username: 'abc' }, { _id: 456, username: 'xyz' }]);
-        return done();
+        done();
       });
     });
 
@@ -275,7 +275,7 @@ describe('userStore', () => {
       this.store({ useBl: true }).find((err, result) => {
         should.not.exist(err);
         result.should.containDeep([{ _id: 123, username: 'abc' }, { _id: 456, username: 'xyz' }]);
-        return done();
+        done();
       });
     });
 
@@ -295,7 +295,7 @@ describe('userStore', () => {
       this.store({ apiVersion: API_VERSION }).find((err, result) => {
         should.not.exist(err);
         result.should.containDeep([{ _id: 123, username: 'abc' }, { _id: 456, username: 'xyz' }]);
-        return done();
+        done();
       });
     });
 
@@ -308,7 +308,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -321,7 +321,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -334,7 +334,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -353,7 +353,7 @@ describe('userStore', () => {
       this.storeUserRequest().find((err, result) => {
         should.not.exist(err);
         result.should.containDeep([{ _id: 123, username: 'abc' }, { _id: 456, username: 'xyz' }]);
-        return done();
+        done();
       });
     });
 
@@ -366,7 +366,7 @@ describe('userStore', () => {
           err.debug.should.eql(
             'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
           );
-          return done();
+          done();
         });
     });
 
@@ -389,7 +389,7 @@ describe('userStore', () => {
       this.store().find(query, (err, result) => {
         should.not.exist(err);
         result.should.containDeep([{ _id: 123, username: 'abc' }, { _id: 456, username: 'xyz' }]);
-        return done();
+        done();
       });
     });
 
@@ -412,7 +412,7 @@ describe('userStore', () => {
       this.store().find(query)
         .then((result) => {
           result.should.containDeep([{ _id: 123, username: 'abc' }, { _id: 456, username: 'xyz' }]);
-          return done();
+          done();
         });
     });
   });
@@ -440,7 +440,7 @@ describe('userStore', () => {
         .reply(200, { _id: 1234, username: 'abc' });
 
       (this.store().findById(1234)).should.be.a.Promise(); // eslint-disable-line new-cap
-      return done();
+      done();
     });
 
     it('should find a single user', (done) => {
@@ -458,7 +458,7 @@ describe('userStore', () => {
       this.store().findById(1234, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -477,7 +477,7 @@ describe('userStore', () => {
       this.store().findById(1234)
         .then((result) => {
           result.should.containDeep({ _id: 1234, username: 'abc' });
-          return done();
+          done();
         });
     });
 
@@ -493,7 +493,7 @@ describe('userStore', () => {
       this.store({ useUserContext: true }).findById(1234, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -507,7 +507,7 @@ describe('userStore', () => {
       this.store({ useBl: true }).findById('1234', (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -527,7 +527,7 @@ describe('userStore', () => {
       this.store({ apiVersion: API_VERSION }).findById('1234', (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -540,7 +540,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -553,7 +553,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -566,7 +566,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -585,7 +585,7 @@ describe('userStore', () => {
       this.storeUserRequest().findById(1234, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -595,7 +595,7 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('userId is required');
-        return done();
+        done();
       });
     });
 
@@ -605,7 +605,7 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('userId is required');
-        return done();
+        done();
       });
     });
 
@@ -615,7 +615,7 @@ describe('userStore', () => {
           err.message.should.eql('UserStoreError');
           err.description.should.eql('Bad Request');
           err.debug.should.eql('userId is required');
-          return done();
+          done();
         });
     });
 
@@ -628,7 +628,7 @@ describe('userStore', () => {
           err.debug.should.eql(
             'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
           );
-          return done();
+          done();
         });
     });
   });
@@ -656,7 +656,7 @@ describe('userStore', () => {
         .reply(200, { _id: `${authenticatedUserId}`, username: 'abc' });
 
       (this.store().getCurrentUser()).should.be.a.Promise(); // eslint-disable-line new-cap
-      return done();
+      done();
     });
 
     it('should get the current user entity', (done) => {
@@ -674,7 +674,7 @@ describe('userStore', () => {
       this.store().getCurrentUser((err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: `${authenticatedUserId}`, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -693,7 +693,7 @@ describe('userStore', () => {
       this.store().getCurrentUser()
         .then((result) => {
           result.should.containDeep({ _id: `${authenticatedUserId}`, username: 'abc' });
-          return done();
+          done();
         });
     });
 
@@ -707,7 +707,7 @@ describe('userStore', () => {
       this.store({ useBl: true }).getCurrentUser((err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -727,7 +727,7 @@ describe('userStore', () => {
       this.store({ apiVersion: API_VERSION }).getCurrentUser((err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -740,7 +740,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -753,7 +753,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -766,7 +766,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -785,7 +785,7 @@ describe('userStore', () => {
       this.storeUserRequest().getCurrentUser((err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: `${authenticatedUserId}`, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -798,7 +798,7 @@ describe('userStore', () => {
           err.debug.should.eql(
             'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
           );
-          return done();
+          done();
         });
     });
   });
@@ -828,7 +828,7 @@ describe('userStore', () => {
         .reply(200, { _id: 1234, username: 'abc' });
 
       (this.store().create({ username: 'abc' })).should.be.a.Promise(); // eslint-disable-line new-cap
-      return done();
+      done();
     });
 
     it('should create a new entity', (done) => {
@@ -848,7 +848,7 @@ describe('userStore', () => {
       this.store().create({ username: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -869,7 +869,7 @@ describe('userStore', () => {
       this.store().create({ username: 'abc' })
         .then((result) => {
           result.should.containDeep({ _id: 1234, username: 'abc' });
-          return done();
+          done();
         });
     });
 
@@ -890,7 +890,7 @@ describe('userStore', () => {
       this.store().create({ username: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -910,7 +910,7 @@ describe('userStore', () => {
       this.store({ useBl: true }).create({ username: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -932,7 +932,7 @@ describe('userStore', () => {
       this.store({ apiVersion: API_VERSION }).create({ username: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -945,7 +945,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -958,7 +958,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -971,7 +971,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -992,7 +992,7 @@ describe('userStore', () => {
       this.storeUserRequest().create({ username: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -1002,7 +1002,7 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('A user entity must be supplied');
-        return done();
+        done();
       });
     });
 
@@ -1012,7 +1012,7 @@ describe('userStore', () => {
           err.message.should.eql('UserStoreError');
           err.description.should.eql('Bad Request');
           err.debug.should.eql('A user entity must be supplied');
-          return done();
+          done();
         });
     });
 
@@ -1025,7 +1025,7 @@ describe('userStore', () => {
           err.debug.should.eql(
             'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
           );
-          return done();
+          done();
         });
     });
   });
@@ -1056,7 +1056,7 @@ describe('userStore', () => {
         .reply(200, { _id: 1234, username: 'abc' });
 
       (this.store().update({ _id: 1234, username: 'abc' })).should.be.a.Promise(); // eslint-disable-line new-cap
-      return done();
+      done();
     });
 
     it('should update an existing user', (done) => {
@@ -1077,7 +1077,7 @@ describe('userStore', () => {
       this.store().update({ _id: 1234, username: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -1099,7 +1099,7 @@ describe('userStore', () => {
       this.store().update({ _id: 1234, username: 'abc' })
         .then((result) => {
           result.should.containDeep({ _id: 1234, username: 'abc' });
-          return done();
+          done();
         });
     });
 
@@ -1118,7 +1118,7 @@ describe('userStore', () => {
       this.store({ useUserContext: true }).update({ _id: 1234, username: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -1139,7 +1139,7 @@ describe('userStore', () => {
       this.store({ useBl: true }).update({ _id: 1234, username: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -1162,7 +1162,7 @@ describe('userStore', () => {
       this.store({ apiVersion: API_VERSION }).update({ _id: 1234, username: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -1175,7 +1175,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -1188,7 +1188,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -1202,7 +1202,7 @@ describe('userStore', () => {
           err.debug.should.eql(
             'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
           );
-          return done();
+          done();
         });
     });
 
@@ -1224,7 +1224,7 @@ describe('userStore', () => {
       this.storeUserRequest().update({ _id: 1234, username: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -1234,7 +1234,7 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('A user entity must be supplied');
-        return done();
+        done();
       });
     });
 
@@ -1244,7 +1244,7 @@ describe('userStore', () => {
           err.message.should.eql('UserStoreError');
           err.description.should.eql('Bad Request');
           err.debug.should.eql('A user entity must be supplied');
-          return done();
+          done();
         });
     });
 
@@ -1254,7 +1254,7 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('A user entity must be supplied containing at least an _id');
-        return done();
+        done();
       });
     });
 
@@ -1264,7 +1264,7 @@ describe('userStore', () => {
           err.message.should.eql('UserStoreError');
           err.description.should.eql('Bad Request');
           err.debug.should.eql('A user entity must be supplied containing at least an _id');
-          return done();
+          done();
         });
     });
 
@@ -1277,7 +1277,7 @@ describe('userStore', () => {
           err.debug.should.eql(
             'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
           );
-          return done();
+          done();
         });
     });
   });
@@ -1305,7 +1305,7 @@ describe('userStore', () => {
         .reply(200);
 
       (this.store().remove(1234)).should.be.a.Promise(); // eslint-disable-line new-cap
-      return done();
+      done();
     });
 
     it('should remove a single user', (done) => {
@@ -1323,7 +1323,7 @@ describe('userStore', () => {
       this.store().remove(1234, (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
@@ -1342,7 +1342,7 @@ describe('userStore', () => {
       this.store().remove(1234)
         .then((result) => {
           should.not.exist(result);
-          return done();
+          done();
         });
     });
 
@@ -1364,7 +1364,7 @@ describe('userStore', () => {
       this.store().remove(1234, (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
@@ -1380,7 +1380,7 @@ describe('userStore', () => {
       this.store({ useUserContext: true }).remove(1234, (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
@@ -1398,7 +1398,7 @@ describe('userStore', () => {
       this.store({ useBl: true }).remove('1234', (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
@@ -1418,7 +1418,7 @@ describe('userStore', () => {
       this.store({ apiVersion: API_VERSION }).remove('1234', (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
@@ -1431,7 +1431,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -1444,7 +1444,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -1457,7 +1457,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -1476,7 +1476,7 @@ describe('userStore', () => {
       this.storeUserRequest().remove('1234', (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
@@ -1486,7 +1486,7 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('userId is required');
-        return done();
+        done();
       });
     });
 
@@ -1496,7 +1496,7 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('userId is required');
-        return done();
+        done();
       });
     });
 
@@ -1506,7 +1506,7 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('userId is required');
-        return done();
+        done();
       });
     });
 
@@ -1516,7 +1516,7 @@ describe('userStore', () => {
           err.message.should.eql('UserStoreError');
           err.description.should.eql('Bad Request');
           err.debug.should.eql('userId is required');
-          return done();
+          done();
         });
     });
 
@@ -1529,7 +1529,7 @@ describe('userStore', () => {
           err.debug.should.eql(
             'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
           );
-          return done();
+          done();
         });
     });
   });
@@ -1557,7 +1557,7 @@ describe('userStore', () => {
         .reply(200, { count: 30 });
 
       (this.store().count()).should.be.a.Promise(); // eslint-disable-line new-cap
-      return done();
+      done();
     });
 
 
@@ -1576,7 +1576,7 @@ describe('userStore', () => {
       this.store().count((err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 30 });
-        return done();
+        done();
       });
     });
 
@@ -1595,7 +1595,7 @@ describe('userStore', () => {
       this.store().count()
         .then((result) => {
           result.should.containDeep({ count: 30 });
-          return done();
+          done();
         });
     });
 
@@ -1611,7 +1611,7 @@ describe('userStore', () => {
       this.store({ useUserContext: true }).count((err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 30 });
-        return done();
+        done();
       });
     });
 
@@ -1629,7 +1629,7 @@ describe('userStore', () => {
       this.store({ useBl: true }).count((err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 30 });
-        return done();
+        done();
       });
     });
 
@@ -1649,7 +1649,7 @@ describe('userStore', () => {
       this.store({ apiVersion: API_VERSION }).count((err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 30 });
-        return done();
+        done();
       });
     });
 
@@ -1662,7 +1662,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -1675,7 +1675,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -1688,7 +1688,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -1707,7 +1707,7 @@ describe('userStore', () => {
       this.storeUserRequest().count((err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 30 });
-        return done();
+        done();
       });
     });
 
@@ -1720,7 +1720,7 @@ describe('userStore', () => {
           err.debug.should.eql(
             'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
           );
-          return done();
+          done();
         });
     });
 
@@ -1743,7 +1743,7 @@ describe('userStore', () => {
       this.store().count(query, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ count: 12 });
-        return done();
+        done();
       });
     });
 
@@ -1766,7 +1766,7 @@ describe('userStore', () => {
       this.store().count(query)
         .then((result) => {
           result.should.containDeep({ count: 12 });
-          return done();
+          done();
         });
     });
   });
@@ -1794,7 +1794,7 @@ describe('userStore', () => {
         .reply(200);
 
       (this.store().suspend(1234)).should.be.a.Promise(); // eslint-disable-line new-cap
-      return done();
+      done();
     });
 
     it('should suspend a single user', (done) => {
@@ -1812,7 +1812,7 @@ describe('userStore', () => {
       this.store().suspend(1234, (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
@@ -1831,7 +1831,7 @@ describe('userStore', () => {
       this.store().suspend(1234)
         .then((result) => {
           should.not.exist(result);
-          return done();
+          done();
         });
     });
 
@@ -1853,7 +1853,7 @@ describe('userStore', () => {
       this.store().suspend(1234, (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
@@ -1869,7 +1869,7 @@ describe('userStore', () => {
       this.store({ useUserContext: true }).suspend(1234, (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
@@ -1887,7 +1887,7 @@ describe('userStore', () => {
       this.store({ useBl: true }).suspend('1234', (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
@@ -1907,7 +1907,7 @@ describe('userStore', () => {
       this.store({ apiVersion: API_VERSION }).suspend('1234', (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
@@ -1920,7 +1920,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -1933,7 +1933,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -1946,7 +1946,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -1965,7 +1965,7 @@ describe('userStore', () => {
       this.storeUserRequest().suspend('1234', (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
@@ -1975,7 +1975,7 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('userId is required');
-        return done();
+        done();
       });
     });
 
@@ -1985,7 +1985,7 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('userId is required');
-        return done();
+        done();
       });
     });
 
@@ -1995,7 +1995,7 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('userId is required');
-        return done();
+        done();
       });
     });
 
@@ -2005,7 +2005,7 @@ describe('userStore', () => {
           err.message.should.eql('UserStoreError');
           err.description.should.eql('Bad Request');
           err.debug.should.eql('userId is required');
-          return done();
+          done();
         });
     });
 
@@ -2018,7 +2018,7 @@ describe('userStore', () => {
           err.debug.should.eql(
             'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
           );
-          return done();
+          done();
         });
     });
   });
@@ -2046,7 +2046,7 @@ describe('userStore', () => {
         .reply(200);
 
       (this.store().restore(1234)).should.be.a.Promise(); // eslint-disable-line new-cap
-      return done();
+      done();
     });
 
     it('should restore a single user', (done) => {
@@ -2064,7 +2064,7 @@ describe('userStore', () => {
       this.store().restore(1234, (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
@@ -2083,7 +2083,7 @@ describe('userStore', () => {
       this.store().restore(1234)
         .then((result) => {
           should.not.exist(result);
-          return done();
+          done();
         });
     });
 
@@ -2102,7 +2102,7 @@ describe('userStore', () => {
       this.store({ useUserContext: true }).restore(1234, (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
@@ -2120,7 +2120,7 @@ describe('userStore', () => {
       this.store({ useBl: true }).restore('1234', (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
@@ -2140,7 +2140,7 @@ describe('userStore', () => {
       this.store({ apiVersion: API_VERSION }).restore('1234', (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
@@ -2153,7 +2153,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -2166,7 +2166,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -2179,7 +2179,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -2198,7 +2198,7 @@ describe('userStore', () => {
       this.storeUserRequest().restore(1234, (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
@@ -2208,7 +2208,7 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('userId is required');
-        return done();
+        done();
       });
     });
 
@@ -2218,7 +2218,7 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('userId is required');
-        return done();
+        done();
       });
     });
 
@@ -2228,7 +2228,7 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('userId is required');
-        return done();
+        done();
       });
     });
 
@@ -2238,7 +2238,7 @@ describe('userStore', () => {
           err.message.should.eql('UserStoreError');
           err.description.should.eql('Bad Request');
           err.debug.should.eql('userId is required');
-          return done();
+          done();
         });
     });
 
@@ -2251,7 +2251,7 @@ describe('userStore', () => {
           err.debug.should.eql(
             'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
           );
-          return done();
+          done();
         });
     });
   });
@@ -2279,7 +2279,7 @@ describe('userStore', () => {
         .reply(200, { _id: 1234, username: 'abc' });
 
       (this.store().assignRole(1234, 5678)).should.be.a.Promise(); // eslint-disable-line new-cap
-      return done();
+      done();
     });
 
     it('should assign a role to a user', (done) => {
@@ -2297,7 +2297,7 @@ describe('userStore', () => {
       this.store().assignRole(1234, 5678, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -2316,7 +2316,7 @@ describe('userStore', () => {
       this.store().assignRole(1234, 5678)
         .then((result) => {
           result.should.containDeep({ _id: 1234, username: 'abc' });
-          return done();
+          done();
         });
     });
 
@@ -2332,7 +2332,7 @@ describe('userStore', () => {
       this.store({ useUserContext: true }).assignRole(1234, 5678, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -2350,7 +2350,7 @@ describe('userStore', () => {
       this.store({ useBl: true }).assignRole(1234, 5678, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -2370,7 +2370,7 @@ describe('userStore', () => {
       this.store({ apiVersion: API_VERSION }).assignRole(1234, 5678, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -2383,7 +2383,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -2396,7 +2396,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -2409,7 +2409,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -2428,7 +2428,7 @@ describe('userStore', () => {
       this.storeUserRequest().assignRole(1234, 5678, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -2438,7 +2438,7 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('userId is required');
-        return done();
+        done();
       });
     });
 
@@ -2448,7 +2448,7 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('Bulk role assignment is not currently supported.');
-        return done();
+        done();
       });
     });
 
@@ -2458,7 +2458,7 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('userId is required');
-        return done();
+        done();
       });
     });
 
@@ -2468,7 +2468,7 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('userId is required');
-        return done();
+        done();
       });
     });
 
@@ -2478,7 +2478,7 @@ describe('userStore', () => {
           err.message.should.eql('UserStoreError');
           err.description.should.eql('Bad Request');
           err.debug.should.eql('userId is required');
-          return done();
+          done();
         });
     });
 
@@ -2488,7 +2488,7 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('roleId is required');
-        return done();
+        done();
       });
     });
 
@@ -2498,7 +2498,7 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('Bulk role assignment is not currently supported.');
-        return done();
+        done();
       });
     });
 
@@ -2508,7 +2508,7 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('roleId is required');
-        return done();
+        done();
       });
     });
 
@@ -2518,7 +2518,7 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('roleId is required');
-        return done();
+        done();
       });
     });
 
@@ -2528,7 +2528,7 @@ describe('userStore', () => {
           err.message.should.eql('UserStoreError');
           err.description.should.eql('Bad Request');
           err.debug.should.eql('roleId is required');
-          return done();
+          done();
         });
     });
 
@@ -2541,7 +2541,7 @@ describe('userStore', () => {
           err.debug.should.eql(
             'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
           );
-          return done();
+          done();
         });
     });
   });
@@ -2569,7 +2569,7 @@ describe('userStore', () => {
         .reply(200);
 
       (this.store().revokeRole(1234, 5678)).should.be.a.Promise(); // eslint-disable-line new-cap
-      return done();
+      done();
     });
 
     it('should revoke a role', (done) => {
@@ -2587,7 +2587,7 @@ describe('userStore', () => {
       this.store().revokeRole(1234, 5678, (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
@@ -2606,7 +2606,7 @@ describe('userStore', () => {
       this.store().revokeRole(1234, 5678)
         .then((result) => {
           should.not.exist(result);
-          return done();
+          done();
         });
     });
 
@@ -2622,7 +2622,7 @@ describe('userStore', () => {
       this.store({ useUserContext: true }).revokeRole(1234, 5678, (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
@@ -2640,7 +2640,7 @@ describe('userStore', () => {
       this.store({ useBl: true }).revokeRole(1234, 5678, (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
@@ -2660,7 +2660,7 @@ describe('userStore', () => {
       this.store({ apiVersion: API_VERSION }).revokeRole(1234, 5678, (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
@@ -2673,7 +2673,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -2686,7 +2686,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -2699,7 +2699,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -2718,7 +2718,7 @@ describe('userStore', () => {
       this.storeUserRequest().revokeRole('1234', '5678', (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
@@ -2728,7 +2728,7 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('userId is required');
-        return done();
+        done();
       });
     });
 
@@ -2738,7 +2738,7 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('Bulk role revocation is not currently supported.');
-        return done();
+        done();
       });
     });
 
@@ -2748,7 +2748,7 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('userId is required');
-        return done();
+        done();
       });
     });
 
@@ -2758,7 +2758,7 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('userId is required');
-        return done();
+        done();
       });
     });
 
@@ -2768,7 +2768,7 @@ describe('userStore', () => {
           err.message.should.eql('UserStoreError');
           err.description.should.eql('Bad Request');
           err.debug.should.eql('userId is required');
-          return done();
+          done();
         });
     });
 
@@ -2778,7 +2778,7 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('roleId is required');
-        return done();
+        done();
       });
     });
 
@@ -2788,7 +2788,7 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('Bulk role revocation is not currently supported.');
-        return done();
+        done();
       });
     });
 
@@ -2798,7 +2798,7 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('roleId is required');
-        return done();
+        done();
       });
     });
 
@@ -2808,7 +2808,7 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('roleId is required');
-        return done();
+        done();
       });
     });
 
@@ -2818,7 +2818,7 @@ describe('userStore', () => {
           err.message.should.eql('UserStoreError');
           err.description.should.eql('Bad Request');
           err.debug.should.eql('roleId is required');
-          return done();
+          done();
         });
     });
 
@@ -2831,7 +2831,7 @@ describe('userStore', () => {
           err.debug.should.eql(
             'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
           );
-          return done();
+          done();
         });
     });
   });
@@ -2859,7 +2859,7 @@ describe('userStore', () => {
         .reply(200, { _id: 1234, username: 'abc' });
 
       (this.store().listRoles(1234)).should.be.a.Promise(); // eslint-disable-line new-cap
-      return done();
+      done();
     });
 
     it('should list a user\'s roles', (done) => {
@@ -2877,7 +2877,7 @@ describe('userStore', () => {
       this.store().listRoles(1234, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -2896,7 +2896,7 @@ describe('userStore', () => {
       this.store().listRoles(1234)
         .then((result) => {
           result.should.containDeep({ _id: 1234, username: 'abc' });
-          return done();
+          done();
         });
     });
 
@@ -2912,7 +2912,7 @@ describe('userStore', () => {
       this.store({ useUserContext: true }).listRoles(1234, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -2926,7 +2926,7 @@ describe('userStore', () => {
       this.store({ useBl: true }).listRoles('1234', (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -2946,7 +2946,7 @@ describe('userStore', () => {
       this.store({ apiVersion: API_VERSION }).listRoles('1234', (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -2959,7 +2959,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -2972,7 +2972,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -2985,7 +2985,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -3004,7 +3004,7 @@ describe('userStore', () => {
       this.storeUserRequest().listRoles(1234, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -3014,7 +3014,7 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('userId is required');
-        return done();
+        done();
       });
     });
 
@@ -3024,7 +3024,7 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('userId is required');
-        return done();
+        done();
       });
     });
 
@@ -3034,7 +3034,7 @@ describe('userStore', () => {
         err.message.should.eql('UserStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('userId is required');
-        return done();
+        done();
       });
     });
 
@@ -3044,7 +3044,7 @@ describe('userStore', () => {
           err.message.should.eql('UserStoreError');
           err.description.should.eql('Bad Request');
           err.debug.should.eql('userId is required');
-          return done();
+          done();
         });
     });
 
@@ -3057,7 +3057,7 @@ describe('userStore', () => {
           err.debug.should.eql(
             'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
           );
-          return done();
+          done();
         });
     });
   });

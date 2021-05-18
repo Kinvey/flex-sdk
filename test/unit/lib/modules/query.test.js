@@ -786,7 +786,7 @@ describe('Query', () => {
       should.throws(() => {
         const field = randomString();
         const query = new Query();
-        return query.matches(field, /^abc/, { ignoreCase: true });
+        query.matches(field, /^abc/, { ignoreCase: true });
       }, function error(err) {
         return err.toString() === 'Error: QueryError' && err.debug === 'ignoreCase is not supported.';
       });
@@ -797,7 +797,7 @@ describe('Query', () => {
       should.throws(() => {
         const field = randomString();
         const query = new Query();
-        return query.matches(field, '/abc/');
+        query.matches(field, '/abc/');
       }, function error(err) {
         return err.toString() === 'Error: QueryError' && err.debug === debugErr;
       });
@@ -851,7 +851,7 @@ describe('Query', () => {
         should.throws(() => {
           const field = randomString();
           const query = new Query();
-          return query.matches(field, /^foo/i);
+          query.matches(field, /^foo/i);
         }, function error(err) {
           return err.toString() === 'Error: QueryError' && err.debug === 'ignoreCase is not supported.';
         });
@@ -1366,7 +1366,7 @@ describe('Query', () => {
       should.throws(() => {
         const query = new Query();
         query.greaterThan('field', {});
-        return query.process([]);
+        query.process([]);
       }, function error(err) {
         return err.toString() === 'Error: QueryError' && err.debug === 'You must supply a number or string.';
       });
@@ -1383,7 +1383,7 @@ describe('Query', () => {
       should.throws(() => {
         const query = new Query();
         query.greaterThanOrEqualTo('field', {});
-        return query.process([]);
+        query.process([]);
       }, function error(err) {
         return err.toString() === 'Error: QueryError' && err.debug === 'You must supply a number or string.';
       });
@@ -1400,7 +1400,7 @@ describe('Query', () => {
       should.throws(() => {
         const query = new Query();
         query.lessThan('field', {});
-        return query.process([]);
+        query.process([]);
       }, function error(err) {
         return err.toString() === 'Error: QueryError' && err.debug === 'You must supply a number or string.';
       });
@@ -1417,7 +1417,7 @@ describe('Query', () => {
       should.throws(() => {
         const query = new Query();
         query.lessThanOrEqualTo('field', {});
-        return query.process([]);
+        query.process([]);
       }, function error(err) {
         return err.toString() === 'Error: QueryError' && err.debug === 'You must supply a number or string.';
       });
@@ -1471,7 +1471,7 @@ describe('Query', () => {
     it('throw an error when a data is not an array', () => {
       should.throws(() => {
         const query = new Query();
-        return query.process({});
+        query.process({});
       }, function error(err) {
         return err.toString() === 'Error: QueryError' && err.debug === 'data argument must be of type: Array.';
       });

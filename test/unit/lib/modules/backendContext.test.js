@@ -23,18 +23,18 @@ describe('modules / backendContext', () => {
   };
   before((done) => {
     backendContext = backendContextModule(metadata);
-    return done();
+    done();
   });
   it('exposes the environment ID through the getAppKey method', (done) => {
     backendContext.getAppKey().should.eql(metadata._id);
-    return done();
+    done();
   });
   it('exposes the app secret through the getAppSecret method', (done) => {
     backendContext.getAppSecret().should.eql(metadata.appsecret);
-    return done();
+    done();
   });
   it('exposes the master secret through the getMasterSecret method', (done) => {
     backendContext.getMasterSecret().should.eql(metadata.mastersecret);
-    return done();
+    done();
   });
 });
