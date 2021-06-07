@@ -1,5 +1,8 @@
 ## Changelog
 
+### 4.1.0
+* Add login hooks properties
+
 ### 3.5.0
 * Update logged message on error from complete callback
 

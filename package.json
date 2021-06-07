@@ -1,6 +1,6 @@
 {
   "name": "kinvey-flex-sdk",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "SDK for creating Kinvey Flex Services",
   "engines": {
     "node": "= 6.x.x"
@@ -18,7 +18,7 @@
   "dependencies": {
     "async": "3.1.0",
     "bson": "0.4.23",
-    "kinvey-code-task-runner": "2.4.0",
+    "kinvey-code-task-runner": "2.5.0",
     "kinvey-datalink-errors": "0.3.2",
     "moment": "2.22.2",
     "request": "2.88.0",
