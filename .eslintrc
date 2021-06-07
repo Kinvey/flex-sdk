@@ -1,3 +1,13 @@
 {
-  "extends": "kinvey-platform"
+  "extends": "@progresskinvey/eslint-config-kinvey-platform",
+  "globals": {
+      "sinon": false
+  },
+  "rules": {
+      "max-len": [
+          "warn",
+          160,
+          4
+      ]
+  }
 }

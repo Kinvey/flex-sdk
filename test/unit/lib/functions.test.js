@@ -211,7 +211,90 @@ describe('FlexFunctions', () => {
       });
       functions.process(task, {}, () => {});
     });
+
+    it('context includes loginOptions if passed', (done) => {
+      const taskName = quickRandom();
+      const task = sampleTask(taskName);
+      task.request.loginOptions = { type: 'kinvey' };
+
+      functions.register(taskName, (context, complete, modules) => {
+        context.should.be.an.Object();
+        complete.should.be.a.Function();
+        modules.should.be.an.Object();
+        context.loginOptions.should.eql({ type: 'kinvey' });
+        return done();
+      });
+
+      functions.process(task, {}, () => {});
+    });
+
+    it('context does not includes loginOptions if not passed', (done) => {
+      const taskName = quickRandom();
+      const task = sampleTask(taskName);
+
+      functions.register(taskName, (context, complete, modules) => {
+        context.should.be.an.Object();
+        complete.should.be.a.Function();
+        modules.should.be.an.Object();
+        should.not.exist(context.loginOptions);
+        return done();
+      });
+
+      functions.process(task, {}, () => {});
+    });
+
+    it('context includes status of response.status is >399 and hookType is "post"', (done) => {
+      const taskName = quickRandom();
+      const task = sampleTask(taskName);
+      task.hookType = 'post';
+      task.response.status = 401;
+
+      functions.register(taskName, (context, complete, modules) => {
+        context.should.be.an.Object();
+        complete.should.be.a.Function();
+        modules.should.be.an.Object();
+        context.status.should.eql(401);
+        return done();
+      });
+
+      functions.process(task, {}, () => {});
+    });
+
+    it('context does not include status of response.status is <399', (done) => {
+      const taskName = quickRandom();
+      const task = sampleTask(taskName);
+      task.hookType = 'post';
+      task.response.status = 200;
+
+      functions.register(taskName, (context, complete, modules) => {
+        context.should.be.an.Object();
+        complete.should.be.a.Function();
+        modules.should.be.an.Object();
+        should.not.exist(context.status);
+        return done();
+      });
+
+      functions.process(task, {}, () => {});
+    });
+
+    it('context does not include status of hookType is "pre"', (done) => {
+      const taskName = quickRandom();
+      const task = sampleTask(taskName);
+      task.hookType = 'pre';
+      task.response.status = 401;
+
+      functions.register(taskName, (context, complete, modules) => {
+        context.should.be.an.Object();
+        complete.should.be.a.Function();
+        modules.should.be.an.Object();
+        should.not.exist(context.status);
+        return done();
+      });
+
+      functions.process(task, {}, () => {});
+    });
   });
+
   describe('completion handlers', () => {
     afterEach((done) => {
       loggerMock.error.resetHistory();

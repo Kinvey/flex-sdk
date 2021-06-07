@@ -151,7 +151,7 @@ describe('modules / requestContext', () => {
         metadata.clientAppVersion = '';
         requestContext = requestContextModule(metadata);
         (requestContext.clientAppVersion.stringValue() === null).should.be.true();
-       done();
+        done();
       });
       it('should return null when metadata value is undefined', (done) => {
         metadata.clientAppVersion = undefined;

@@ -222,7 +222,7 @@ describe('userStore', () => {
       this.store().find((err, result) => {
         should.not.exist(err);
         result.should.containDeep([{ _id: 123, username: 'abc' }, { _id: 456, username: 'xyz' }]);
-        done();
+        return done();
       });
     });
 
@@ -257,7 +257,7 @@ describe('userStore', () => {
       this.store({ useUserContext: true }).find((err, result) => {
         should.not.exist(err);
         result.should.containDeep([{ _id: 123, username: 'abc' }, { _id: 456, username: 'xyz' }]);
-        done();
+        return done();
       });
     });
 
@@ -275,7 +275,7 @@ describe('userStore', () => {
       this.store({ useBl: true }).find((err, result) => {
         should.not.exist(err);
         result.should.containDeep([{ _id: 123, username: 'abc' }, { _id: 456, username: 'xyz' }]);
-        done();
+        return done();
       });
     });
 
@@ -295,7 +295,7 @@ describe('userStore', () => {
       this.store({ apiVersion: API_VERSION }).find((err, result) => {
         should.not.exist(err);
         result.should.containDeep([{ _id: 123, username: 'abc' }, { _id: 456, username: 'xyz' }]);
-        done();
+        return done();
       });
     });
 
@@ -308,7 +308,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        done();
+        return done();
       });
     });
 
@@ -321,7 +321,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        done();
+        return done();
       });
     });
 
@@ -334,7 +334,7 @@ describe('userStore', () => {
         err.debug.should.eql(
           'Recursive requests to the user store from the user store cannot use user credentials or use Bl'
         );
-        done();
+        return done();
       });
     });
 
@@ -353,7 +353,7 @@ describe('userStore', () => {
       this.storeUserRequest().find((err, result) => {
         should.not.exist(err);
         result.should.containDeep([{ _id: 123, username: 'abc' }, { _id: 456, username: 'xyz' }]);
-        done();
+        return done();
       });
     });
 
