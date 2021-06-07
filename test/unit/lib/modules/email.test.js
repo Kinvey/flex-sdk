@@ -45,16 +45,16 @@ describe('modules / email', () => {
     require.cache[require.resolve('request')].exports.defaults = requestDefaultsStub;
     emailModule = require('../../../../lib/service/modules/email'); // eslint-disable-line global-require
     emailInstance = emailModule(appMetadata, taskMetadata, requestMetadata, emitter);
-    return done();
+    done();
   });
   afterEach((done) => {
     requestStub.post.reset();
-    return done();
+    done();
   });
 
   it('should return a Promise', (done) => {
     (emailInstance.send('from', 'to', 'subject', 'textBody')).should.be.a.Promise(); // eslint-disable-line new-cap
-    return done();
+    done();
   });
 
   it('should invoke the callback if specified', (done) => {
@@ -76,7 +76,7 @@ describe('modules / email', () => {
     (() => emailInstance.send('from', 'to', 'subject', 'textBody')).should.not.throw();
     requestStub.post.args[0][0].auth.user.should.eql(appMetadata._id);
     requestStub.post.args[0][0].auth.pass.should.eql(appMetadata.mastersecret);
-    return done();
+    done();
   });
 
   it('rejects if \'from\', \'to\', \'subject\' and \'textBody\' are not all specified', (done) => {
@@ -87,66 +87,66 @@ describe('modules / email', () => {
     (emailInstance.send(null, 'to', 'subject', 'textBody')).should.be.rejected();
     (emailInstance.send('from', null, 'subject', 'textBody')).should.be.rejected();
     (emailInstance.send('from', 'to', null, 'textBody')).should.be.rejected();
-    return done();
+    done();
   });
 
   it('can pass a callback instead of replyTo argument', (done) => {
     requestStub.post.callsArgWith(1, 'error!');
-    return emailInstance.send('from', 'to', 'subject', 'textBody', (err) => {
+    emailInstance.send('from', 'to', 'subject', 'textBody', (err) => {
       should.exist(err);
       err.should.eql('error!');
-      return done();
+      done();
     });
   });
 
   it('can pass a callback instead of htmlBody argument', (done) => {
     requestStub.post.callsArgWith(1, 'error!');
-    return emailInstance.send('from', 'to', 'subject', 'textBody', 'replyTo', (err) => {
+    emailInstance.send('from', 'to', 'subject', 'textBody', 'replyTo', (err) => {
       should.exist(err);
       err.should.eql('error!');
-      return done();
+      done();
     });
   });
 
   it('can pass a callback instead of cc argument', (done) => {
     requestStub.post.callsArgWith(1, 'error!');
-    return emailInstance.send('from', 'to', 'subject', 'textBody', 'replyTo', 'htmlBody', (err) => {
+    emailInstance.send('from', 'to', 'subject', 'textBody', 'replyTo', 'htmlBody', (err) => {
       should.exist(err);
       err.should.eql('error!');
-      return done();
+      done();
     });
   });
 
   it('can pass a callback instead of bcc argument', (done) => {
     requestStub.post.callsArgWith(1, 'error!');
-    return emailInstance.send('from', 'to', 'subject', 'textBody', 'replyTo', 'htmlBody', 'cc', (err) => {
+    emailInstance.send('from', 'to', 'subject', 'textBody', 'replyTo', 'htmlBody', 'cc', (err) => {
       should.exist(err);
       err.should.eql('error!');
-      return done();
+      done();
     });
   });
 
   it('can pass a callback as the last argument', (done) => {
     requestStub.post.callsArgWith(1, 'error!');
-    return emailInstance.send('from', 'to', 'subject', 'textBody', 'replyTo', 'htmlBody', 'cc', 'bcc', (err) => {
+    emailInstance.send('from', 'to', 'subject', 'textBody', 'replyTo', 'htmlBody', 'cc', 'bcc', (err) => {
       should.exist(err);
       err.should.eql('error!');
-      return done();
+      done();
     });
   });
 
   it('calls back an error if one has occurred while communicating with the server', (done) => {
     requestStub.post.callsArgWith(1, 'error!');
-    return emailInstance.send('from', 'to', 'subject', 'textBody', (err) => {
+    emailInstance.send('from', 'to', 'subject', 'textBody', (err) => {
       should.exist(err);
       err.should.eql('error!');
-      return done();
+      done();
     });
   });
 
   it('invokes rejection handler if an error has occurred while communicating with the server', () => {
     requestStub.post.callsArgWith(1, 'error!');
-    return emailInstance.send('from', 'to', 'subject', 'textBody')
+    emailInstance.send('from', 'to', 'subject', 'textBody')
       .catch((err) => {
         should.exist(err);
         err.should.eql('error!');
@@ -157,10 +157,10 @@ describe('modules / email', () => {
     requestStub.post.callsArgWith(1, null, {
       statusCode: 401
     }, 'error!');
-    return emailInstance.send('from', 'to', 'subject', 'textBody', (err) => {
+    emailInstance.send('from', 'to', 'subject', 'textBody', (err) => {
       should.exist(err);
       err.should.eql('error!');
-      return done();
+      done();
     });
   });
 
@@ -168,7 +168,7 @@ describe('modules / email', () => {
     requestStub.post.callsArgWith(1, null, {
       statusCode: 401
     }, 'error!');
-    return emailInstance.send('from', 'to', 'subject', 'textBody')
+    emailInstance.send('from', 'to', 'subject', 'textBody')
       .catch((err) => {
         should.exist(err);
         err.should.eql('error!');
@@ -177,51 +177,51 @@ describe('modules / email', () => {
 
   it('POSTs to the server\'s send-email endpoint', (done) => {
     requestStub.post.callsArgWith(1, {});
-    return emailInstance.send('from', 'to', 'subject', 'textBody', () => {
+    emailInstance.send('from', 'to', 'subject', 'textBody', () => {
       requestStub.post.args[0][0].url.should.eql(`${FAKE_BAAS_URL}/rpc/${appMetadata._id}/send-email`);
-      return done();
+      done();
     });
   });
 
   it('sends a null replyTo parameter if no replyTo argument is specified', (done) => {
     requestStub.post.callsArgWith(1, {});
-    return emailInstance.send('from', 'to', 'subject', 'textBody', () => {
+    emailInstance.send('from', 'to', 'subject', 'textBody', () => {
       const requestBody = requestStub.post.args[0][0].json;
       (requestBody.replyTo === null).should.be.true;
-      return done();
+      done();
     });
   });
 
   it('sends a null html parameter if no htmlBody argument is specified', (done) => {
     requestStub.post.callsArgWith(1, {});
-    return emailInstance.send('from', 'to', 'subject', 'textBody', () => {
+    emailInstance.send('from', 'to', 'subject', 'textBody', () => {
       const requestBody = requestStub.post.args[0][0].json;
       (requestBody.html === null).should.be.true;
-      return done();
+      done();
     });
   });
 
   it('sends a null cc parameter if no cc argument is specified', (done) => {
     requestStub.post.callsArgWith(1, {});
-    return emailInstance.send('from', 'to', 'subject', 'textBody', 'htmlBody', () => {
+    emailInstance.send('from', 'to', 'subject', 'textBody', 'htmlBody', () => {
       const requestBody = requestStub.post.args[0][0].json;
       (requestBody.cc === null).should.be.true;
-      return done();
+      done();
     });
   });
 
   it('sends a null bcc parameter if no bcc argument is specified', (done) => {
     requestStub.post.callsArgWith(1, {});
-    return emailInstance.send('from', 'to', 'subject', 'textBody', 'htmlBody', 'cc', () => {
+    emailInstance.send('from', 'to', 'subject', 'textBody', 'htmlBody', 'cc', () => {
       const requestBody = requestStub.post.args[0][0].json;
       (requestBody.bcc === null).should.be.true;
-      return done();
+      done();
     });
   });
 
   it('sends the appropriate arguments to the server', (done) => {
     requestStub.post.callsArgWith(1, {});
-    return emailInstance.send(
+    emailInstance.send(
       'fromTest', 'toTest', 'subjectTest', 'textBodyTest', 'replyToTest', 'htmlBodyTest', 'ccTest', 'bccTest'
       , () => {
         const requestBody = requestStub.post.args[0][0].json;
@@ -236,19 +236,19 @@ describe('modules / email', () => {
         const outgoingRequestHeaders = requestStub.post.args[0][0].headers;
         outgoingRequestHeaders.should.have.property('x-kinvey-api-version');
         outgoingRequestHeaders['x-kinvey-api-version'].should.equal('3');
-        return done();
+        done();
       });
   });
 
-  return it('returns the response from the mail server if one is returned', (done) => {
+  it('returns the response from the mail server if one is returned', (done) => {
     requestStub.post.callsArgWith(1, null, {}, {
       mailServerResponse: 'response!'
     });
-    return emailInstance.send('from', 'to', 'subject', 'textBody', (err, response) => {
+    emailInstance.send('from', 'to', 'subject', 'textBody', (err, response) => {
       should.not.exist(err);
       should.exist(response);
       response.should.eql('response!');
-      return done();
+      done();
     });
   });
 });

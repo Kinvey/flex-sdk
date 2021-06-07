@@ -197,7 +197,7 @@ describe('groupStore', () => {
         .reply(200, { _id: 1234, username: 'abc' });
 
       (this.store().findById(1234)).should.be.a.Promise(); // eslint-disable-line new-cap
-      return done();
+      done();
     });
 
     it('should find a single group', (done) => {
@@ -215,7 +215,7 @@ describe('groupStore', () => {
       this.store().findById(1234, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -234,7 +234,7 @@ describe('groupStore', () => {
       this.store().findById(1234)
         .then((result) => {
           result.should.containDeep({ _id: 1234, username: 'abc' });
-          return done();
+          done();
         });
     });
 
@@ -250,7 +250,7 @@ describe('groupStore', () => {
       this.store({ useUserContext: true }).findById(1234, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -264,7 +264,7 @@ describe('groupStore', () => {
       this.store({ useBl: true }).findById('1234', (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -280,7 +280,7 @@ describe('groupStore', () => {
       this.store({ apiVersion: API_VERSION }).findById('1234', (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, someData: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -293,7 +293,7 @@ describe('groupStore', () => {
         err.debug.should.eql(
           'Recursive requests to the group store from the group store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -306,7 +306,7 @@ describe('groupStore', () => {
         err.debug.should.eql(
           'Recursive requests to the group store from the group store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -319,7 +319,7 @@ describe('groupStore', () => {
         err.debug.should.eql(
           'Recursive requests to the group store from the group store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -338,7 +338,7 @@ describe('groupStore', () => {
       this.storeUserRequest().findById(1234, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -348,7 +348,7 @@ describe('groupStore', () => {
         err.message.should.eql('GroupStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('groupId is required');
-        return done();
+        done();
       });
     });
 
@@ -358,7 +358,7 @@ describe('groupStore', () => {
         err.message.should.eql('GroupStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('groupId is required');
-        return done();
+        done();
       });
     });
 
@@ -368,7 +368,7 @@ describe('groupStore', () => {
         err.message.should.eql('GroupStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('groupId is required');
-        return done();
+        done();
       });
     });
 
@@ -378,7 +378,7 @@ describe('groupStore', () => {
           err.message.should.eql('GroupStoreError');
           err.description.should.eql('Bad Request');
           err.debug.should.eql('groupId is required');
-          return done();
+          done();
         });
     });
 
@@ -391,7 +391,7 @@ describe('groupStore', () => {
           err.debug.should.eql(
             'Recursive requests to the group store from the group store cannot use user credentials or use Bl'
           );
-          return done();
+          done();
         });
     });
   });
@@ -421,7 +421,7 @@ describe('groupStore', () => {
         .reply(200, { _id: 1234, username: 'abc' });
 
       (this.store().create({ username: 'abc' })).should.be.a.Promise(); // eslint-disable-line new-cap
-      return done();
+      done();
     });
 
     it('should create a new entity', (done) => {
@@ -441,7 +441,7 @@ describe('groupStore', () => {
       this.store().create({ username: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -462,7 +462,7 @@ describe('groupStore', () => {
       this.store().create({ username: 'abc' })
         .then((result) => {
           result.should.containDeep({ _id: 1234, username: 'abc' });
-          return done();
+          done();
         });
     });
 
@@ -483,7 +483,7 @@ describe('groupStore', () => {
       this.store().create({ username: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -503,7 +503,7 @@ describe('groupStore', () => {
       this.store({ useBl: true }).create({ username: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -525,7 +525,7 @@ describe('groupStore', () => {
       this.store({ apiVersion: API_VERSION }).create({ username: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -538,7 +538,7 @@ describe('groupStore', () => {
         err.debug.should.eql(
           'Recursive requests to the group store from the group store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -551,7 +551,7 @@ describe('groupStore', () => {
         err.debug.should.eql(
           'Recursive requests to the group store from the group store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -564,7 +564,7 @@ describe('groupStore', () => {
         err.debug.should.eql(
           'Recursive requests to the group store from the group store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -585,7 +585,7 @@ describe('groupStore', () => {
       this.storeUserRequest().create({ username: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -595,7 +595,7 @@ describe('groupStore', () => {
         err.message.should.eql('GroupStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('A group entity must be supplied');
-        return done();
+        done();
       });
     });
 
@@ -605,7 +605,7 @@ describe('groupStore', () => {
           err.message.should.eql('GroupStoreError');
           err.description.should.eql('Bad Request');
           err.debug.should.eql('A group entity must be supplied');
-          return done();
+          done();
         });
     });
 
@@ -618,7 +618,7 @@ describe('groupStore', () => {
           err.debug.should.eql(
             'Recursive requests to the group store from the group store cannot use user credentials or use Bl'
           );
-          return done();
+          done();
         });
     });
   });
@@ -649,7 +649,7 @@ describe('groupStore', () => {
         .reply(200, { _id: 1234, username: 'abc' });
 
       (this.store().update({ _id: 1234, username: 'abc' })).should.be.a.Promise(); // eslint-disable-line new-cap
-      return done();
+      done();
     });
 
     it('should update an existing group', (done) => {
@@ -670,7 +670,7 @@ describe('groupStore', () => {
       this.store().update({ _id: 1234, username: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -692,7 +692,7 @@ describe('groupStore', () => {
       this.store().update({ _id: 1234, username: 'abc' })
         .then((result) => {
           result.should.containDeep({ _id: 1234, username: 'abc' });
-          return done();
+          done();
         });
     });
 
@@ -711,7 +711,7 @@ describe('groupStore', () => {
       this.store({ useUserContext: true }).update({ _id: 1234, username: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -732,7 +732,7 @@ describe('groupStore', () => {
       this.store({ useBl: true }).update({ _id: 1234, username: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -755,7 +755,7 @@ describe('groupStore', () => {
       this.store({ apiVersion: API_VERSION }).update({ _id: 1234, username: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -768,7 +768,7 @@ describe('groupStore', () => {
         err.debug.should.eql(
           'Recursive requests to the group store from the group store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -781,7 +781,7 @@ describe('groupStore', () => {
         err.debug.should.eql(
           'Recursive requests to the group store from the group store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -795,7 +795,7 @@ describe('groupStore', () => {
           err.debug.should.eql(
             'Recursive requests to the group store from the group store cannot use user credentials or use Bl'
           );
-          return done();
+          done();
         });
     });
 
@@ -817,7 +817,7 @@ describe('groupStore', () => {
       this.storeUserRequest().update({ _id: 1234, username: 'abc' }, (err, result) => {
         should.not.exist(err);
         result.should.containDeep({ _id: 1234, username: 'abc' });
-        return done();
+        done();
       });
     });
 
@@ -827,7 +827,7 @@ describe('groupStore', () => {
         err.message.should.eql('GroupStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('A group entity must be supplied');
-        return done();
+        done();
       });
     });
 
@@ -837,7 +837,7 @@ describe('groupStore', () => {
           err.message.should.eql('GroupStoreError');
           err.description.should.eql('Bad Request');
           err.debug.should.eql('A group entity must be supplied');
-          return done();
+          done();
         });
     });
 
@@ -847,7 +847,7 @@ describe('groupStore', () => {
         err.message.should.eql('GroupStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('A group entity must be supplied containing at least an _id');
-        return done();
+        done();
       });
     });
 
@@ -857,7 +857,7 @@ describe('groupStore', () => {
           err.message.should.eql('GroupStoreError');
           err.description.should.eql('Bad Request');
           err.debug.should.eql('A group entity must be supplied containing at least an _id');
-          return done();
+          done();
         });
     });
 
@@ -870,7 +870,7 @@ describe('groupStore', () => {
           err.debug.should.eql(
             'Recursive requests to the group store from the group store cannot use user credentials or use Bl'
           );
-          return done();
+          done();
         });
     });
   });
@@ -898,7 +898,7 @@ describe('groupStore', () => {
         .reply(200);
 
       (this.store().remove(1234)).should.be.a.Promise(); // eslint-disable-line new-cap
-      return done();
+      done();
     });
 
     it('should remove a single group', (done) => {
@@ -916,7 +916,7 @@ describe('groupStore', () => {
       this.store().remove(1234, (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
@@ -935,7 +935,7 @@ describe('groupStore', () => {
       this.store().remove(1234)
         .then((result) => {
           should.not.exist(result);
-          return done();
+          done();
         });
     });
 
@@ -951,7 +951,7 @@ describe('groupStore', () => {
       this.store({ useUserContext: true }).remove(1234, (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
@@ -969,7 +969,7 @@ describe('groupStore', () => {
       this.store({ useBl: true }).remove('1234', (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
@@ -989,7 +989,7 @@ describe('groupStore', () => {
       this.store({ apiVersion: API_VERSION }).remove('1234', (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
@@ -1002,7 +1002,7 @@ describe('groupStore', () => {
         err.debug.should.eql(
           'Recursive requests to the group store from the group store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -1015,7 +1015,7 @@ describe('groupStore', () => {
         err.debug.should.eql(
           'Recursive requests to the group store from the group store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -1028,7 +1028,7 @@ describe('groupStore', () => {
         err.debug.should.eql(
           'Recursive requests to the group store from the group store cannot use user credentials or use Bl'
         );
-        return done();
+        done();
       });
     });
 
@@ -1047,7 +1047,7 @@ describe('groupStore', () => {
       this.storeUserRequest().remove('1234', (err, result) => {
         should.not.exist(err);
         should.not.exist(result);
-        return done();
+        done();
       });
     });
 
@@ -1057,7 +1057,7 @@ describe('groupStore', () => {
         err.message.should.eql('GroupStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('groupId is required');
-        return done();
+        done();
       });
     });
 
@@ -1067,7 +1067,7 @@ describe('groupStore', () => {
         err.message.should.eql('GroupStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('groupId is required');
-        return done();
+        done();
       });
     });
 
@@ -1077,7 +1077,7 @@ describe('groupStore', () => {
         err.message.should.eql('GroupStoreError');
         err.description.should.eql('Bad Request');
         err.debug.should.eql('groupId is required');
-        return done();
+        done();
       });
     });
 
@@ -1087,7 +1087,7 @@ describe('groupStore', () => {
           err.message.should.eql('GroupStoreError');
           err.description.should.eql('Bad Request');
           err.debug.should.eql('groupId is required');
-          return done();
+          done();
         });
     });
 
@@ -1100,7 +1100,7 @@ describe('groupStore', () => {
           err.debug.should.eql(
             'Recursive requests to the group store from the group store cannot use user credentials or use Bl'
           );
-          return done();
+          done();
         });
     });
   });
