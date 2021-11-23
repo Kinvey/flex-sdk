@@ -15,17 +15,21 @@ const requestContextModule = require('../../../../lib/service/modules/requestCon
 
 describe('modules / requestContext', () => {
   let requestContext = null;
-  const metadata = {
-    _id: 'test ID',
-    authenticatedUsername: 'test authenticated username',
-    authenticatedUserId: '12345',
-    securityContext: 'test security context',
-    customRequestProperties: {
-      first: 1
-    }
+  const task = {
+    requestMetadata: {
+      _id: 'test ID',
+      authenticatedUsername: 'test authenticated username',
+      authenticatedUserId: '12345',
+      securityContext: 'test security context',
+      customRequestProperties: {
+        first: 1,
+      },
+    },
   };
+  const metadata = task.requestMetadata;
+
   before((done) => {
-    requestContext = requestContextModule(metadata);
+    requestContext = requestContextModule(task);
     done();
   });
   it('exposes the authenticated username through the getAuthenticatedUsername method', (done) => {
@@ -51,7 +55,7 @@ describe('modules / requestContext', () => {
   });
   describe('getCustomRequestProperty return value', () => {
     it('should be undefined when nothing is passed', (done) => {
-      requestContext = requestContextModule(metadata);
+      requestContext = requestContextModule(task);
       (requestContext.getCustomRequestProperty() === undefined).should.be.true();
       done();
     });
@@ -132,30 +136,30 @@ describe('modules / requestContext', () => {
     describe('stringValue()', () => {
       it('should return the current client version for the request', (done) => {
         metadata.clientAppVersion = '1.0.1';
-        requestContext = requestContextModule(metadata);
+        requestContext = requestContextModule(task);
         requestContext.clientAppVersion.stringValue().should.eql(metadata.clientAppVersion);
         done();
       });
       it('should return null when metadata value is null', (done) => {
         metadata.clientAppVersion = null;
-        requestContext = requestContextModule(metadata);
+        requestContext = requestContextModule(task);
         (requestContext.clientAppVersion.stringValue() === null).should.be.true();
         done();
       });
       it('returns null when no customer app version is passed in', (done) => {
-        requestContext = requestContextModule(metadata);
+        requestContext = requestContextModule(task);
         (requestContext.clientAppVersion.stringValue() === null).should.be.true();
         done();
       });
       it('should return null when metadata value is \'\'', (done) => {
         metadata.clientAppVersion = '';
-        requestContext = requestContextModule(metadata);
+        requestContext = requestContextModule(task);
         (requestContext.clientAppVersion.stringValue() === null).should.be.true();
         done();
       });
       it('should return null when metadata value is undefined', (done) => {
         metadata.clientAppVersion = undefined;
-        requestContext = requestContextModule(metadata);
+        requestContext = requestContextModule(task);
         (requestContext.clientAppVersion.stringValue() === null).should.be.true();
         done();
       });
@@ -163,49 +167,49 @@ describe('modules / requestContext', () => {
     describe('majorVersion()', () => {
       it('should return correct value when only one number passed in', (done) => {
         metadata.clientAppVersion = '1';
-        requestContext = requestContextModule(metadata);
+        requestContext = requestContextModule(task);
         requestContext.clientAppVersion.majorVersion().should.eql(1);
         done();
       });
       it('should return correct value when major and minor are passed in', (done) => {
         metadata.clientAppVersion = '1.0';
-        requestContext = requestContextModule(metadata);
+        requestContext = requestContextModule(task);
         requestContext.clientAppVersion.majorVersion().should.eql(1);
         done();
       });
       it('should return correct value when major, minor and patch are passed in', (done) => {
         metadata.clientAppVersion = '1.2.3';
-        requestContext = requestContextModule(metadata);
+        requestContext = requestContextModule(task);
         requestContext.clientAppVersion.majorVersion().should.eql(1);
         done();
       });
       it('should return correct value when major, minor and patch AND MORE are passed in', (done) => {
         metadata.clientAppVersion = '1.2.3.4';
-        requestContext = requestContextModule(metadata);
+        requestContext = requestContextModule(task);
         requestContext.clientAppVersion.majorVersion().should.eql(1);
         done();
       });
       it('should return correct value when major ver is more than 1 digit', (done) => {
         metadata.clientAppVersion = '12.2.3';
-        requestContext = requestContextModule(metadata);
+        requestContext = requestContextModule(task);
         requestContext.clientAppVersion.majorVersion().should.eql(12);
         done();
       });
       it('returns NaN when no customer app version is passed in', (done) => {
         metadata.clientAppVersion = '';
-        requestContext = requestContextModule(metadata);
+        requestContext = requestContextModule(task);
         (isNaN(requestContext.clientAppVersion.majorVersion())).should.be.true();
         done();
       });
       it('should return NaN major component contains a string', (done) => {
         metadata.clientAppVersion = '1a.1.2';
-        requestContext = requestContextModule(metadata);
+        requestContext = requestContextModule(task);
         (isNaN(requestContext.clientAppVersion.majorVersion())).should.be.true();
         return done();
       });
       return it('should return number value minor or patch contain non-digit characters', (done) => {
         metadata.clientAppVersion = '1.2a.3-beta';
-        requestContext = requestContextModule(metadata);
+        requestContext = requestContextModule(task);
         requestContext.clientAppVersion.majorVersion().should.eql(1);
         done();
       });
@@ -213,37 +217,37 @@ describe('modules / requestContext', () => {
     describe('minorVersion()', () => {
       it('should return correct value when major and minor are passed in', (done) => {
         metadata.clientAppVersion = '1.0';
-        requestContext = requestContextModule(metadata);
+        requestContext = requestContextModule(task);
         requestContext.clientAppVersion.minorVersion().should.eql(0);
         done();
       });
       it('should return correct value when major, minor and patch are passed in', (done) => {
         metadata.clientAppVersion = '1.2.3';
-        requestContext = requestContextModule(metadata);
+        requestContext = requestContextModule(task);
         requestContext.clientAppVersion.minorVersion().should.eql(2);
         done();
       });
       it('should return correct value when major ver is more than 1 digit', (done) => {
         metadata.clientAppVersion = '12.34.56';
-        requestContext = requestContextModule(metadata);
+        requestContext = requestContextModule(task);
         requestContext.clientAppVersion.minorVersion().should.eql(34);
         done();
       });
       it('returns NaN when no customer app version is passed in', (done) => {
         metadata.clientAppVersion = '';
-        requestContext = requestContextModule(metadata);
+        requestContext = requestContextModule(task);
         (isNaN(requestContext.clientAppVersion.minorVersion())).should.be.true();
         done();
       });
       it('should return NaN when minor component contains a string', (done) => {
         metadata.clientAppVersion = '1.1a.2';
-        requestContext = requestContextModule(metadata);
+        requestContext = requestContextModule(task);
         (isNaN(requestContext.clientAppVersion.minorVersion())).should.be.true();
         done();
       });
       it('should return correct value when major or patch contains a string', (done) => {
         metadata.clientAppVersion = '1a.2.3-beta';
-        requestContext = requestContextModule(metadata);
+        requestContext = requestContextModule(task);
         requestContext.clientAppVersion.minorVersion().should.eql(2);
         done();
       });
@@ -251,31 +255,31 @@ describe('modules / requestContext', () => {
     describe('patchVersion()', () => {
       it('should return correct value when major, minor and patch are passed in', (done) => {
         metadata.clientAppVersion = '1.2.3';
-        requestContext = requestContextModule(metadata);
+        requestContext = requestContextModule(task);
         requestContext.clientAppVersion.patchVersion().should.eql(3);
         done();
       });
       it('should return correct value when major ver is more than 1 digit', (done) => {
         metadata.clientAppVersion = '12.34.56';
-        requestContext = requestContextModule(metadata);
+        requestContext = requestContextModule(task);
         requestContext.clientAppVersion.patchVersion().should.eql(56);
         done();
       });
       it('returns NaN when no customer app version is passed in', (done) => {
         metadata.clientAppVersion = '';
-        requestContext = requestContextModule(metadata);
+        requestContext = requestContextModule(task);
         (isNaN(requestContext.clientAppVersion.patchVersion())).should.be.true();
         done();
       });
       it('should return NaN when patch component contains a string', (done) => {
         metadata.clientAppVersion = '1.2.3-beta';
-        requestContext = requestContextModule(metadata);
+        requestContext = requestContextModule(task);
         (isNaN(requestContext.clientAppVersion.patchVersion())).should.be.true();
         done();
       });
       it('should return correct value when major or minor contain string characters', (done) => {
         metadata.clientAppVersion = '1a.2-beta.3';
-        requestContext = requestContextModule(metadata);
+        requestContext = requestContextModule(task);
         requestContext.clientAppVersion.patchVersion().should.eql(3);
         done();
       });
