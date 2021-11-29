@@ -1,5 +1,8 @@
 ## Changelog
 
+### 4.1.1
+* Fixed custom request properties to be available between Pre and Post hooks
+
 ### 4.1.0
 * Add login hooks properties
 
