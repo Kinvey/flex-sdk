@@ -12,13 +12,15 @@
  * the License.
  */
 
+const proxyquire = require('proxyquire');
 const should = require('should');
 const sinon = require('sinon');
-const proxyquire = require('proxyquire');
+
 const loggerMock = require('./mocks/loggerMock');
 
 const completionHandler = proxyquire('../../../lib/service/kinveyCompletionHandler', { './logger': loggerMock });
 const functions = proxyquire('../../../lib/service/functions', { './kinveyCompletionHandler': completionHandler });
+const moduleGenerator = require('../../../lib/service/moduleGenerator');
 
 const testTaskName = 'myTaskName';
 
@@ -76,6 +78,10 @@ function samplePreTask(name) {
     method: 'POST',
     endpoint: null,
     hookType: 'pre',
+    baasUrl: 'some-url',
+    appMetadata: {
+      _id: quickRandom()
+    },
     request: {
       method: 'POST',
       headers: { requestHeader: 'foo' },
@@ -138,6 +144,7 @@ describe('FlexFunctions', () => {
       fn();
     });
   });
+
   describe('discovery', () => {
     afterEach((done) => {
       functions.clearAll();
@@ -160,6 +167,7 @@ describe('FlexFunctions', () => {
       done();
     });
   });
+
   describe('functions processing', () => {
     afterEach((done) => {
       functions.clearAll();
@@ -301,6 +309,7 @@ describe('FlexFunctions', () => {
       functions.clearAll();
       done();
     });
+
     it("should return a 'BadRequest' response with a null task name", (done) => {
       const task = sampleTask(null);
       functions.process(task, null, (err) => {
@@ -309,6 +318,7 @@ describe('FlexFunctions', () => {
         done();
       });
     });
+
     it("should return a 'BadRequest' response with a non-JSON task", (done) => {
       const task = sampleBadTask(null);
       functions.process(task, null, (err) => {
@@ -317,22 +327,24 @@ describe('FlexFunctions', () => {
         done();
       });
     });
+
     it('should return a successful response', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
       functions.register(taskName, (context, complete) => complete().ok().next());
-      functions.process(task, null, (err, result) => {
+      functions.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
         result.response.body.should.eql({});
         done();
       });
     });
+
     it('should include a body', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
       functions.register(taskName, (context, complete) => complete({ foo: 'bar' }).ok().done());
-      functions.process(task, null, (err, result) => {
+      functions.process(task, {}, (err, result) => {
         result.response.statusCode.should.eql(200);
         result.response.body.should.eql({
           foo: 'bar'
@@ -340,6 +352,7 @@ describe('FlexFunctions', () => {
         done();
       });
     });
+
     it('should explicitly set a body', (done) => {
       const taskName = quickRandom();
       const task = samplePreTask(taskName);
@@ -347,7 +360,7 @@ describe('FlexFunctions', () => {
         .setBody({ foo: 'bar' })
         .ok()
         .done());
-      functions.process(task, null, (err, result) => {
+      functions.process(task, {}, (err, result) => {
         result.response.statusCode.should.eql(200);
         result.response.body.should.eql({
           foo: 'bar'
@@ -355,6 +368,7 @@ describe('FlexFunctions', () => {
         done();
       });
     });
+
     it('should explicitly set a query', (done) => {
       const taskName = quickRandom();
       const task = samplePreTask(taskName);
@@ -364,13 +378,14 @@ describe('FlexFunctions', () => {
         .setQuery({ query, sort })
         .ok()
         .next());
-      functions.process(task, null, (err, result) => {
+      functions.process(task, {}, (err, result) => {
         result.response.statusCode.should.eql(200);
         result.request.query.should.eql({ query: JSON.stringify(query), sort: JSON.stringify(sort) });
         result.request.params.should.eql({ query: JSON.stringify(query), sort: JSON.stringify(sort) });
         done();
       });
     });
+
     it('should include the response body and headers when task is a post task', (done) => {
       const taskName = quickRandom();
       const task = samplePostTask(taskName);
@@ -381,7 +396,7 @@ describe('FlexFunctions', () => {
         context.headers.should.not.eql(task.request.headers);
         complete(task.response.body).ok().next();
       });
-      functions.process(task, null, () => done());
+      functions.process(task, {}, () => done());
     });
 
     it('should include the request body and headers when task is a pre task', (done) => {
@@ -394,7 +409,7 @@ describe('FlexFunctions', () => {
         context.headers.should.not.eql(task.response.headers);
         complete(task.response.body).ok().next();
       });
-      functions.process(task, null, () => done());
+      functions.process(task, {}, () => done());
     });
 
     it('should include the request body and headers when task is a custom endpoint task', (done) => {
@@ -407,14 +422,14 @@ describe('FlexFunctions', () => {
         context.headers.should.not.eql(task.response.headers);
         complete(task.response.body).ok().next();
       });
-      functions.process(task, null, () => done());
+      functions.process(task, {}, () => done());
     });
 
     it('should set the response body when task is a post task and the request is ended', (done) => {
       const taskName = quickRandom();
       const task = samplePostTask(taskName);
       functions.register(taskName, (context, complete) => complete({ foo: 'bar' }).ok().done());
-      functions.process(task, null, (err, result) => {
+      functions.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
         result.response.body.should.eql({
@@ -428,7 +443,7 @@ describe('FlexFunctions', () => {
       const taskName = quickRandom();
       const task = samplePostTask(taskName);
       functions.register(taskName, (context, complete) => complete({ foo: 'bar' }).ok().next());
-      functions.process(task, null, (err, result) => {
+      functions.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
         result.response.body.should.eql({
@@ -438,12 +453,29 @@ describe('FlexFunctions', () => {
       });
     });
 
+    it('should add customRequestProperties to request.header.x-kinvey-custom-request-properties', (done) => {
+      const taskName = quickRandom();
+      const task = samplePreTask(taskName);
+      task.request.headers['x-kinvey-custom-request-properties'] = '{"keyFromRequest":"testValue"}';
+
+      functions.register(taskName, (context, complete, modules) => {
+        modules.requestContext.setCustomRequestProperty('keyFromHook', 'testValue');
+        complete().ok().next();
+      });
+
+      functions.process(task, moduleGenerator.generate(task), (err, result) => {
+        should.not.exist(err);
+        result.request.headers.should.containEql({ 'x-kinvey-custom-request-properties': '{"keyFromRequest":"testValue","keyFromHook":"testValue"}', });
+        done();
+      });
+    });
+
     it('should keep existing response body when task is a post task and no body is set and the request is ended',
       (done) => {
         const taskName = quickRandom();
         const task = samplePostTask(taskName);
         functions.register(taskName, (context, complete) => complete({ foo: 'bar' }).ok().done());
-        functions.process(task, null, (err, result) => {
+        functions.process(task, {}, (err, result) => {
           should.not.exist(err);
           result.response.statusCode.should.eql(200);
           result.response.body.should.eql(task.response.body);
@@ -456,7 +488,7 @@ describe('FlexFunctions', () => {
         const taskName = quickRandom();
         const task = samplePostTask(taskName);
         functions.register(taskName, (context, complete) => complete({ foo: 'bar' }).ok().next());
-        functions.process(task, null, (err, result) => {
+        functions.process(task, {}, (err, result) => {
           should.not.exist(err);
           result.response.statusCode.should.eql(200);
           result.response.body.should.eql(task.response.body);
@@ -474,14 +506,14 @@ describe('FlexFunctions', () => {
         context.headers.should.not.eql(task.response.headers);
         complete(task.response.body).ok().next();
       });
-      functions.process(task, null, () => done());
+      functions.process(task, {}, () => done());
     });
 
     it('should set the response body when task is a pre task and the request is ended', (done) => {
       const taskName = quickRandom();
       const task = samplePreTask(taskName);
       functions.register(taskName, (context, complete) => complete({ foo: 'bar' }).ok().done());
-      functions.process(task, null, (err, result) => {
+      functions.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
         result.response.body.should.eql({
@@ -496,7 +528,7 @@ describe('FlexFunctions', () => {
       const taskName = quickRandom();
       const task = samplePreTask(taskName);
       functions.register(taskName, (context, complete) => complete({ foo: 'bar' }).ok().next());
-      functions.process(task, null, (err, result) => {
+      functions.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
         result.request.body.should.eql({
@@ -512,7 +544,7 @@ describe('FlexFunctions', () => {
         const taskName = quickRandom();
         const task = samplePreTask(taskName);
         functions.register(taskName, (context, complete) => complete({ foo: 'bar' }).ok().done());
-        functions.process(task, null, (err, result) => {
+        functions.process(task, {}, (err, result) => {
           should.not.exist(err);
           result.response.statusCode.should.eql(200);
           result.response.body.should.eql(task.response.body);
@@ -525,7 +557,7 @@ describe('FlexFunctions', () => {
         const taskName = quickRandom();
         const task = samplePreTask(taskName);
         functions.register(taskName, (context, complete) => complete({ foo: 'bar' }).ok().next());
-        functions.process(task, null, (err, result) => {
+        functions.process(task, {}, (err, result) => {
           should.not.exist(err);
           result.response.statusCode.should.eql(200);
           result.request.body.should.eql({
@@ -546,14 +578,14 @@ describe('FlexFunctions', () => {
         context.headers.should.not.eql(task.response.headers);
         complete(task.response.body).ok().next();
       });
-      functions.process(task, null, () => done());
+      functions.process(task, {}, () => done());
     });
 
     it('should set the response body when task is a custom endpoint task and the request is ended', (done) => {
       const taskName = quickRandom();
       const task = sampleCustomEndpoint(taskName);
       functions.register(taskName, (context, complete) => complete({ foo: 'bar' }).ok().done());
-      functions.process(task, null, (err, result) => {
+      functions.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
         result.response.body.should.eql({
@@ -568,7 +600,7 @@ describe('FlexFunctions', () => {
       const taskName = quickRandom();
       const task = sampleCustomEndpoint(taskName);
       functions.register(taskName, (context, complete) => complete({ foo: 'bar' }).ok().next());
-      functions.process(task, null, (err, result) => {
+      functions.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
         result.response.body.should.eql({
@@ -584,7 +616,7 @@ describe('FlexFunctions', () => {
         const taskName = quickRandom();
         const task = sampleCustomEndpoint(taskName);
         functions.register(taskName, (context, complete) => complete({ foo: 'bar' }).ok().done());
-        functions.process(task, null, (err, result) => {
+        functions.process(task, {}, (err, result) => {
           should.not.exist(err);
           result.response.statusCode.should.eql(200);
           result.response.body.should.eql(task.response.body);
@@ -597,7 +629,7 @@ describe('FlexFunctions', () => {
         const taskName = quickRandom();
         const task = sampleCustomEndpoint(taskName);
         functions.register(taskName, (context, complete) => complete({ foo: 'bar' }).ok().next());
-        functions.process(task, null, (err, result) => {
+        functions.process(task, {}, (err, result) => {
           should.not.exist(err);
           result.response.statusCode.should.eql(200);
           result.response.body.should.eql(task.response.body);
@@ -610,7 +642,7 @@ describe('FlexFunctions', () => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
       functions.register(taskName, (context, complete) => complete({ foo: 'bar' }).created().done());
-      functions.process(task, null, (err, result) => {
+      functions.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(201);
         result.response.body.should.eql({
@@ -619,11 +651,12 @@ describe('FlexFunctions', () => {
         done();
       });
     });
+
     it('should return a 202 accepted', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
       functions.register(taskName, (context, complete) => complete({ foo: 'bar' }).accepted().done());
-      functions.process(task, null, (err, result) => {
+      functions.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(202);
         result.response.body.should.eql({
@@ -632,11 +665,12 @@ describe('FlexFunctions', () => {
         done();
       });
     });
+
     it('should return a 400 bad request', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
       functions.register(taskName, (context, complete) => complete('This is a bad request').badRequest().done());
-      functions.process(task, null, (err, result) => {
+      functions.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(400);
 
@@ -646,11 +680,12 @@ describe('FlexFunctions', () => {
         done();
       });
     });
+
     it('should return a 401 unauthorized', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
       functions.register(taskName, (context, complete) => complete('You are not authorized!').unauthorized().done());
-      functions.process(task, null, (err, result) => {
+      functions.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(401);
         result.response.body.error.should.eql('InvalidCredentials');
@@ -660,11 +695,12 @@ describe('FlexFunctions', () => {
         done();
       });
     });
+
     it('should return a 403 forbidden', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
       functions.register(taskName, (context, complete) => complete('Forbidden!').forbidden().done());
-      functions.process(task, null, (err, result) => {
+      functions.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(403);
         result.response.body.error.should.eql('Forbidden');
@@ -673,11 +709,12 @@ describe('FlexFunctions', () => {
         done();
       });
     });
+
     it('should return a 404 not found', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
       functions.register(taskName, (context, complete) => complete('The request is not found!').notFound().done());
-      functions.process(task, null, (err, result) => {
+      functions.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(404);
         result.response.body.error.should.eql('NotFound');
@@ -687,11 +724,12 @@ describe('FlexFunctions', () => {
         done();
       });
     });
+
     it('should return a 405 not allowed', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
       functions.register(taskName, (context, complete) => complete('The request is not allowed!').notAllowed().done());
-      functions.process(task, null, (err, result) => {
+      functions.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(405);
         result.response.body.error.should.eql('NotAllowed');
@@ -700,11 +738,12 @@ describe('FlexFunctions', () => {
         done();
       });
     });
+
     it('should return a 501 not implemented', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
       functions.register(taskName, (context, complete) => complete('This isn\'t implemented').notImplemented().done());
-      functions.process(task, null, (err, result) => {
+      functions.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(501);
         result.response.body.error.should.eql('NotImplemented');
@@ -713,12 +752,13 @@ describe('FlexFunctions', () => {
         done();
       });
     });
+
     it('should return a 550 runtime error', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
       functions.register(taskName, (context, complete) => complete('There was some error in the app!')
         .runtimeError().done());
-      functions.process(task, null, (err, result) => {
+      functions.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(550);
         result.response.body.error.should.eql('FlexRuntimeError');
@@ -729,11 +769,12 @@ describe('FlexFunctions', () => {
         done();
       });
     });
+
     it('should process a next (continuation) handler', (done) => {
       const taskName = quickRandom();
       const task = samplePostTask(taskName);
       functions.register(taskName, (context, complete) => complete({ foo: 'bar' }).ok().next());
-      functions.process(task, null, (err, result) => {
+      functions.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
         result.response.body.should.eql({
@@ -743,11 +784,12 @@ describe('FlexFunctions', () => {
         done();
       });
     });
+
     it('should process a done (completion) handler', (done) => {
       const taskName = quickRandom();
       const task = sampleTask(taskName);
       functions.register(taskName, (context, complete) => complete({ foo: 'bar' }).ok().done());
-      functions.process(task, null, (err, result) => {
+      functions.process(task, {}, (err, result) => {
         should.not.exist(err);
         result.response.statusCode.should.eql(200);
         result.response.body.should.eql({
@@ -783,7 +825,7 @@ describe('FlexFunctions', () => {
             done();
           });
 
-          functions.process(task, null, processCallbackSpy);
+          functions.process(task, {}, processCallbackSpy);
         });
       });
     });
