@@ -1,5 +1,8 @@
 ## Changelog
 
+### 4.1.2
+* Fixed security issues
+
 ### 4.1.1
 * Fixed custom request properties to be available between Pre and Post hooks
 
