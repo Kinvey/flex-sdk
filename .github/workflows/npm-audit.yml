@@ -1,0 +1,18 @@
+name: NPM security
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+jobs:
+  npm-security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '12'
+          
+      - name: Run NPM security
+        run: npm run test-npm-security
