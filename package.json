@@ -18,7 +18,7 @@
   "dependencies": {
     "async": "3.2.3",
     "bson": "4.3.0",
-    "kinvey-code-task-runner": "2.5.1",
+    "kinvey-code-task-runner": "2.6.0-next.0",
     "kinvey-datalink-errors": "0.3.2",
     "moment": "2.29.4",
     "request": "2.88.0",
