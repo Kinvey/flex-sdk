@@ -1,5 +1,8 @@
 ## Changelog
 
+### 4.1.4
+* Fixed security issues
+
 ### 4.1.3
 * Fixed security issues
 
